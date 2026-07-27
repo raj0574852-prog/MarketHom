@@ -15,6 +15,10 @@ export interface LeadInquiry {
   serviceRequested: string;
   date: string;
   status: 'New' | 'Contacted' | 'Closed';
+  phone?: string;
+  company?: string;
+  budget?: string;
+  message?: string;
 }
 
 export const INITIAL_SERVICES: SiteService[] = [
@@ -73,8 +77,49 @@ export function getLeads(): LeadInquiry[] {
   }
 }
 
+export function addLead(lead: Omit<LeadInquiry, 'id' | 'date' | 'status'> & { serviceRequested?: string }): LeadInquiry {
+  const currentLeads = getLeads();
+  const newLead: LeadInquiry = {
+    id: 'lead-' + Date.now(),
+    name: lead.name,
+    email: lead.email,
+    website: lead.website || '',
+    serviceRequested: lead.serviceRequested || 'SEO Audit',
+    phone: lead.phone || '',
+    company: lead.company || '',
+    budget: lead.budget || '',
+    message: lead.message || '',
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+    status: 'New'
+  };
+
+  const updated = [newLead, ...currentLeads];
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(LEADS_KEY, JSON.stringify(updated));
+  }
+
+  // Also async sync to API server
+  if (typeof window !== 'undefined') {
+    fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newLead)
+    }).catch(() => {});
+  }
+
+  return newLead;
+}
+
 export function updateLeadStatus(id: string, status: LeadInquiry['status']): void {
   const leads = getLeads();
   const updated = leads.map(l => l.id === id ? { ...l, status } : l);
   if (typeof window !== 'undefined') localStorage.setItem(LEADS_KEY, JSON.stringify(updated));
+
+  if (typeof window !== 'undefined') {
+    fetch('/api/leads', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status })
+    }).catch(() => {});
+  }
 }

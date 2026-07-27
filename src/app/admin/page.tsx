@@ -80,12 +80,45 @@ export default function AdminDashboardPage() {
       setIsAuthenticated(true);
     }
     loadData();
+
+    // Real-time polling for new client lead inquiries every 4 seconds
+    const interval = setInterval(() => {
+      fetchLeadsFromApi();
+    }, 4000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const loadData = () => {
     setPosts(getStoredPosts());
     setServices(getServices());
     setLeads(getLeads());
+    fetchLeadsFromApi();
+  };
+
+  const fetchLeadsFromApi = async () => {
+    try {
+      const res = await fetch('/api/leads');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.leads && Array.isArray(data.leads)) {
+          // Merge local and server leads by ID
+          const localLeads = getLeads();
+          const mergedMap = new Map<string, LeadInquiry>();
+          data.leads.forEach((l: LeadInquiry) => mergedMap.set(l.id, l));
+          localLeads.forEach((l: LeadInquiry) => {
+            if (!mergedMap.has(l.id)) mergedMap.set(l.id, l);
+          });
+          const mergedList = Array.from(mergedMap.values());
+          setLeads(mergedList);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('markethom_leads', JSON.stringify(mergedList));
+          }
+        }
+      }
+    } catch (err) {
+      // fallback to local leads
+    }
   };
 
   const handleLogin = (e: React.FormEvent) => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Metadata } from 'next';
+import { addLead } from '@/lib/resourcesStore';
 
 const contactInfo = [
   {
@@ -47,8 +47,39 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
+
+    try {
+      // 1. Save to local storage & broadcast
+      addLead({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        company: form.company,
+        website: form.website,
+        serviceRequested: form.service || 'General Inquiry',
+        budget: form.budget,
+        message: form.message
+      });
+
+      // 2. Also POST directly to server endpoint
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          company: form.company,
+          website: form.website,
+          serviceRequested: form.service || 'General Inquiry',
+          budget: form.budget,
+          message: form.message
+        })
+      });
+    } catch (err) {
+      console.error('Lead submission error:', err);
+    }
+
     setStatus('sent');
   };
 
@@ -88,7 +119,7 @@ export default function ContactPage() {
 
               {/* Why Choose Us */}
               <div className="glass-card p-6">
-                <h3 className="font-bold mb-4">Why Work With Us?</h3>
+                <h3 className="font-bold mb-4 text-white">Why Work With Us?</h3>
                 <ul className="space-y-3">
                   {[
                     'Free comprehensive website audit',
@@ -115,14 +146,14 @@ export default function ContactPage() {
                 {status === 'sent' ? (
                   <div className="text-center py-16">
                     <div className="text-6xl mb-4">🎉</div>
-                    <h2 className="text-2xl font-bold mb-3">Message Received!</h2>
+                    <h2 className="text-2xl font-bold mb-3 text-white">Message Received!</h2>
                     <p className="text-[hsl(215,20%,60%)]">
-                      Thank you for reaching out. Our team will review your inquiry and get back to you within <strong className="text-white">2 business hours</strong> with your free audit.
+                      Thank you for reaching out, <span className="text-white font-bold">{form.name}</span>. Our team will review your inquiry for <strong className="text-emerald-400">{form.service || 'your request'}</strong> and get back to you within <strong className="text-white">2 business hours</strong>.
                     </p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
-                    <h2 className="text-2xl font-bold mb-2">Get Your Free Audit</h2>
+                    <h2 className="text-2xl font-bold mb-2 text-white">Get Your Free Audit</h2>
                     <p className="text-[hsl(215,20%,60%)] text-sm mb-6">Fill out the form below and we'll have a custom strategy ready for you within 24 hours.</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -236,7 +267,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={status === 'sending'}
-                      className="btn-primary w-full justify-center text-base py-4"
+                      className="btn-primary w-full justify-center text-base py-4 font-bold shadow-lg shadow-[hsl(217,91%,54%)]/25"
                     >
                       {status === 'sending' ? (
                         <span className="flex items-center gap-2">
