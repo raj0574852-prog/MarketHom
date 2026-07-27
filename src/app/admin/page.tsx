@@ -46,6 +46,7 @@ export default function AdminDashboardPage() {
   const [formAuthorRole, setFormAuthorRole] = useState('Senior Strategist');
   const [formReadTime, setFormReadTime] = useState('5 min read');
   const [formIcon, setFormIcon] = useState('🚀');
+  const [formFeaturedImage, setFormFeaturedImage] = useState('');
   const [formContent, setFormContent] = useState('');
   const [formFeatured, setFormFeatured] = useState(false);
 
@@ -94,7 +95,6 @@ export default function AdminDashboardPage() {
     localStorage.removeItem('markethom_admin_auth');
   };
 
-  // Auto-generate slug from title
   const handleTitleChange = (val: string) => {
     setFormTitle(val);
     if (!editingPostId) {
@@ -109,6 +109,52 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const autoFormatPlainTextToHTML = () => {
+    if (!formContent.trim()) return;
+
+    if (formContent.includes('<p>') || formContent.includes('<h2>')) {
+      alert('Content is already formatted with HTML tags!');
+      return;
+    }
+
+    const lines = formContent.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    const formattedBlocks: string[] = [];
+
+    lines.forEach((line) => {
+      const isHeadingPattern = /^(Why|What|How|The|1\.|2\.|3\.|4\.|5\.|6\.|7\.|8\.|9\.|10\.|Step|Guide)/i.test(line) && line.length < 80;
+      const isShortHeading = line.length < 60 && !line.endsWith('.') && !line.endsWith(',');
+
+      if (isHeadingPattern || isShortHeading) {
+        formattedBlocks.push(`<h2>${line.replace(/^[0-9]+\.\s*/, '')}</h2>`);
+      } else if (line.startsWith('- ') || line.startsWith('* ')) {
+        formattedBlocks.push(`<ul><li>${line.substring(2)}</li></ul>`);
+      } else {
+        formattedBlocks.push(`<p>${line}</p>`);
+      }
+    });
+
+    setFormContent(formattedBlocks.join('\n\n'));
+  };
+
+  const insertTag = (tag: string) => {
+    if (tag === 'h2') {
+      setFormContent(prev => prev + '\n\n<h2>Section Heading</h2>\n<p>Write section text here...</p>');
+    } else if (tag === 'h3') {
+      setFormContent(prev => prev + '\n\n<h3>Sub-heading</h3>');
+    } else if (tag === 'p') {
+      setFormContent(prev => prev + '\n\n<p>Write paragraph text here...</p>');
+    } else if (tag === 'bold') {
+      setFormContent(prev => prev + ' <strong>bold text</strong> ');
+    } else if (tag === 'ul') {
+      setFormContent(prev => prev + '\n\n<ul>\n  <li>Key point 1</li>\n  <li>Key point 2</li>\n  <li>Key point 3</li>\n</ul>');
+    } else if (tag === 'img') {
+      const url = prompt('Enter Image URL (e.g. https://images.unsplash.com/...):', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200');
+      if (url) {
+        setFormContent(prev => prev + `\n\n<img src="${url}" alt="Article Image" class="rounded-2xl my-8 w-full h-80 object-cover shadow-2xl border border-[hsl(215,25%,22%)]" />\n\n`);
+      }
+    }
+  };
+
   const handlePublishPost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle || !formContent) {
@@ -117,6 +163,14 @@ export default function AdminDashboardPage() {
     }
 
     const categoryToUse = formCategory === 'Custom' ? (formCustomCategory || 'General') : formCategory;
+
+    let finalContent = formContent;
+    if (!finalContent.includes('<p>') && !finalContent.includes('<h2>') && !finalContent.includes('<div>')) {
+      finalContent = finalContent
+        .split(/\n\n+/)
+        .map(p => `<p>${p.trim()}</p>`)
+        .join('\n\n');
+    }
 
     const saved = savePost({
       id: editingPostId || undefined,
@@ -128,7 +182,8 @@ export default function AdminDashboardPage() {
       authorRole: formAuthorRole,
       readTime: formReadTime,
       icon: formIcon,
-      content: formContent,
+      featuredImage: formFeaturedImage,
+      content: finalContent,
       featured: formFeatured,
       metaTitle: formMetaTitle || formTitle,
       metaDescription: formMetaDescription || formExcerpt,
@@ -158,6 +213,7 @@ export default function AdminDashboardPage() {
     setFormCustomCategory('');
     setFormContent('');
     setFormIcon('🚀');
+    setFormFeaturedImage('');
     setFormFeatured(false);
     setFormMetaTitle('');
     setFormMetaDescription('');
@@ -176,6 +232,7 @@ export default function AdminDashboardPage() {
     setFormAuthorRole(post.authorRole || 'Senior Strategist');
     setFormReadTime(post.readTime);
     setFormIcon(post.icon || '🚀');
+    setFormFeaturedImage(post.featuredImage || '');
     setFormContent(post.content);
     setFormFeatured(!!post.featured);
     setFormMetaTitle(post.metaTitle || post.title);
@@ -443,7 +500,7 @@ export default function AdminDashboardPage() {
               {/* SECTION 1: ARTICLE ESSENTIALS */}
               <div className="space-y-6">
                 <h3 className="text-sm font-bold text-[hsl(217,91%,70%)] uppercase tracking-widest flex items-center gap-2">
-                  <span>📝</span> Article Content & Metadata
+                  <span>📝</span> Article Details & Media
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -470,6 +527,26 @@ export default function AdminDashboardPage() {
                       required
                     />
                   </div>
+                </div>
+
+                {/* FEATURED COVER IMAGE INPUT */}
+                <div>
+                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">
+                    🖼️ Featured Cover Banner Image URL (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={formFeaturedImage}
+                    onChange={(e) => setFormFeaturedImage(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-... or your image link"
+                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-xs font-mono"
+                  />
+                  {formFeaturedImage && (
+                    <div className="mt-3 relative h-32 w-full rounded-xl overflow-hidden border border-[hsl(215,25%,22%)] bg-[hsl(222,47%,9%)]">
+                      <img src={formFeaturedImage} alt="Cover Preview" className="w-full h-full object-cover" />
+                      <span className="absolute top-2 right-2 px-2.5 py-1 rounded bg-black/70 text-white text-[10px] font-bold">Cover Preview</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -546,17 +623,53 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
+                {/* ARTICLE CONTENT WITH AUTO-FORMATTER & IMAGE TOOLBAR */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Article Content (HTML / Rich Text)</label>
-                    <span className="text-[10px] text-[hsl(215,20%,50%)]">Supports &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;strong&gt;, etc.</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Article Content</label>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={autoFormatPlainTextToHTML}
+                        className="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold hover:bg-emerald-500/30 transition-all flex items-center gap-1.5 shadow-sm"
+                        title="Click to automatically convert plain text into clean HTML paragraphs and headings!"
+                      >
+                        <span>✨ Auto-Format Plain Text</span>
+                      </button>
+
+                      <div className="flex items-center gap-1 bg-[hsl(222,47%,9%)] p-1 rounded-lg border border-[hsl(215,25%,22%)] text-[11px]">
+                        <button type="button" onClick={() => insertTag('h2')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + H2
+                        </button>
+                        <button type="button" onClick={() => insertTag('h3')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + H3
+                        </button>
+                        <button type="button" onClick={() => insertTag('p')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + Para
+                        </button>
+                        <button type="button" onClick={() => insertTag('bold')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + Bold
+                        </button>
+                        <button type="button" onClick={() => insertTag('ul')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + List
+                        </button>
+                        <button type="button" onClick={() => insertTag('img')} className="px-2 py-0.5 rounded bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] hover:bg-[hsl(217,91%,54%)]/40 font-bold">
+                          🖼️ + Image
+                        </button>
+                      </div>
+                    </div>
                   </div>
+
+                  <p className="text-[11px] text-[hsl(215,20%,50%)] mb-2">
+                    💡 <span className="text-white font-semibold">Tip:</span> You can paste plain text here and click <span className="text-emerald-400 font-bold">"✨ Auto-Format Plain Text"</span> above, or click <span className="text-[hsl(217,91%,70%)] font-bold">"🖼️ + Image"</span> to insert photos!
+                  </p>
+
                   <textarea
-                    rows={8}
+                    rows={12}
                     value={formContent}
                     onChange={(e) => setFormContent(e.target.value)}
-                    placeholder="<p>Write your detailed blog post content here...</p>"
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white font-mono text-sm placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)]"
+                    placeholder="Paste your plain text article here, or write using HTML tags..."
+                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white font-mono text-sm placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] leading-relaxed"
                     required
                   />
                 </div>

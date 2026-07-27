@@ -69,7 +69,7 @@ export default function BlogPostPage({ params }: Props) {
                <div className="text-6xl mb-6">{post.icon || '📝'}</div>
                <span className="badge mb-6">{post.category}</span>
 
-               {/* Robots Directive Badge for Admin Preview */}
+               {/* Robots Directive Badge */}
                {(post.noIndex || post.noFollow) && (
                  <div className="mb-4 flex items-center justify-center gap-2">
                    <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-mono font-bold">
@@ -100,7 +100,14 @@ export default function BlogPostPage({ params }: Props) {
                </div>
             </div>
 
-            <div className="prose-dark max-w-none text-slate-300 text-lg leading-relaxed space-y-6" dangerouslySetInnerHTML={{ __html: post.content }} />
+            {/* Featured Cover Banner Image */}
+            {post.featuredImage && (
+              <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl border border-[hsl(215,25%,22%)]">
+                <img src={post.featuredImage} alt={post.title} className="w-full h-[400px] object-cover" />
+              </div>
+            )}
+
+            <div className="prose-dark max-w-none space-y-6" dangerouslySetInnerHTML={{ __html: post.content }} />
             
             <div className="mt-16 p-8 glass-card border-[hsl(217,91%,54%)]/20 flex flex-col md:flex-row items-center gap-8">
                <div className="flex-1">

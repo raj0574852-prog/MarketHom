@@ -11,6 +11,7 @@ export interface BlogPost {
   readTime: string;
   icon: string;
   featured?: boolean;
+  featuredImage?: string;
   metaTitle?: string;
   metaDescription?: string;
   noIndex?: boolean;
@@ -31,6 +32,7 @@ export const INITIAL_POSTS: BlogPost[] = [
     readTime: '8 min read',
     icon: '🤖',
     featured: true,
+    featuredImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop',
     metaTitle: '10 AI SEO Strategies for 2025 | MarketHom Agency',
     metaDescription: 'Discover the top 10 AI-powered SEO strategies for 2025. Learn how to optimize for SGE, ChatGPT, and semantic topical authority.',
     noIndex: false,
@@ -43,7 +45,9 @@ export const INITIAL_POSTS: BlogPost[] = [
       
       <h2 className="text-2xl font-bold mt-8 mb-4 text-white">2. Semantic Content Optimization with NLP</h2>
       <p className="mb-6 leading-relaxed">Natural Language Processing (NLP) allows us to understand the latent semantic indexing (LSI) keywords and entities that top-ranking pages share. By optimizing your content for these semantic signals, you increase your chances of ranking significantly.</p>
-      
+
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop" alt="AI SEO Data Visualization" className="rounded-2xl my-8 w-full h-80 object-cover shadow-2xl border border-[hsl(215,25%,22%)]" />
+
       <h2 className="text-2xl font-bold mt-8 mb-4 text-white">3. Automated Technical SEO Monitoring</h2>
       <p className="mb-6 leading-relaxed">AI can now monitor your site 24/7 for technical issues like broken links, crawl errors, and Core Web Vital drops, fixing them automatically or alerting your team before they impact rankings.</p>
       
