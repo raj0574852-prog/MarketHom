@@ -18,7 +18,6 @@ import {
   LeadInquiry 
 } from '@/lib/resourcesStore';
 
-// Preset high quality cover images for quick 1-click selection
 const PRESET_COVER_IMAGES = [
   { label: '🤖 AI & Tech', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop' },
   { label: '📈 Marketing Growth', url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop' },
@@ -91,12 +90,12 @@ export default function AdminDashboardPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcode === 'admin123' || passcode.trim() === 'admin') {
+    if (passcode === 'Rajjesh@123') {
       setIsAuthenticated(true);
       localStorage.setItem('markethom_admin_auth', 'true');
       setLoginError('');
     } else {
-      setLoginError('Invalid passcode. Use "admin123" to access.');
+      setLoginError('Invalid admin password. Please try again.');
     }
   };
 
@@ -307,13 +306,14 @@ export default function AdminDashboardPage() {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Admin Passcode</label>
+              <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Admin Password</label>
               <input 
                 type="password" 
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Enter passcode (default: admin123)" 
+                placeholder="Enter admin password" 
                 className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm transition-all"
+                required
               />
             </div>
 
@@ -323,14 +323,6 @@ export default function AdminDashboardPage() {
 
             <button type="submit" className="w-full btn-primary py-3 justify-center text-sm font-bold shadow-lg shadow-[hsl(217,91%,54%)]/20">
               Access Admin Panel →
-            </button>
-
-            <button 
-              type="button" 
-              onClick={() => { setPasscode('admin123'); setIsAuthenticated(true); localStorage.setItem('markethom_admin_auth', 'true'); }}
-              className="w-full text-xs text-[hsl(215,20%,50%)] hover:text-[hsl(217,91%,70%)] transition-colors py-2 text-center"
-            >
-              ⚡ Quick Demo Login (Auto-fill admin123)
             </button>
           </form>
         </div>
