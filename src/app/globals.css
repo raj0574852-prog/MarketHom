@@ -344,6 +344,22 @@
     color: hsl(215 20% 90%);
   }
 
+  .prose-dark img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: contain;
+    border-radius: 16px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid hsl(215 25% 22% / 0.5);
+  }
+
   /* Animations */
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(30px); }
