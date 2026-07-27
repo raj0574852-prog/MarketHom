@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 import { getPostBySlug, BlogPost } from '@/lib/blogStore';
@@ -19,6 +20,9 @@ export default function BlogPostPage({ params }: Props) {
     const found = getPostBySlug(slug);
     if (found) {
       setPost(found);
+      if (typeof document !== 'undefined') {
+        document.title = found.metaTitle || `${found.title} | MarketHom Agency`;
+      }
     }
     setLoading(false);
   }, [slug]);
@@ -45,8 +49,17 @@ export default function BlogPostPage({ params }: Props) {
     );
   }
 
+  const robotsDirective = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
+
   return (
     <>
+      <Head>
+        <title>{post.metaTitle || `${post.title} | MarketHom Agency`}</title>
+        <meta name="description" content={post.metaDescription || post.excerpt} />
+        <meta name="robots" content={robotsDirective} />
+        {post.canonicalUrl && <link rel="canonical" href={post.canonicalUrl} />}
+      </Head>
+
       <article className="pt-32 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">
         <div className="container-custom relative z-10">
           <Breadcrumbs items={[{ label: 'Blog', href: '/blog' }, { label: post.category }]} />
@@ -55,6 +68,16 @@ export default function BlogPostPage({ params }: Props) {
             <div className="text-center mb-12">
                <div className="text-6xl mb-6">{post.icon || '📝'}</div>
                <span className="badge mb-6">{post.category}</span>
+
+               {/* Robots Directive Badge for Admin Preview */}
+               {(post.noIndex || post.noFollow) && (
+                 <div className="mb-4 flex items-center justify-center gap-2">
+                   <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-mono font-bold">
+                     SEO Meta Robots: {robotsDirective}
+                   </span>
+                 </div>
+               )}
+
                <h1 className="text-4xl md:text-6xl font-black mb-8 leading-tight text-white">{post.title}</h1>
                
                <div className="flex items-center justify-center gap-6 py-8 border-y border-[hsl(215,25%,22%)]/40">

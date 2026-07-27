@@ -48,6 +48,14 @@ export default function AdminDashboardPage() {
   const [formIcon, setFormIcon] = useState('🚀');
   const [formContent, setFormContent] = useState('');
   const [formFeatured, setFormFeatured] = useState(false);
+
+  // SEO Form State
+  const [formMetaTitle, setFormMetaTitle] = useState('');
+  const [formMetaDescription, setFormMetaDescription] = useState('');
+  const [formNoIndex, setFormNoIndex] = useState(false);
+  const [formNoFollow, setFormNoFollow] = useState(false);
+  const [formCanonicalUrl, setFormCanonicalUrl] = useState('');
+
   const [publishSuccessMsg, setPublishSuccessMsg] = useState('');
 
   // Service Form State
@@ -95,6 +103,9 @@ export default function AdminDashboardPage() {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
       setFormSlug(generatedSlug);
+      if (!formMetaTitle) {
+        setFormMetaTitle(`${val} | MarketHom`);
+      }
     }
   };
 
@@ -119,13 +130,17 @@ export default function AdminDashboardPage() {
       icon: formIcon,
       content: formContent,
       featured: formFeatured,
+      metaTitle: formMetaTitle || formTitle,
+      metaDescription: formMetaDescription || formExcerpt,
+      noIndex: formNoIndex,
+      noFollow: formNoFollow,
+      canonicalUrl: formCanonicalUrl,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     });
 
     setPublishSuccessMsg(editingPostId ? 'Article updated successfully!' : '🎉 Article published live to the Blog section!');
     loadData();
 
-    // Reset form after short delay
     setTimeout(() => {
       setPublishSuccessMsg('');
       if (!editingPostId) {
@@ -144,6 +159,11 @@ export default function AdminDashboardPage() {
     setFormContent('');
     setFormIcon('🚀');
     setFormFeatured(false);
+    setFormMetaTitle('');
+    setFormMetaDescription('');
+    setFormNoIndex(false);
+    setFormNoFollow(false);
+    setFormCanonicalUrl('');
   };
 
   const startEditPost = (post: BlogPost) => {
@@ -158,6 +178,11 @@ export default function AdminDashboardPage() {
     setFormIcon(post.icon || '🚀');
     setFormContent(post.content);
     setFormFeatured(!!post.featured);
+    setFormMetaTitle(post.metaTitle || post.title);
+    setFormMetaDescription(post.metaDescription || post.excerpt);
+    setFormNoIndex(!!post.noIndex);
+    setFormNoFollow(!!post.noFollow);
+    setFormCanonicalUrl(post.canonicalUrl || '');
     setActiveTab('publish');
   };
 
@@ -193,7 +218,6 @@ export default function AdminDashboardPage() {
     loadData();
   };
 
-  // Filtered articles
   const filteredArticles = posts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(articleSearch.toLowerCase()) || 
                           post.excerpt.toLowerCase().includes(articleSearch.toLowerCase());
@@ -201,7 +225,6 @@ export default function AdminDashboardPage() {
     return matchesSearch && matchesCat;
   });
 
-  // Login Screen Render
   if (!isAuthenticated) {
     return (
       <main className="min-h-screen bg-[hsl(222,47%,5%)] text-white flex items-center justify-center p-6 pt-24">
@@ -302,7 +325,6 @@ export default function AdminDashboardPage() {
         {/* TAB 1: DASHBOARD OVERVIEW */}
         {activeTab === 'dashboard' && (
           <div className="space-y-8">
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="glass-card p-6 border-l-4 border-l-[hsl(217,91%,54%)]">
                 <div className="text-xs font-bold text-[hsl(215,20%,50%)] uppercase tracking-wider mb-1">Published Articles</div>
@@ -326,7 +348,6 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Quick Actions & Recent Articles */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 glass-card p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -365,7 +386,6 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Inbound Leads Summary */}
               <div className="glass-card p-6">
                 <h3 className="text-lg font-bold text-white mb-6">Latest Audit Inquiries</h3>
                 <div className="space-y-4">
@@ -395,8 +415,8 @@ export default function AdminDashboardPage() {
 
         {/* TAB 2: PUBLISH / EDIT ARTICLE */}
         {activeTab === 'publish' && (
-          <div className="glass-card p-8 border border-[hsl(217,91%,54%)]/20">
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-[hsl(215,25%,22%)]/40">
+          <div className="glass-card p-8 border border-[hsl(217,91%,54%)]/20 space-y-8">
+            <div className="flex items-center justify-between pb-4 border-b border-[hsl(215,25%,22%)]/40">
               <div>
                 <h2 className="text-2xl font-black text-white">
                   {editingPostId ? 'Edit Blog Article' : 'Publish New Article to Blog'}
@@ -414,149 +434,243 @@ export default function AdminDashboardPage() {
             </div>
 
             {publishSuccessMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-bold text-center animate-bounce">
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-bold text-center animate-bounce">
                 {publishSuccessMsg}
               </div>
             )}
 
-            <form onSubmit={handlePublishPost} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Article Title</label>
-                  <input
-                    type="text"
-                    value={formTitle}
-                    onChange={(e) => handleTitleChange(e.target.value)}
-                    placeholder="e.g. 10 AI SEO Strategies That Will Dominate Search in 2026"
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm"
-                    required
-                  />
-                </div>
+            <form onSubmit={handlePublishPost} className="space-y-8">
+              {/* SECTION 1: ARTICLE ESSENTIALS */}
+              <div className="space-y-6">
+                <h3 className="text-sm font-bold text-[hsl(217,91%,70%)] uppercase tracking-widest flex items-center gap-2">
+                  <span>📝</span> Article Content & Metadata
+                </h3>
 
-                <div>
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">URL Slug</label>
-                  <input
-                    type="text"
-                    value={formSlug}
-                    onChange={(e) => setFormSlug(e.target.value)}
-                    placeholder="ai-seo-strategies-2026"
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm font-mono text-xs"
-                    required
-                  />
-                </div>
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Article Title</label>
+                    <input
+                      type="text"
+                      value={formTitle}
+                      onChange={(e) => handleTitleChange(e.target.value)}
+                      placeholder="e.g. 10 AI SEO Strategies That Will Dominate Search in 2026"
+                      className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm"
+                      required
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div>
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Category</label>
-                  <select
-                    value={formCategory}
-                    onChange={(e) => setFormCategory(e.target.value)}
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm"
-                  >
-                    <option value="AI SEO">AI SEO</option>
-                    <option value="SEO">SEO</option>
-                    <option value="PPC">PPC</option>
-                    <option value="Web Dev">Web Dev</option>
-                    <option value="Link Building">Link Building</option>
-                    <option value="CRO">CRO</option>
-                    <option value="Local SEO">Local SEO</option>
-                    <option value="Custom">Custom...</option>
-                  </select>
-                </div>
-
-                {formCategory === 'Custom' && (
                   <div>
-                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Custom Category</label>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">URL Slug</label>
                     <input
                       type="text"
-                      value={formCustomCategory}
-                      onChange={(e) => setFormCustomCategory(e.target.value)}
-                      placeholder="e.g. Social Media"
+                      value={formSlug}
+                      onChange={(e) => setFormSlug(e.target.value)}
+                      placeholder="ai-seo-strategies-2026"
+                      className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm font-mono text-xs"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Category</label>
+                    <select
+                      value={formCategory}
+                      onChange={(e) => setFormCategory(e.target.value)}
+                      className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm"
+                    >
+                      <option value="AI SEO">AI SEO</option>
+                      <option value="SEO">SEO</option>
+                      <option value="PPC">PPC</option>
+                      <option value="Web Dev">Web Dev</option>
+                      <option value="Link Building">Link Building</option>
+                      <option value="CRO">CRO</option>
+                      <option value="Local SEO">Local SEO</option>
+                      <option value="Custom">Custom...</option>
+                    </select>
+                  </div>
+
+                  {formCategory === 'Custom' && (
+                    <div>
+                      <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Custom Category</label>
+                      <input
+                        type="text"
+                        value={formCustomCategory}
+                        onChange={(e) => setFormCustomCategory(e.target.value)}
+                        placeholder="e.g. Social Media"
+                        className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-sm"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Author Name</label>
+                    <input
+                      type="text"
+                      value={formAuthor}
+                      onChange={(e) => setFormAuthor(e.target.value)}
                       className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-sm"
                     />
                   </div>
-                )}
+
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Read Time & Icon</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={formReadTime}
+                        onChange={(e) => setFormReadTime(e.target.value)}
+                        placeholder="6 min read"
+                        className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-sm"
+                      />
+                      <input
+                        type="text"
+                        value={formIcon}
+                        onChange={(e) => setFormIcon(e.target.value)}
+                        placeholder="🚀"
+                        className="w-16 px-2 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-center text-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Author Name</label>
-                  <input
-                    type="text"
-                    value={formAuthor}
-                    onChange={(e) => setFormAuthor(e.target.value)}
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-sm"
+                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Short Excerpt</label>
+                  <textarea
+                    rows={2}
+                    value={formExcerpt}
+                    onChange={(e) => setFormExcerpt(e.target.value)}
+                    placeholder="Brief 1-2 sentence summary of the article..."
+                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Read Time & Icon</label>
-                  <div className="flex gap-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Article Content (HTML / Rich Text)</label>
+                    <span className="text-[10px] text-[hsl(215,20%,50%)]">Supports &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;strong&gt;, etc.</span>
+                  </div>
+                  <textarea
+                    rows={8}
+                    value={formContent}
+                    onChange={(e) => setFormContent(e.target.value)}
+                    placeholder="<p>Write your detailed blog post content here...</p>"
+                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white font-mono text-sm placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)]"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* SECTION 2: ADVANCED SEO CONTROLS */}
+              <div className="p-6 rounded-2xl bg-[hsl(222,47%,7%)] border border-[hsl(217,91%,54%)]/30 space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[hsl(217,91%,70%)] uppercase tracking-widest flex items-center gap-2">
+                    <span>🔍</span> Advanced Search Engine Optimization (SEO)
+                  </h3>
+                  <span className="text-[10px] px-2.5 py-1 rounded-full bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] font-bold">Google & Meta Tags</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Meta Title</label>
+                      <span className={`text-[10px] font-mono ${formMetaTitle.length > 60 ? 'text-amber-400' : 'text-[hsl(215,20%,50%)]'}`}>
+                        {formMetaTitle.length}/60 chars
+                      </span>
+                    </div>
                     <input
                       type="text"
-                      value={formReadTime}
-                      onChange={(e) => setFormReadTime(e.target.value)}
-                      placeholder="6 min read"
-                      className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-sm"
+                      value={formMetaTitle}
+                      onChange={(e) => setFormMetaTitle(e.target.value)}
+                      placeholder="Custom SEO Title for Google (defaults to title)"
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs placeholder-[hsl(215,20%,40%)]"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Canonical URL</label>
                     <input
                       type="text"
-                      value={formIcon}
-                      onChange={(e) => setFormIcon(e.target.value)}
-                      placeholder="🚀"
-                      className="w-16 px-2 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-center text-lg"
+                      value={formCanonicalUrl}
+                      onChange={(e) => setFormCanonicalUrl(e.target.value)}
+                      placeholder="https://educationhom.com/blog/custom-canonical"
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs font-mono placeholder-[hsl(215,20%,40%)]"
                     />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Meta Description</label>
+                    <span className={`text-[10px] font-mono ${formMetaDescription.length > 160 ? 'text-amber-400' : 'text-[hsl(215,20%,50%)]'}`}>
+                      {formMetaDescription.length}/160 chars
+                    </span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={formMetaDescription}
+                    onChange={(e) => setFormMetaDescription(e.target.value)}
+                    placeholder="Snippet description displayed in Google Search engine results..."
+                    className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs placeholder-[hsl(215,20%,40%)]"
+                  />
+                </div>
+
+                {/* Robots Link Directives */}
+                <div className="pt-4 border-t border-[hsl(215,25%,22%)]/40 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)]">
+                    <input
+                      type="checkbox"
+                      id="noIndexCheck"
+                      checked={formNoIndex}
+                      onChange={(e) => setFormNoIndex(e.target.checked)}
+                      className="w-4 h-4 rounded bg-[hsl(222,47%,12%)] border-[hsl(215,25%,22%)] text-[hsl(217,91%,54%)]"
+                    />
+                    <label htmlFor="noIndexCheck" className="text-xs font-bold text-white cursor-pointer">
+                      noindex <span className="text-[10px] text-[hsl(215,20%,50%)] block font-normal">(Hide from Google search index)</span>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)]">
+                    <input
+                      type="checkbox"
+                      id="noFollowCheck"
+                      checked={formNoFollow}
+                      onChange={(e) => setFormNoFollow(e.target.checked)}
+                      className="w-4 h-4 rounded bg-[hsl(222,47%,12%)] border-[hsl(215,25%,22%)] text-[hsl(217,91%,54%)]"
+                    />
+                    <label htmlFor="noFollowCheck" className="text-xs font-bold text-white cursor-pointer">
+                      nofollow <span className="text-[10px] text-[hsl(215,20%,50%)] block font-normal">(Instruct crawlers not to follow links)</span>
+                    </label>
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Short Excerpt</label>
-                <textarea
-                  rows={2}
-                  value={formExcerpt}
-                  onChange={(e) => setFormExcerpt(e.target.value)}
-                  placeholder="Brief 1-2 sentence summary of the article..."
-                  className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Article Content (HTML/Rich text)</label>
-                  <span className="text-[10px] text-[hsl(215,20%,50%)]">Supports &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;strong&gt;, etc.</span>
+              {/* SECTION 3: OPTIONS & PUBLISH BUTTON */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-[hsl(215,25%,22%)]/40">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="featuredCheck"
+                    checked={formFeatured}
+                    onChange={(e) => setFormFeatured(e.target.checked)}
+                    className="w-4 h-4 rounded bg-[hsl(222,47%,9%)] border-[hsl(215,25%,22%)] text-[hsl(217,91%,54%)]"
+                  />
+                  <label htmlFor="featuredCheck" className="text-xs font-bold text-white cursor-pointer">
+                    Feature this article at the top of the blog page
+                  </label>
                 </div>
-                <textarea
-                  rows={10}
-                  value={formContent}
-                  onChange={(e) => setFormContent(e.target.value)}
-                  placeholder="<p>Write your detailed blog post content here...</p>"
-                  className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white font-mono text-sm placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)]"
-                  required
-                />
-              </div>
 
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="featuredCheck"
-                  checked={formFeatured}
-                  onChange={(e) => setFormFeatured(e.target.checked)}
-                  className="w-4 h-4 rounded bg-[hsl(222,47%,9%)] border-[hsl(215,25%,22%)] text-[hsl(217,91%,54%)] focus:ring-0"
-                />
-                <label htmlFor="featuredCheck" className="text-xs font-bold text-white cursor-pointer">
-                  Feature this article at the top of the blog page
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-4 pt-4 border-t border-[hsl(215,25%,22%)]/40">
-                {editingPostId && (
-                  <button type="button" onClick={resetArticleForm} className="px-6 py-3 rounded-xl border border-[hsl(215,25%,22%)] text-xs font-bold text-[hsl(215,20%,60%)] hover:text-white transition-all">
-                    Cancel Edit
+                <div className="flex items-center gap-4">
+                  {editingPostId && (
+                    <button type="button" onClick={resetArticleForm} className="px-6 py-3 rounded-xl border border-[hsl(215,25%,22%)] text-xs font-bold text-[hsl(215,20%,60%)] hover:text-white transition-all">
+                      Cancel Edit
+                    </button>
+                  )}
+                  <button type="submit" className="btn-primary px-8 py-3 text-sm font-bold shadow-lg shadow-[hsl(217,91%,54%)]/25">
+                    {editingPostId ? 'Update Article →' : 'Publish Article Live →'}
                   </button>
-                )}
-                <button type="submit" className="btn-primary px-8 py-3 text-sm font-bold shadow-lg shadow-[hsl(217,91%,54%)]/25">
-                  {editingPostId ? 'Update Article →' : 'Publish Article Live →'}
-                </button>
+                </div>
               </div>
             </form>
           </div>
@@ -602,7 +716,7 @@ export default function AdminDashboardPage() {
                   <tr className="border-b border-[hsl(215,25%,22%)] text-[10px] font-bold text-[hsl(215,20%,50%)] uppercase tracking-wider">
                     <th className="pb-3 px-4">Article</th>
                     <th className="pb-3 px-4">Category</th>
-                    <th className="pb-3 px-4">Author</th>
+                    <th className="pb-3 px-4">SEO Robots</th>
                     <th className="pb-3 px-4">Published Date</th>
                     <th className="pb-3 px-4 text-right">Actions</th>
                   </tr>
@@ -624,7 +738,16 @@ export default function AdminDashboardPage() {
                           {post.category}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-[hsl(215,20%,60%)] font-medium">{post.author}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${post.noIndex ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                            {post.noIndex ? 'noindex' : 'index'}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${post.noFollow ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                            {post.noFollow ? 'nofollow' : 'follow'}
+                          </span>
+                        </div>
+                      </td>
                       <td className="py-4 px-4 text-[hsl(215,20%,60%)] font-medium">{post.date}</td>
                       <td className="py-4 px-4 text-right space-x-2">
                         <button onClick={() => startEditPost(post)} className="px-3 py-1.5 rounded-lg bg-[hsl(215,25%,20%)] text-white hover:bg-[hsl(217,91%,54%)] font-bold transition-colors">

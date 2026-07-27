@@ -11,6 +11,11 @@ export interface BlogPost {
   readTime: string;
   icon: string;
   featured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  noIndex?: boolean;
+  noFollow?: boolean;
+  canonicalUrl?: string;
 }
 
 export const INITIAL_POSTS: BlogPost[] = [
@@ -26,6 +31,10 @@ export const INITIAL_POSTS: BlogPost[] = [
     readTime: '8 min read',
     icon: '🤖',
     featured: true,
+    metaTitle: '10 AI SEO Strategies for 2025 | MarketHom Agency',
+    metaDescription: 'Discover the top 10 AI-powered SEO strategies for 2025. Learn how to optimize for SGE, ChatGPT, and semantic topical authority.',
+    noIndex: false,
+    noFollow: false,
     content: `
       <p className="text-lg leading-relaxed mb-6">The landscape of search is changing faster than ever. With the rise of AI-powered search engines like Google's SGE and Perplexity, traditional SEO tactics are being challenged. To stay ahead in 2025, agencies and brands must embrace AI not just for content creation, but for strategy, analysis, and optimization.</p>
       
@@ -148,14 +157,12 @@ export function savePost(post: Omit<BlogPost, 'id'> & { id?: string }): BlogPost
   const dateStr = post.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
   
   if (post.id) {
-    // Update existing
     const updated = posts.map(p => p.id === post.id ? { ...p, ...post, date: dateStr } : p);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
     return { ...post, id: post.id, date: dateStr } as BlogPost;
   } else {
-    // Create new
     const newPost: BlogPost = {
       ...post,
       id: Date.now().toString(),
