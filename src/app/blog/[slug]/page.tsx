@@ -60,7 +60,7 @@ export default function BlogPostPage({ params }: Props) {
         {post.canonicalUrl && <link rel="canonical" href={post.canonicalUrl} />}
       </Head>
 
-      <article className="pt-40 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">
+      <article className="pt-32 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">
         <div className="container-custom relative z-10">
           <Breadcrumbs items={[{ label: 'Blog', href: '/blog' }, { label: post.category }]} />
           
@@ -78,7 +78,7 @@ export default function BlogPostPage({ params }: Props) {
                  </div>
                )}
 
-               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 leading-tight text-white">{post.title}</h1>
+               <h1 className="text-4xl md:text-6xl font-black mb-8 leading-tight text-white">{post.title}</h1>
                
                <div className="flex items-center justify-center gap-6 py-8 border-y border-[hsl(215,25%,22%)]/40">
                   <div className="flex items-center gap-3">
@@ -102,12 +102,8 @@ export default function BlogPostPage({ params }: Props) {
 
             {/* Featured Cover Banner Image */}
             {post.featuredImage && (
-              <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl border border-[hsl(215,25%,22%)] bg-[hsl(222,47%,9%)] p-2">
-                <img 
-                  src={post.featuredImage} 
-                  alt={post.title} 
-                  className="w-full h-auto max-h-[600px] object-contain rounded-2xl mx-auto" 
-                />
+              <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl border border-[hsl(215,25%,22%)]">
+                <img src={post.featuredImage} alt={post.title} className="w-full h-[400px] object-cover" />
               </div>
             )}
 
