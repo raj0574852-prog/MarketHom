@@ -18,6 +18,16 @@ import {
   LeadInquiry 
 } from '@/lib/resourcesStore';
 
+// Preset high quality cover images for quick 1-click selection
+const PRESET_COVER_IMAGES = [
+  { label: '🤖 AI & Tech', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop' },
+  { label: '📈 Marketing Growth', url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop' },
+  { label: '📍 SEO & Search', url: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=1200&auto=format&fit=crop' },
+  { label: '💻 Web Development', url: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop' },
+  { label: '💰 PPC Advertising', url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop' },
+  { label: '🔗 Link Building', url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop' }
+];
+
 export default function AdminDashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState('');
@@ -148,7 +158,7 @@ export default function AdminDashboardPage() {
     } else if (tag === 'ul') {
       setFormContent(prev => prev + '\n\n<ul>\n  <li>Key point 1</li>\n  <li>Key point 2</li>\n  <li>Key point 3</li>\n</ul>');
     } else if (tag === 'img') {
-      const url = prompt('Enter Image URL (e.g. https://images.unsplash.com/...):', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200');
+      const url = prompt('Enter Image URL (or select from presets):', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200');
       if (url) {
         setFormContent(prev => prev + `\n\n<img src="${url}" alt="Article Image" class="rounded-2xl my-8 w-full h-80 object-cover shadow-2xl border border-[hsl(215,25%,22%)]" />\n\n`);
       }
@@ -500,7 +510,7 @@ export default function AdminDashboardPage() {
               {/* SECTION 1: ARTICLE ESSENTIALS */}
               <div className="space-y-6">
                 <h3 className="text-sm font-bold text-[hsl(217,91%,70%)] uppercase tracking-widest flex items-center gap-2">
-                  <span>📝</span> Article Details & Media
+                  <span>📝</span> Article Details & Title
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -529,22 +539,67 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                {/* FEATURED COVER IMAGE INPUT */}
-                <div>
-                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">
-                    🖼️ Featured Cover Banner Image URL (Optional)
-                  </label>
+                {/* DEDICATED FEATURED BANNER & IMAGE SELECTOR SECTION */}
+                <div className="p-6 rounded-2xl bg-[hsl(222,47%,8%)] border border-[hsl(217,91%,54%)]/30 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-[hsl(217,91%,70%)] uppercase tracking-wider">
+                      🖼️ Featured Banner Cover Image
+                    </label>
+                    <span className="text-[10px] text-[hsl(215,20%,50%)]">Single-click preset picker or custom URL</span>
+                  </div>
+
                   <input
                     type="text"
                     value={formFeaturedImage}
                     onChange={(e) => setFormFeaturedImage(e.target.value)}
-                    placeholder="https://images.unsplash.com/photo-... or your image link"
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-xs font-mono"
+                    placeholder="Enter custom image URL (e.g. https://images.unsplash.com/...)"
+                    className="w-full px-4 py-3 bg-[hsl(222,47%,10%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] text-xs font-mono"
                   />
-                  {formFeaturedImage && (
-                    <div className="mt-3 relative h-32 w-full rounded-xl overflow-hidden border border-[hsl(215,25%,22%)] bg-[hsl(222,47%,9%)]">
+
+                  {/* 1-CLICK QUICK IMAGE PRESETS */}
+                  <div>
+                    <span className="block text-[10px] font-bold text-[hsl(215,20%,50%)] uppercase tracking-wider mb-2">
+                      ⚡ Quick 1-Click Cover Image Presets:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {PRESET_COVER_IMAGES.map((img) => (
+                        <button
+                          key={img.label}
+                          type="button"
+                          onClick={() => setFormFeaturedImage(img.url)}
+                          className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
+                            formFeaturedImage === img.url
+                              ? 'bg-[hsl(217,91%,54%)] border-[hsl(217,91%,54%)] text-white shadow-md'
+                              : 'bg-[hsl(222,47%,12%)] border-[hsl(215,25%,22%)] text-[hsl(215,20%,60%)] hover:text-white hover:border-[hsl(217,91%,54%)]'
+                          }`}
+                        >
+                          {img.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* LIVE IMAGE PREVIEW CARD */}
+                  {formFeaturedImage ? (
+                    <div className="relative h-40 w-full rounded-xl overflow-hidden border border-[hsl(217,91%,54%)]/40 bg-black/40">
                       <img src={formFeaturedImage} alt="Cover Preview" className="w-full h-full object-cover" />
-                      <span className="absolute top-2 right-2 px-2.5 py-1 rounded bg-black/70 text-white text-[10px] font-bold">Cover Preview</span>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3 justify-between">
+                        <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                          Banner Ready
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setFormFeaturedImage('')}
+                          className="px-2.5 py-1 rounded bg-red-500/80 text-white text-[10px] font-bold hover:bg-red-600 transition-colors"
+                        >
+                          Remove Image
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-xl border border-dashed border-[hsl(215,25%,25%)] text-center text-xs text-[hsl(215,20%,50%)]">
+                      📷 Select a preset image above or paste your custom image link
                     </div>
                   )}
                 </div>
