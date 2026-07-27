@@ -190,5 +190,7 @@ export function deletePost(id: string): void {
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
   const posts = getStoredPosts();
-  return posts.find(p => p.slug === slug);
+  const found = posts.find(p => p.slug === slug);
+  if (found) return found;
+  return INITIAL_POSTS.find(p => p.slug === slug);
 }
