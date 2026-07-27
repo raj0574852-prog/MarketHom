@@ -1,59 +1,78 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
+import { getServices, SiteService } from '@/lib/resourcesStore';
 
-export const metadata: Metadata = {
-  title: 'Our Services | Full-Stack Digital Growth Solutions',
-  description: 'Explore our range of digital marketing services including SEO, AI SEO, PPC, Link Building, and Web Development. Tailored strategies for every stage of growth.',
-};
-
-const services = [
+const defaultServiceList = [
   {
-    title: 'Search Engine Optimization',
-    slug: 'seo',
-    icon: '🔍',
-    desc: 'Dominate organic search results with data-driven strategies that build long-term authority and drive qualified traffic.',
-    features: ['Technical Audits', 'Keyword Research', 'On-Page SEO', 'Local SEO']
+    id: 'seo',
+    name: 'Search Engine Optimization',
+    category: 'SEO',
+    priceRange: '$1,500 - $4,500/mo',
+    description: 'Dominate organic search results with data-driven strategies that build long-term authority and drive qualified traffic.',
   },
   {
-    title: 'AI-Powered SEO',
-    slug: 'ai-seo',
-    icon: '🤖',
-    desc: 'Harness the power of artificial intelligence to scale content production and gain a competitive edge in modern search.',
-    features: ['AI Content Strategy', 'Topical Authority', 'Entity Optimization', 'SERP Analysis']
+    id: 'ai-seo',
+    name: 'AI-Powered SEO',
+    category: 'SEO',
+    priceRange: '$2,000 - $5,000/mo',
+    description: 'Harness the power of artificial intelligence to scale content production and gain a competitive edge in modern search.',
   },
   {
-    title: 'PPC Advertising',
-    slug: 'ppc',
-    icon: '💰',
-    desc: 'Laser-targeted paid campaigns across Google, Meta, and LinkedIn designed to maximize ROI and lower acquisition costs.',
-    features: ['Google Ads', 'Meta Ads', 'Remarketing', 'Landing Page CRO']
+    id: 'ppc',
+    name: 'PPC Advertising',
+    category: 'PPC',
+    priceRange: '$2,000 - $6,000/mo',
+    description: 'Laser-targeted paid campaigns across Google, Meta, and LinkedIn designed to maximize ROI and lower acquisition costs.',
   },
   {
-    title: 'Web Development',
-    slug: 'web-development',
-    icon: '💻',
-    desc: 'Fast, secure, and conversion-optimized websites built on Next.js and React. Sites that look great and rank even better.',
-    features: ['Next.js / React', 'Core Web Vitals', 'CMS Integration', 'Mobile-First Design']
+    id: 'web-development',
+    name: 'Web Development',
+    category: 'Web Dev',
+    priceRange: '$3,500 - $12,000',
+    description: 'Fast, secure, and conversion-optimized websites built on Next.js and React. Sites that look great and rank even better.',
   },
   {
-    title: 'Link Building',
-    slug: 'link-building',
-    icon: '🔗',
-    desc: 'Build a powerful backlink profile with white-hat outreach and digital PR. High-authority links that move the needle.',
-    features: ['Digital PR', 'Guest Posting', 'Niche Outreach', 'HARO Services']
+    id: 'link-building',
+    name: 'Link Building',
+    category: 'Link Building',
+    priceRange: '$1,200 - $3,500/mo',
+    description: 'Build a powerful backlink profile with white-hat outreach and digital PR. High-authority links that move the needle.',
   },
   {
-    title: 'Social Media Marketing',
-    slug: 'smm',
-    icon: '📱',
-    desc: 'Strategic social media management that builds community, increases brand awareness, and drives meaningful engagement.',
-    features: ['Content Creation', 'Community Management', 'Paid Social', 'Brand Strategy']
+    id: 'smm',
+    name: 'Social Media Marketing',
+    category: 'Social',
+    priceRange: '$1,500 - $4,000/mo',
+    description: 'Strategic social media management that builds community, increases brand awareness, and drives meaningful engagement.',
   }
 ];
 
 export default function ServicesPage() {
+  const [servicesList, setServicesList] = useState<SiteService[]>([]);
+
+  useEffect(() => {
+    const customServices = getServices();
+    // Merge custom admin services with standard list
+    const combined = [...customServices];
+    defaultServiceList.forEach(def => {
+      if (!combined.some(c => c.name.toLowerCase() === def.name.toLowerCase())) {
+        combined.push({
+          id: def.id,
+          name: def.name,
+          category: def.category,
+          status: 'Active',
+          priceRange: def.priceRange,
+          description: def.description
+        });
+      }
+    });
+    setServicesList(combined);
+  }, []);
+
   return (
     <>
       <section className="pt-32 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">
@@ -74,24 +93,23 @@ export default function ServicesPage() {
       <section className="section-padding bg-[hsl(222,47%,5%)]">
         <div className="container-custom">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((s) => (
-              <div key={s.slug} className="glass-card p-8 group hover:border-[hsl(217,91%,54%)]/40 transition-all flex flex-col">
-                <div className="text-4xl mb-6">{s.icon}</div>
-                <h2 className="text-2xl font-bold mb-4 text-white group-hover:text-[hsl(217,91%,75%)] transition-colors">{s.title}</h2>
-                <p className="text-[hsl(215,20%,60%)] text-sm leading-relaxed mb-6 flex-1">{s.desc}</p>
+            {servicesList.map((s) => (
+              <div key={s.id} className="glass-card p-8 group hover:border-[hsl(217,91%,54%)]/40 transition-all flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-4xl">🚀</span>
+                  <span className="px-3 py-1 rounded-full bg-[hsl(217,91%,54%)]/15 text-[hsl(217,91%,70%)] text-xs font-bold font-mono">
+                    {s.priceRange}
+                  </span>
+                </div>
+                <h2 className="text-2xl font-bold mb-4 text-white group-hover:text-[hsl(217,91%,75%)] transition-colors">{s.name}</h2>
+                <p className="text-[hsl(215,20%,60%)] text-sm leading-relaxed mb-6 flex-1">{s.description}</p>
                 
-                <ul className="space-y-2 mb-8">
-                  {s.features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-xs text-[hsl(215,20%,50%)]">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[hsl(217,91%,54%)]" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link href={`/services/${s.slug}`} className="btn-outline w-full justify-center text-xs">
-                  Learn More About {s.title}
-                </Link>
+                <div className="pt-4 border-t border-[hsl(215,25%,22%)]/40 flex items-center justify-between">
+                  <span className="text-xs font-bold text-[hsl(217,91%,70%)] uppercase tracking-wider">{s.category}</span>
+                  <Link href="/contact" className="btn-outline px-4 py-2 text-xs">
+                    Get Free Strategy →
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
