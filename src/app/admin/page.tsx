@@ -202,6 +202,53 @@ export default function AdminDashboardPage() {
     setFormContent(formattedBlocks.join('\n\n'));
   };
 
+  const generateAIPrompt = () => {
+    const topic = formTitle || 'Digital Marketing Strategy 2026';
+    const cat = formCategory === 'Custom' ? (formCustomCategory || 'Marketing') : formCategory;
+    const promptText = `Write a comprehensive, expert-level 1,500-word article on "${topic}" under the category "${cat}".
+Optimized for:
+1. Google SEO (Topical authority, semantic LSI keywords, structured H2/H3 headings).
+2. Answer Engine Optimization (AEO - Perplexity/Google AI Overviews direct answer blocks).
+3. Generative Engine Optimization (GEO - ChatGPT/Claude citations with industry statistics).
+4. Tone: 100% Expert Human, actionable, and engaging without robotic AI cliches.
+
+Include:
+- Clear <h2> headings
+- Actionable bulleted lists <ul><li>...</li></ul>
+- Direct summary paragraphs <p>...</p>`;
+
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(promptText);
+      alert('🤖 AI Content Prompt copied to clipboard! Paste into ChatGPT or Claude to generate your article instantly.');
+    } else {
+      prompt('Copy this AI Prompt for ChatGPT:', promptText);
+    }
+  };
+
+  const exportArticlesJson = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(posts, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `markethom_articles_backup_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  // Calculate Live Content Metrics
+  const cleanText = formContent.replace(/<[^>]*>/g, '').trim();
+  const wordCount = cleanText ? cleanText.split(/\s+/).filter(Boolean).length : 0;
+  const charCount = cleanText.length;
+  const headingCount = (formContent.match(/<h[23]/gi) || []).length;
+
+  // Live SEO Quality Score Calculation
+  let seoScore = 0;
+  if (formTitle.length >= 25 && formTitle.length <= 75) seoScore += 25;
+  if (formMetaDescription.length >= 80 && formMetaDescription.length <= 170) seoScore += 25;
+  if (formExcerpt.trim().length >= 20) seoScore += 15;
+  if (formFeaturedImage) seoScore += 15;
+  if (headingCount >= 2) seoScore += 20;
+
   const insertTag = (tag: string) => {
     if (tag === 'h2') {
       setFormContent(prev => prev + '\n\n<h2>Section Heading</h2>\n<p>Write section text here...</p>');
@@ -762,6 +809,40 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
+                {/* LIVE SEO SCORE & AI PROMPT TOOLBAR */}
+                <div className="p-4 rounded-xl bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">SEO Score:</span>
+                      <span className={`px-2.5 py-1 rounded-lg text-xs font-black font-mono ${
+                        seoScore >= 80 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' :
+                        seoScore >= 50 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' :
+                        'bg-red-500/20 text-red-400 border border-red-500/40'
+                      }`}>
+                        {seoScore} / 100%
+                      </span>
+                    </div>
+
+                    <div className="hidden sm:flex items-center gap-3 text-xs font-mono text-[hsl(215,20%,60%)]">
+                      <span><strong>{wordCount}</strong> Words</span>
+                      <span>•</span>
+                      <span><strong>{charCount}</strong> Chars</span>
+                      <span>•</span>
+                      <span><strong>{headingCount}</strong> Headings</span>
+                      <span>•</span>
+                      <span className="text-[hsl(217,91%,70%)] font-bold">{Math.max(1, Math.ceil(wordCount / 200))} min read</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={generateAIPrompt}
+                    className="px-3.5 py-1.5 rounded-lg bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] border border-[hsl(217,91%,54%)]/40 text-xs font-bold hover:bg-[hsl(217,91%,54%)]/30 transition-all flex items-center gap-1.5 shadow-sm"
+                  >
+                    <span>🤖 Copy AI Content Prompt</span>
+                  </button>
+                </div>
+
                 {/* ARTICLE CONTENT WITH AUTO-FORMATTER & IMAGE TOOLBAR */}
                 <div>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
@@ -956,6 +1037,14 @@ export default function AdminDashboardPage() {
                   <option value="CRO">CRO</option>
                   <option value="Local SEO">Local SEO</option>
                 </select>
+                <button
+                  type="button"
+                  onClick={exportArticlesJson}
+                  className="px-4 py-2 rounded-xl bg-[hsl(215,25%,20%)] text-xs font-bold text-white hover:bg-[hsl(215,25%,30%)] transition-all flex items-center gap-1.5"
+                  title="Export backup JSON of all published articles"
+                >
+                  <span>📥 Backup JSON</span>
+                </button>
                 <button onClick={() => { resetArticleForm(); setActiveTab('publish'); }} className="btn-primary px-4 py-2 text-xs font-bold">
                   + Create Article
                 </button>
