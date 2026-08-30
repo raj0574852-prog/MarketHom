@@ -4,25 +4,52 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
-import { getStoredPosts, BlogPost } from '@/lib/blogStore';
+import { getStoredPosts, getDeletedIds, BlogPost } from '@/lib/blogStore';
 
 export default function BlogIndexPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   useEffect(() => {
-    // 1. Initial local load
+    // 1. Initial local load from localStorage
     const local = getStoredPosts();
+    const deletedIds = getDeletedIds();
     setPosts(local);
 
-    // 2. Fetch latest server posts from /api/blog
+    // 2. Fetch server posts & auto-rehydrate server container if cold started
     fetch('/api/blog')
       .then(res => res.json())
       .then(data => {
         if (data.posts && Array.isArray(data.posts)) {
-          setPosts(data.posts);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
+          const deletedSet = new Set([...deletedIds, ...(data.deletedIds || [])]);
+          const validServerPosts = data.posts.filter((p: BlogPost) => !deletedSet.has(p.id) && !deletedSet.has(p.slug));
+
+          // If local browser has custom posts that server is missing due to cold-start, sync them to server!
+          if (local.length > 0) {
+            const serverMap = new Map<string, BlogPost>();
+            validServerPosts.forEach((p: BlogPost) => serverMap.set(p.id, p));
+            let needsRehydration = false;
+            local.forEach((p: BlogPost) => {
+              if (!serverMap.has(p.id) && !deletedSet.has(p.id)) {
+                serverMap.set(p.id, p);
+                needsRehydration = true;
+              }
+            });
+            const mergedList = Array.from(serverMap.values());
+            setPosts(mergedList);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('markethom_blog_posts', JSON.stringify(mergedList));
+            }
+
+            if (needsRehydration) {
+              fetch('/api/blog', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ posts: mergedList, deletedIds })
+              }).catch(() => {});
+            }
+          } else {
+            setPosts(validServerPosts);
           }
         }
       })

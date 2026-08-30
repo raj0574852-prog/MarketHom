@@ -80,16 +80,40 @@ export const INITIAL_POSTS: BlogPost[] = [
 ];
 
 const STORAGE_KEY = 'markethom_blog_posts';
+const DELETED_KEY = 'markethom_deleted_ids';
+
+export function getDeletedIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const data = localStorage.getItem(DELETED_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export function saveDeletedId(id: string): void {
+  if (typeof window === 'undefined') return;
+  const ids = getDeletedIds();
+  if (!ids.includes(id)) {
+    const updated = [...ids, id];
+    localStorage.setItem(DELETED_KEY, JSON.stringify(updated));
+  }
+}
 
 export function getStoredPosts(): BlogPost[] {
   if (typeof window === 'undefined') return INITIAL_POSTS;
   try {
     const data = localStorage.getItem(STORAGE_KEY);
+    const deletedIds = getDeletedIds();
+
     if (data === null) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_POSTS));
-      return INITIAL_POSTS;
+      return INITIAL_POSTS.filter(p => !deletedIds.includes(p.id) && !deletedIds.includes(p.slug));
     }
-    return JSON.parse(data);
+
+    const parsed: BlogPost[] = JSON.parse(data);
+    return parsed.filter(p => !deletedIds.includes(p.id) && !deletedIds.includes(p.slug));
   } catch (e) {
     console.error('Error reading blog posts from storage:', e);
     return INITIAL_POSTS;
@@ -135,6 +159,7 @@ export function savePost(post: Omit<BlogPost, 'id'> & { id?: string }): BlogPost
 }
 
 export function deletePost(id: string): void {
+  saveDeletedId(id);
   const posts = getStoredPosts();
   const updated = posts.filter(p => p.id !== id && p.slug !== id);
   if (typeof window !== 'undefined') {
@@ -153,5 +178,7 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
   const posts = getStoredPosts();
   const found = posts.find(p => p.slug === slug);
   if (found) return found;
+  const deletedIds = getDeletedIds();
+  if (deletedIds.includes(slug)) return undefined;
   return INITIAL_POSTS.find(p => p.slug === slug);
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   getStoredPosts, 
+  getDeletedIds,
   savePost, 
   deletePost, 
   BlogPost 
@@ -105,9 +106,36 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.posts && Array.isArray(data.posts)) {
-          setPosts(data.posts);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
+          const local = getStoredPosts();
+          const deletedIds = getDeletedIds();
+          const deletedSet = new Set([...deletedIds, ...(data.deletedIds || [])]);
+          const validServerPosts = data.posts.filter((p: BlogPost) => !deletedSet.has(p.id) && !deletedSet.has(p.slug));
+
+          if (local.length > 0) {
+            const serverMap = new Map<string, BlogPost>();
+            validServerPosts.forEach((p: BlogPost) => serverMap.set(p.id, p));
+            let needsRehydration = false;
+            local.forEach((p: BlogPost) => {
+              if (!serverMap.has(p.id) && !deletedSet.has(p.id)) {
+                serverMap.set(p.id, p);
+                needsRehydration = true;
+              }
+            });
+            const mergedList = Array.from(serverMap.values());
+            setPosts(mergedList);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('markethom_blog_posts', JSON.stringify(mergedList));
+            }
+
+            if (needsRehydration) {
+              fetch('/api/blog', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ posts: mergedList, deletedIds })
+              }).catch(() => {});
+            }
+          } else {
+            setPosts(validServerPosts);
           }
         }
       }
