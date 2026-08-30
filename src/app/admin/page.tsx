@@ -18,6 +18,12 @@ import {
   SiteService, 
   LeadInquiry 
 } from '@/lib/resourcesStore';
+import {
+  getGuestPosts,
+  saveGuestPost,
+  deleteGuestPost,
+  GuestPostListing
+} from '@/lib/guestPostStore';
 
 const PRESET_COVER_IMAGES = [
   { label: '🤖 AI & Tech', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop' },
@@ -33,13 +39,28 @@ export default function AdminDashboardPage() {
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // Active Tab: 'dashboard' | 'publish' | 'articles' | 'resources' | 'leads'
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'publish' | 'articles' | 'resources' | 'leads'>('dashboard');
+  // Active Tab: 'dashboard' | 'publish' | 'articles' | 'guestposts' | 'resources' | 'leads'
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'publish' | 'articles' | 'guestposts' | 'resources' | 'leads'>('dashboard');
 
   // Data states
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [services, setServices] = useState<SiteService[]>([]);
   const [leads, setLeads] = useState<LeadInquiry[]>([]);
+  const [guestPosts, setGuestPosts] = useState<GuestPostListing[]>([]);
+
+  // Guest Post Form State
+  const [gpEditingId, setGpEditingId] = useState<string | null>(null);
+  const [gpTitle, setGpTitle] = useState('');
+  const [gpDomainName, setGpDomainName] = useState('');
+  const [gpNiche, setGpNiche] = useState('AI & Tech');
+  const [gpDa, setGpDa] = useState(70);
+  const [gpDr, setGpDr] = useState(72);
+  const [gpTraffic, setGpTraffic] = useState('100,000/mo');
+  const [gpTurnaround, setGpTurnaround] = useState('3 Days');
+  const [gpPrice, setGpPrice] = useState(199);
+  const [gpSampleUrl, setGpSampleUrl] = useState('');
+  const [gpDescription, setGpDescription] = useState('');
+  const [gpFeatured, setGpFeatured] = useState(false);
 
   // Search & Filter
   const [articleSearch, setArticleSearch] = useState('');
@@ -96,8 +117,71 @@ export default function AdminDashboardPage() {
     setPosts(getStoredPosts());
     setServices(getServices());
     setLeads(getLeads());
+    setGuestPosts(getGuestPosts());
     fetchLeadsFromApi();
     fetchPostsFromApi();
+  };
+
+  const handleSaveGuestPost = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!gpTitle || !gpDomainName) return;
+
+    saveGuestPost({
+      id: gpEditingId || undefined,
+      title: gpTitle,
+      domainName: gpDomainName,
+      niche: gpNiche,
+      da: Number(gpDa),
+      dr: Number(gpDr),
+      traffic: gpTraffic,
+      turnaround: gpTurnaround,
+      price: Number(gpPrice),
+      sampleUrl: gpSampleUrl,
+      description: gpDescription,
+      featured: gpFeatured
+    });
+
+    resetGuestPostForm();
+    loadData();
+    alert(gpEditingId ? 'Guest Post Listing updated!' : '🎉 New Guest Post Listing Published to Marketplace!');
+  };
+
+  const handleEditGuestPost = (item: GuestPostListing) => {
+    setGpEditingId(item.id);
+    setGpTitle(item.title);
+    setGpDomainName(item.domainName);
+    setGpNiche(item.niche);
+    setGpDa(item.da);
+    setGpDr(item.dr);
+    setGpTraffic(item.traffic);
+    setGpTurnaround(item.turnaround);
+    setGpPrice(item.price);
+    setGpSampleUrl(item.sampleUrl || '');
+    setGpDescription(item.description);
+    setGpFeatured(!!item.featured);
+    setActiveTab('guestposts');
+  };
+
+  const handleDeleteGuestPostItem = (id: string) => {
+    if (confirm('Are you sure you want to delete this guest post marketplace listing?')) {
+      deleteGuestPost(id);
+      loadData();
+    }
+  };
+
+  const resetGuestPostForm = () => {
+    setGpEditingId(null);
+    setGpTitle('');
+    setGpDomainName('');
+    setGpNiche('AI & Tech');
+    setGpDa(70);
+    setGpDr(72);
+    setGpTraffic('100,000/mo');
+    setGpTurnaround('3 Days');
+    setGpPrice(199);
+    setGpSampleUrl('');
+    setGpDescription('');
+    setGpFeatured(false);
   };
 
   const fetchPostsFromApi = async () => {
@@ -537,6 +621,7 @@ Include:
             { id: 'dashboard', label: '📊 Dashboard Overview' },
             { id: 'publish', label: editingPostId ? '✏️ Edit Article' : '✍️ Publish Article' },
             { id: 'articles', label: `📚 Manage Articles (${posts.length})` },
+            { id: 'guestposts', label: `🚀 Guest Post Marketplace (${guestPosts.length})` },
             { id: 'resources', label: `🛠️ Site Services (${services.length})` },
             { id: 'leads', label: `📬 Client Leads (${leads.filter(l => l.status === 'New').length} New)` }
           ].map(tab => (
@@ -1204,6 +1289,234 @@ Include:
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: GUEST POST MARKETPLACE */}
+        {activeTab === 'guestposts' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Form to Add / Edit Guest Post Marketplace Listing */}
+            <div className="lg:col-span-5 glass-card p-6 border border-[hsl(217,91%,54%)]/30">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-[hsl(215,25%,20%)]">
+                <div>
+                  <span className="badge mb-1">Marketplace Admin</span>
+                  <h3 className="text-xl font-black text-white">
+                    {gpEditingId ? '✏️ Edit Guest Post Site' : '🚀 Publish Guest Post Website'}
+                  </h3>
+                </div>
+                {gpEditingId && (
+                  <button onClick={resetGuestPostForm} className="text-xs text-amber-400 underline font-bold">
+                    Cancel Edit
+                  </button>
+                )}
+              </div>
+
+              <form onSubmit={handleSaveGuestPost} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-1.5">
+                    Publication / Listing Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={gpTitle}
+                    onChange={(e) => setGpTitle(e.target.value)}
+                    placeholder="e.g. AI & High-Tech Journal"
+                    className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs text-white"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-cyan-300 uppercase tracking-wider mb-1.5">
+                      Domain Name / URL *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={gpDomainName}
+                      onChange={(e) => setGpDomainName(e.target.value)}
+                      placeholder="e.g. techinsider.com"
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(217,91%,54%)]/40 rounded-xl text-xs text-white font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-1.5">
+                      Niche / Industry *
+                    </label>
+                    <select
+                      value={gpNiche}
+                      onChange={(e) => setGpNiche(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs text-white"
+                    >
+                      <option value="AI & Tech">AI & Tech</option>
+                      <option value="SaaS & Marketing">SaaS & Marketing</option>
+                      <option value="Finance & Crypto">Finance & Crypto</option>
+                      <option value="E-Commerce">E-Commerce</option>
+                      <option value="General">General</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1.5">
+                      Domain Auth (DA)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={gpDa}
+                      onChange={(e) => setGpDa(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs font-bold text-emerald-400 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1.5">
+                      Domain Rating (DR)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={gpDr}
+                      onChange={(e) => setGpDr(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs font-bold text-cyan-400 text-center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-1.5">
+                      Price ($ USD) *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={gpPrice}
+                      onChange={(e) => setGpPrice(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-[hsl(222,47%,9%)] border border-amber-500/40 rounded-xl text-xs font-bold text-amber-300 text-center"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-1.5">
+                      Monthly Traffic
+                    </label>
+                    <input
+                      type="text"
+                      value={gpTraffic}
+                      onChange={(e) => setGpTraffic(e.target.value)}
+                      placeholder="e.g. 250,000/mo"
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-1.5">
+                      Turnaround Time
+                    </label>
+                    <input
+                      type="text"
+                      value={gpTurnaround}
+                      onChange={(e) => setGpTurnaround(e.target.value)}
+                      placeholder="e.g. 3-5 Days"
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-1.5">
+                    Sample Article URL (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={gpSampleUrl}
+                    onChange={(e) => setGpSampleUrl(e.target.value)}
+                    placeholder="https://..."
+                    className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-1.5">
+                    Description & Guidelines
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={gpDescription}
+                    onChange={(e) => setGpDescription(e.target.value)}
+                    placeholder="Details about link indexing, word count, topic guidelines..."
+                    className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-xs text-white"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="gpFeatured"
+                    checked={gpFeatured}
+                    onChange={(e) => setGpFeatured(e.target.checked)}
+                    className="rounded accent-[hsl(217,91%,54%)]"
+                  />
+                  <label htmlFor="gpFeatured" className="text-xs text-[hsl(215,20%,70%)] font-semibold">
+                    ⭐ Mark as High Traffic / Featured Listing
+                  </label>
+                </div>
+
+                <button type="submit" className="w-full btn-primary py-3 text-xs font-bold justify-center shadow-lg shadow-[hsl(217,91%,54%)]/25">
+                  {gpEditingId ? 'Save Changes' : '🚀 Publish Guest Post Website to Marketplace'}
+                </button>
+              </form>
+            </div>
+
+            {/* List of Published Guest Post Marketplace Websites */}
+            <div className="lg:col-span-7 glass-card p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Published Guest Post Websites ({guestPosts.length})</h3>
+                  <p className="text-xs text-[hsl(215,20%,60%)]">Clients can view these websites on <Link href="/services/guest-posting" target="_blank" className="text-cyan-300 underline font-bold">/services/guest-posting</Link> and place orders directly.</p>
+                </div>
+                <Link href="/services/guest-posting" target="_blank" className="px-3 py-1.5 rounded-lg border border-[hsl(215,25%,22%)] text-xs font-bold text-cyan-300 hover:bg-cyan-500/10">
+                  👁️ View Public Marketplace
+                </Link>
+              </div>
+
+              <div className="space-y-4">
+                {guestPosts.map(item => (
+                  <div key={item.id} className="p-5 rounded-xl bg-[hsl(222,47%,8%)] border border-[hsl(215,25%,18%)] hover:border-[hsl(217,91%,54%)]/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="font-black text-white text-base">{item.title}</span>
+                        <span className="px-2.5 py-0.5 rounded-full bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] text-[10px] font-bold">
+                          {item.niche}
+                        </span>
+                        {item.featured && (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[9px] font-bold">
+                            ⭐ Featured
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs font-mono text-cyan-400 font-bold mb-2">🌐 {item.domainName}</div>
+                      <div className="flex items-center gap-4 text-xs text-[hsl(215,20%,60%)] font-mono">
+                        <span>DA <strong className="text-emerald-400">{item.da}</strong></span>
+                        <span>DR <strong className="text-cyan-400">{item.dr}</strong></span>
+                        <span>Traffic: <strong className="text-white">{item.traffic}</strong></span>
+                        <span>Price: <strong className="text-amber-300">${item.price}</strong></span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleEditGuestPost(item)} className="px-3 py-1.5 rounded-lg bg-[hsl(215,25%,20%)] text-white hover:bg-[hsl(217,91%,54%)] text-xs font-bold">
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteGuestPostItem(item.id)} className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-bold">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
