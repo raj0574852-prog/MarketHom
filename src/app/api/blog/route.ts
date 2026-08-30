@@ -1,22 +1,54 @@
 import { NextResponse } from 'next/server';
 import { BlogPost, INITIAL_POSTS } from '@/lib/blogStore';
+import fs from 'fs';
+import path from 'path';
 
-// Server-side memory cache in global object for Next.js server runtime
+// Permanent file-backed storage on server to protect SEO rankings
+const STORAGE_FILE = path.join(process.cwd(), 'data_posts_backup.json');
+
 const globalForBlog = globalThis as unknown as {
   serverPosts: BlogPost[] | undefined;
 };
 
-if (globalForBlog.serverPosts === undefined) {
+// Helper to read posts from disk or memory
+function loadPermanentPosts(): BlogPost[] {
+  if (globalForBlog.serverPosts && globalForBlog.serverPosts.length > 0) {
+    return globalForBlog.serverPosts;
+  }
+
+  try {
+    if (fs.existsSync(STORAGE_FILE)) {
+      const fileData = fs.readFileSync(STORAGE_FILE, 'utf-8');
+      const parsed = JSON.parse(fileData);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        globalForBlog.serverPosts = parsed;
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error('Error reading permanent posts file:', e);
+  }
+
   globalForBlog.serverPosts = INITIAL_POSTS;
+  savePermanentPosts(INITIAL_POSTS);
+  return INITIAL_POSTS;
+}
+
+// Helper to save posts permanently to disk and memory
+function savePermanentPosts(posts: BlogPost[]): void {
+  globalForBlog.serverPosts = posts;
+  try {
+    fs.writeFileSync(STORAGE_FILE, JSON.stringify(posts, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Error writing permanent posts file:', e);
+  }
 }
 
 export async function GET() {
-  if (globalForBlog.serverPosts === undefined) {
-    globalForBlog.serverPosts = INITIAL_POSTS;
-  }
+  const posts = loadPermanentPosts();
   return NextResponse.json({
     success: true,
-    posts: globalForBlog.serverPosts
+    posts
   });
 }
 
@@ -31,7 +63,7 @@ export async function POST(request: Request) {
     const dateStr = body.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     const slug = body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     
-    let currentPosts = globalForBlog.serverPosts || [];
+    let currentPosts = loadPermanentPosts();
 
     const existingIndex = currentPosts.findIndex(p => p.id === body.id || (body.id && p.id === body.id) || p.slug === slug);
 
@@ -52,11 +84,11 @@ export async function POST(request: Request) {
       currentPosts = [updatedPost, ...currentPosts];
     }
 
-    globalForBlog.serverPosts = currentPosts;
+    savePermanentPosts(currentPosts);
 
     return NextResponse.json({
       success: true,
-      message: 'Article published live on server',
+      message: 'Article published permanently live on server',
       post: updatedPost,
       posts: currentPosts
     });
@@ -74,13 +106,16 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, error: 'ID required' }, { status: 400 });
     }
 
-    if (globalForBlog.serverPosts) {
-      globalForBlog.serverPosts = globalForBlog.serverPosts.filter(p => p.id !== id && p.slug !== id);
-    }
+    let currentPosts = loadPermanentPosts();
+    // Strictly filter out ONLY the matching article ID or slug
+    const updated = currentPosts.filter(p => p.id !== id && p.slug !== id);
+
+    savePermanentPosts(updated);
 
     return NextResponse.json({
       success: true,
-      posts: globalForBlog.serverPosts
+      message: 'Article deleted by admin action',
+      posts: updated
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Failed to delete article' }, { status: 500 });
