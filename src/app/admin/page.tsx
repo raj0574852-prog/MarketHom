@@ -58,6 +58,7 @@ export default function AdminDashboardPage() {
   const [formFeaturedImage, setFormFeaturedImage] = useState('');
   const [formContent, setFormContent] = useState('');
   const [formFeatured, setFormFeatured] = useState(false);
+  const [editorMode, setEditorMode] = useState<'html' | 'plain' | 'preview'>('html');
 
   // SEO Form State
   const [formMetaTitle, setFormMetaTitle] = useState('');
@@ -260,6 +261,14 @@ Include:
       setFormContent(prev => prev + ' <strong>bold text</strong> ');
     } else if (tag === 'ul') {
       setFormContent(prev => prev + '\n\n<ul>\n  <li>Key point 1</li>\n  <li>Key point 2</li>\n  <li>Key point 3</li>\n</ul>');
+    } else if (tag === 'link') {
+      const url = prompt('Enter Hyperlink Target URL:', 'https://educationhom.com');
+      if (url) {
+        const text = prompt('Enter Clickable Anchor Text:', 'Click Here');
+        if (text) {
+          setFormContent(prev => prev + ` <a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[hsl(217,91%,70%)] underline font-bold hover:text-white transition-colors">${text}</a> `);
+        }
+      }
     } else if (tag === 'img') {
       const url = prompt('Enter Image URL (or select from presets):', 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200');
       if (url) {
@@ -843,55 +852,106 @@ Include:
                   </button>
                 </div>
 
-                {/* ARTICLE CONTENT WITH AUTO-FORMATTER & IMAGE TOOLBAR */}
+                {/* ARTICLE CONTENT WITH HTML CODE / PLAIN TEXT MODE & HYPERLINK TOOLBAR */}
                 <div>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Article Content</label>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={autoFormatPlainTextToHTML}
-                        className="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold hover:bg-emerald-500/30 transition-all flex items-center gap-1.5 shadow-sm"
-                        title="Click to automatically convert plain text into clean HTML paragraphs and headings!"
-                      >
-                        <span>✨ Auto-Format Plain Text</span>
-                      </button>
-
-                      <div className="flex items-center gap-1 bg-[hsl(222,47%,9%)] p-1 rounded-lg border border-[hsl(215,25%,22%)] text-[11px]">
-                        <button type="button" onClick={() => insertTag('h2')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                          + H2
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Article Content</label>
+                      {/* Editor Mode Selector */}
+                      <div className="flex items-center gap-1 p-1 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-lg text-xs font-bold">
+                        <button
+                          type="button"
+                          onClick={() => setEditorMode('html')}
+                          className={`px-3 py-1 rounded-md transition-all ${
+                            editorMode === 'html' ? 'bg-[hsl(217,91%,54%)] text-white' : 'text-[hsl(215,20%,60%)] hover:text-white'
+                          }`}
+                        >
+                          💻 Direct HTML Code Mode
                         </button>
-                        <button type="button" onClick={() => insertTag('h3')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                          + H3
+                        <button
+                          type="button"
+                          onClick={() => setEditorMode('plain')}
+                          className={`px-3 py-1 rounded-md transition-all ${
+                            editorMode === 'plain' ? 'bg-[hsl(217,91%,54%)] text-white' : 'text-[hsl(215,20%,60%)] hover:text-white'
+                          }`}
+                        >
+                          📄 Sample / Plain Text Mode
                         </button>
-                        <button type="button" onClick={() => insertTag('p')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                          + Para
-                        </button>
-                        <button type="button" onClick={() => insertTag('bold')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                          + Bold
-                        </button>
-                        <button type="button" onClick={() => insertTag('ul')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                          + List
-                        </button>
-                        <button type="button" onClick={() => insertTag('img')} className="px-2 py-0.5 rounded bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] hover:bg-[hsl(217,91%,54%)]/40 font-bold">
-                          🖼️ + Image
+                        <button
+                          type="button"
+                          onClick={() => setEditorMode('preview')}
+                          className={`px-3 py-1 rounded-md transition-all ${
+                            editorMode === 'preview' ? 'bg-purple-600 text-white' : 'text-[hsl(215,20%,60%)] hover:text-white'
+                          }`}
+                        >
+                          👁️ Live Article Preview
                         </button>
                       </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {editorMode === 'plain' && (
+                        <button
+                          type="button"
+                          onClick={autoFormatPlainTextToHTML}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold hover:bg-emerald-500/30 transition-all flex items-center gap-1.5 shadow-sm"
+                          title="Click to automatically convert plain text into clean HTML paragraphs and headings!"
+                        >
+                          <span>✨ Auto-Format Plain Text to HTML</span>
+                        </button>
+                      )}
+
+                      {editorMode !== 'preview' && (
+                        <div className="flex items-center gap-1 bg-[hsl(222,47%,9%)] p-1 rounded-lg border border-[hsl(215,25%,22%)] text-[11px]">
+                          <button type="button" onClick={() => insertTag('h2')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                            + H2
+                          </button>
+                          <button type="button" onClick={() => insertTag('h3')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                            + H3
+                          </button>
+                          <button type="button" onClick={() => insertTag('p')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                            + Para
+                          </button>
+                          <button type="button" onClick={() => insertTag('bold')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                            + Bold
+                          </button>
+                          <button type="button" onClick={() => insertTag('link')} className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/40 font-bold border border-cyan-500/30">
+                            🔗 + Add Link
+                          </button>
+                          <button type="button" onClick={() => insertTag('ul')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                            + List
+                          </button>
+                          <button type="button" onClick={() => insertTag('img')} className="px-2 py-0.5 rounded bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] hover:bg-[hsl(217,91%,54%)]/40 font-bold">
+                            🖼️ + Image
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   <p className="text-[11px] text-[hsl(215,20%,50%)] mb-2">
-                    💡 <span className="text-white font-semibold">Tip:</span> You can paste plain text here and click <span className="text-emerald-400 font-bold">"✨ Auto-Format Plain Text"</span> above, or click <span className="text-[hsl(217,91%,70%)] font-bold">"🖼️ + Image"</span> to insert photos!
+                    💡 <span className="text-white font-semibold">Tip:</span> Use <span className="text-cyan-300 font-bold">"🔗 + Add Link"</span> to add clickable hyperlinks to any URL, or switch to <span className="text-purple-400 font-bold">"👁️ Live Article Preview"</span> to check how it looks!
                   </p>
 
-                  <textarea
-                    rows={12}
-                    value={formContent}
-                    onChange={(e) => setFormContent(e.target.value)}
-                    placeholder="Paste your plain text article here, or write using HTML tags..."
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white font-mono text-sm placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] leading-relaxed"
-                    required
-                  />
+                  {editorMode === 'preview' ? (
+                    <div className="w-full p-6 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl min-h-[300px]">
+                      <div className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">Live Rendered Article Preview</div>
+                      <div className="prose-dark max-w-none space-y-4" dangerouslySetInnerHTML={{ __html: formContent || '<p className="text-[hsl(215,20%,50%)] italic">No content written yet. Switch back to HTML or Plain Text mode to type your article...</p>' }} />
+                    </div>
+                  ) : (
+                    <textarea
+                      rows={13}
+                      value={formContent}
+                      onChange={(e) => setFormContent(e.target.value)}
+                      placeholder={
+                        editorMode === 'plain'
+                          ? "Paste plain text here (e.g. paragraph 1\n\nSection Heading\n\nparagraph 2), then click '✨ Auto-Format Plain Text'..."
+                          : "Write or paste full HTML code here (e.g. <h2>Title</h2><p>Content with <a href='https://...'>Hyperlink</a>...</p>)..."
+                      }
+                      className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white font-mono text-sm placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] leading-relaxed"
+                      required
+                    />
+                  )}
                 </div>
               </div>
 
