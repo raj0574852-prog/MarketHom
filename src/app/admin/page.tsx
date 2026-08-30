@@ -244,14 +244,18 @@ Include:
   if (headingCount >= 2) seoScore += 20;
 
   const insertTag = (tag: string) => {
-    if (tag === 'h2') {
-      setFormContent(prev => prev + '\n\n<h2>Section Heading</h2>\n<p>Write section text here...</p>');
+    if (tag === 'h1') {
+      setFormContent(prev => prev + '\n\n<h1 class="text-3xl font-black my-4 text-white">Main Heading H1</h1>');
+    } else if (tag === 'h2') {
+      setFormContent(prev => prev + '\n\n<h2>Section Heading H2</h2>\n<p>Write section text here...</p>');
     } else if (tag === 'h3') {
-      setFormContent(prev => prev + '\n\n<h3>Sub-heading</h3>');
+      setFormContent(prev => prev + '\n\n<h3>Sub-heading H3</h3>');
     } else if (tag === 'p') {
       setFormContent(prev => prev + '\n\n<p>Write paragraph text here...</p>');
     } else if (tag === 'bold') {
       setFormContent(prev => prev + ' <strong>bold text</strong> ');
+    } else if (tag === 'quote') {
+      setFormContent(prev => prev + '\n\n<blockquote class="border-l-4 border-[hsl(217,91%,54%)] pl-4 italic my-6 text-[hsl(215,20%,70%)]">Write quote text here...</blockquote>');
     } else if (tag === 'ul') {
       setFormContent(prev => prev + '\n\n<ul>\n  <li>Key point 1</li>\n  <li>Key point 2</li>\n  <li>Key point 3</li>\n</ul>');
     } else if (tag === 'link') {
@@ -894,42 +898,56 @@ Include:
                         </button>
                       )}
 
-                      {editorMode !== 'preview' && (
-                        <div className="flex items-center gap-1 bg-[hsl(222,47%,9%)] p-1 rounded-lg border border-[hsl(215,25%,22%)] text-[11px]">
-                          <button type="button" onClick={() => insertTag('h2')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                            + H2
-                          </button>
-                          <button type="button" onClick={() => insertTag('h3')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                            + H3
-                          </button>
-                          <button type="button" onClick={() => insertTag('p')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                            + Para
-                          </button>
-                          <button type="button" onClick={() => insertTag('bold')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                            + Bold
-                          </button>
-                          <button type="button" onClick={() => insertTag('link')} className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/40 font-bold border border-cyan-500/30">
-                            🔗 + Add Link
-                          </button>
-                          <button type="button" onClick={() => insertTag('ul')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
-                            + List
-                          </button>
-                          <button type="button" onClick={() => insertTag('img')} className="px-2 py-0.5 rounded bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] hover:bg-[hsl(217,91%,54%)]/40 font-bold">
-                            🖼️ + Image
-                          </button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1 bg-[hsl(222,47%,9%)] p-1 rounded-lg border border-[hsl(215,25%,22%)] text-[11px]">
+                        <button type="button" onClick={() => insertTag('h1')} className="px-2 py-0.5 rounded text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 font-bold border border-amber-500/20">
+                          + H1
+                        </button>
+                        <button type="button" onClick={() => insertTag('h2')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + H2
+                        </button>
+                        <button type="button" onClick={() => insertTag('h3')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + H3
+                        </button>
+                        <button type="button" onClick={() => insertTag('bold')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + Bold
+                        </button>
+                        <button type="button" onClick={() => insertTag('link')} className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/40 font-bold border border-cyan-500/30">
+                          🔗 + Add Link
+                        </button>
+                        <button type="button" onClick={() => insertTag('ul')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          + List
+                        </button>
+                        <button type="button" onClick={() => insertTag('quote')} className="px-2 py-0.5 rounded text-[hsl(215,20%,70%)] hover:text-white hover:bg-[hsl(215,25%,20%)] font-bold">
+                          💬 + Quote
+                        </button>
+                        <button type="button" onClick={() => insertTag('img')} className="px-2 py-0.5 rounded bg-[hsl(217,91%,54%)]/20 text-[hsl(217,91%,70%)] hover:bg-[hsl(217,91%,54%)]/40 font-bold">
+                          🖼️ + Image
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   <p className="text-[11px] text-[hsl(215,20%,50%)] mb-2">
-                    💡 <span className="text-white font-semibold">Tip:</span> Use <span className="text-cyan-300 font-bold">"🔗 + Add Link"</span> to add clickable hyperlinks to any URL, or switch to <span className="text-purple-400 font-bold">"👁️ Live Article Preview"</span> to check how it looks!
+                    💡 <span className="text-white font-semibold">Tip:</span> You can now click <span className="text-amber-300 font-bold">"+ H1"</span>, <span className="text-[hsl(217,91%,70%)] font-bold">"+ H2"</span>, <span className="text-cyan-300 font-bold">"🔗 + Add Link"</span>, or <span className="text-purple-400 font-bold">"💬 + Quote"</span> in any mode—including inside <span className="text-purple-400 font-bold">"👁️ Live Article Preview"</span>!
                   </p>
 
                   {editorMode === 'preview' ? (
-                    <div className="w-full p-6 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl min-h-[300px]">
-                      <div className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">Live Rendered Article Preview</div>
-                      <div className="prose-dark max-w-none space-y-4" dangerouslySetInnerHTML={{ __html: formContent || '<p className="text-[hsl(215,20%,50%)] italic">No content written yet. Switch back to HTML or Plain Text mode to type your article...</p>' }} />
+                    <div className="w-full p-6 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl min-h-[350px]">
+                      <div className="flex items-center justify-between pb-3 mb-4 border-b border-[hsl(215,25%,18%)]">
+                        <div className="text-xs font-bold text-purple-400 uppercase tracking-widest flex items-center gap-2">
+                          <span>👁️</span> Live Interactive Article Editor & Preview
+                        </div>
+                        <span className="text-[10px] text-emerald-400 font-mono font-bold bg-emerald-500/10 px-2 py-0.5 rounded">
+                          Directly Editable
+                        </span>
+                      </div>
+                      <div
+                        contentEditable={true}
+                        suppressContentEditableWarning={true}
+                        onInput={(e) => setFormContent(e.currentTarget.innerHTML)}
+                        className="prose-dark max-w-none space-y-4 focus:outline-none min-h-[300px]"
+                        dangerouslySetInnerHTML={{ __html: formContent || '<p class="text-[hsl(215,20%,50%)] italic">Type or edit your article directly in this visual window...</p>' }}
+                      />
                     </div>
                   ) : (
                     <textarea
