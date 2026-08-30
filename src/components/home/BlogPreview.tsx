@@ -1,39 +1,19 @@
 import Link from 'next/link';
+import { getRecentPublishedPosts } from '@/lib/blog/posts';
 
-const posts = [
-  {
-    slug: 'ai-seo-strategies-2025',
-    category: 'AI SEO',
-    categoryColor: 'hsl(270,80%,60%)',
-    title: '10 AI SEO Strategies That Will Dominate Search in 2025',
-    excerpt: 'Artificial intelligence is reshaping how Google ranks content. Here are the 10 AI-powered SEO strategies that top agencies are using right now to leapfrog the competition.',
-    readTime: '8 min read',
-    date: 'Apr 28, 2025',
-    author: 'Alex Rivera',
-  },
-  {
-    slug: 'ppc-mistakes-killing-roi',
-    category: 'PPC',
-    categoryColor: 'hsl(39,100%,58%)',
-    title: '7 PPC Mistakes That Are Silently Killing Your ROI (And How to Fix Them)',
-    excerpt: 'Most businesses are flushing 40-60% of their ad budget down the drain. Discover the seven most common PPC mistakes and the exact fixes that can double your return.',
-    readTime: '6 min read',
-    date: 'Apr 21, 2025',
-    author: 'Priya Sharma',
-  },
-  {
-    slug: 'local-seo-guide-2025',
-    category: 'Local SEO',
-    categoryColor: 'hsl(152,69%,46%)',
-    title: 'The Ultimate Local SEO Guide for 2025: Rank #1 in Your City',
-    excerpt: 'Local search has never been more competitive — or more important. This comprehensive guide walks you through every step to dominate local search results and Google Maps.',
-    readTime: '12 min read',
-    date: 'Apr 14, 2025',
-    author: 'Marcus Chen',
-  },
-];
+export default async function BlogPreview() {
+  const posts = await getRecentPublishedPosts(3);
 
-export default function BlogPreview() {
+  // Helper function for category color assignment
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'AI SEO': return 'hsl(270,80%,60%)';
+      case 'PPC': return 'hsl(39,100%,58%)';
+      case 'Local SEO': return 'hsl(152,69%,46%)';
+      default: return 'hsl(217,91%,65%)';
+    }
+  };
+
   return (
     <section className="section-padding bg-[hsl(222,47%,5%)]" id="blog">
       <div className="container-custom">
@@ -61,19 +41,23 @@ export default function BlogPreview() {
               <div
                 className="h-44 relative overflow-hidden"
                 style={{
-                  background: `linear-gradient(135deg, ${post.categoryColor}20, hsl(222,47%,12%))`,
+                  background: `linear-gradient(135deg, ${getCategoryColor(post.category)}20, hsl(222,47%,12%))`,
                 }}
               >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl opacity-30">
-                    {post.category === 'AI SEO' ? '🤖' : post.category === 'PPC' ? '💰' : '📍'}
-                  </span>
-                </div>
+                {post.featuredImage ? (
+                  <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-5xl opacity-30">
+                      {post.icon || '📝'}
+                    </span>
+                  </div>
+                )}
                 {/* Category badge */}
                 <div className="absolute top-4 left-4">
                   <span
                     className="text-xs font-bold px-3 py-1.5 rounded-full"
-                    style={{ background: `${post.categoryColor}25`, color: post.categoryColor }}
+                    style={{ background: `${getCategoryColor(post.category)}25`, color: getCategoryColor(post.category) }}
                   >
                     {post.category}
                   </span>
@@ -84,7 +68,7 @@ export default function BlogPreview() {
                 <div className="flex items-center gap-3 text-xs text-[hsl(215,20%,50%)] mb-3">
                   <span>{post.date}</span>
                   <span>·</span>
-                  <span>{post.readTime}</span>
+                  <span>{post.readTime || '5 min read'}</span>
                   <span>·</span>
                   <span>{post.author}</span>
                 </div>

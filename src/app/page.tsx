@@ -35,8 +35,8 @@ export default function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: 'MarketHom Agency',
-            url: 'https://markethom.agency',
-            logo: 'https://markethom.agency/logo.png',
+            url: 'https://www.educationhom.com',
+            logo: 'https://www.educationhom.com/logo.png',
             description:
               'Premium digital marketing agency specializing in SEO, AI SEO, PPC, SMM, Link Building and Web Development.',
             contactPoint: {

@@ -1,61 +1,21 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
-import { getStoredPosts, getDeletedIds, BlogPost } from '@/lib/blogStore';
+import { getPublishedPosts } from '@/lib/blog/posts';
 
-export default function BlogIndexPage() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+// Next.js config for caching - revalidate every 1 hour (or false for dynamic)
+export const revalidate = 3600;
 
-  useEffect(() => {
-    // 1. Initial local load from localStorage
-    const local = getStoredPosts();
-    const deletedIds = getDeletedIds();
-    setPosts(local);
+export const metadata = {
+  title: 'Blog | MarketHom',
+  description: 'Expert advice, strategy guides, and industry news to help you navigate the ever-changing digital landscape.',
+};
 
-    // 2. Fetch server posts & auto-rehydrate server container if cold started
-    fetch('/api/blog')
-      .then(res => res.json())
-      .then(data => {
-        if (data.posts && Array.isArray(data.posts)) {
-          const deletedSet = new Set([...deletedIds, ...(data.deletedIds || [])]);
-          const validServerPosts = data.posts.filter((p: BlogPost) => !deletedSet.has(p.id) && !deletedSet.has(p.slug));
-
-          // If local browser has custom posts that server is missing due to cold-start, sync them to server!
-          if (local.length > 0) {
-            const serverMap = new Map<string, BlogPost>();
-            validServerPosts.forEach((p: BlogPost) => serverMap.set(p.id, p));
-            let needsRehydration = false;
-            local.forEach((p: BlogPost) => {
-              if (!serverMap.has(p.id) && !deletedSet.has(p.id)) {
-                serverMap.set(p.id, p);
-                needsRehydration = true;
-              }
-            });
-            const mergedList = Array.from(serverMap.values());
-            setPosts(mergedList);
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('markethom_blog_posts', JSON.stringify(mergedList));
-            }
-
-            if (needsRehydration) {
-              fetch('/api/blog', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ posts: mergedList, deletedIds })
-              }).catch(() => {});
-            }
-          } else {
-            setPosts(validServerPosts);
-          }
-        }
-      })
-      .catch(() => {});
-  }, []);
-
+export default async function BlogIndexPage({ searchParams }: { searchParams: { category?: string } }) {
+  // Fetch posts from Supabase on the server
+  const posts = await getPublishedPosts();
+  
+  const selectedCategory = searchParams.category || 'All';
   const categories = ['All', 'SEO', 'AI SEO', 'PPC', 'Web Dev', 'Link Building', 'CRO', 'Local SEO'];
 
   const filteredPosts = selectedCategory === 'All' 
@@ -84,9 +44,9 @@ export default function BlogIndexPage() {
           {/* Categories Filter */}
           <div className="flex flex-wrap gap-3 mb-12">
             {categories.map(cat => (
-              <button 
+              <Link 
                 key={cat} 
-                onClick={() => setSelectedCategory(cat)}
+                href={cat === 'All' ? '/blog' : `/blog?category=${encodeURIComponent(cat)}`}
                 className={`px-5 py-2 rounded-full border text-xs font-semibold transition-all ${
                   selectedCategory === cat
                     ? 'bg-[hsl(217,91%,54%)] border-[hsl(217,91%,54%)] text-white shadow-lg shadow-[hsl(217,91%,54%)]/25'
@@ -94,7 +54,7 @@ export default function BlogIndexPage() {
                 }`}
               >
                 {cat}
-              </button>
+              </Link>
             ))}
           </div>
 

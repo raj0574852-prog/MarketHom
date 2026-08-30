@@ -33,8 +33,12 @@ export default function AdminDashboardPage() {
   const [passcode, setPasscode] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // Active Tab: 'dashboard' | 'publish' | 'articles' | 'resources' | 'leads'
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'publish' | 'articles' | 'resources' | 'leads'>('dashboard');
+  // Active Tab: 'dashboard' | 'publish' | 'articles' | 'resources' | 'leads' | 'migrate'
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'publish' | 'articles' | 'resources' | 'leads' | 'migrate'>('dashboard');
+
+  // Migration State
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [migrationReport, setMigrationReport] = useState<any>(null);
 
   // Data states
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -77,10 +81,13 @@ export default function AdminDashboardPage() {
   const [serviceDesc, setServiceDesc] = useState('');
 
   useEffect(() => {
-    const authStatus = localStorage.getItem('markethom_admin_auth');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
-    }
+    // Check session on load
+    fetch('/api/auth/check')
+      .then(res => {
+        if (res.ok) setIsAuthenticated(true);
+      })
+      .catch(() => {});
+    
     loadData();
 
     // Real-time polling for new client lead inquiries & blog posts every 4 seconds
@@ -167,20 +174,53 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcode === 'Rajjesh@123') {
-      setIsAuthenticated(true);
-      localStorage.setItem('markethom_admin_auth', 'true');
-      setLoginError('');
-    } else {
-      setLoginError('Invalid admin password. Please try again.');
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode })
+      });
+      if (res.ok) {
+        setIsAuthenticated(true);
+        setLoginError('');
+      } else {
+        const data = await res.json();
+        setLoginError(data.error || 'Invalid admin password. Please try again.');
+      }
+    } catch (err) {
+      setLoginError('Server error. Please try again.');
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
     setIsAuthenticated(false);
-    localStorage.removeItem('markethom_admin_auth');
+  };
+
+  const executeMigration = async () => {
+    if (!confirm("Are you sure you want to push all posts to Supabase?")) return;
+    setIsMigrating(true);
+    setMigrationReport(null);
+    try {
+      const localPosts = getStoredPosts();
+      const res = await fetch('/api/migrate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ localPosts })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMigrationReport(data.report);
+      } else {
+        alert("Migration failed: " + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert("Network error during migration.");
+    } finally {
+      setIsMigrating(false);
+    }
   };
 
   const handleTitleChange = (val: string) => {
@@ -556,7 +596,8 @@ Include:
             { id: 'publish', label: editingPostId ? '✏️ Edit Article' : '✍️ Publish Article' },
             { id: 'articles', label: `📚 Manage Articles (${posts.length})` },
             { id: 'resources', label: `🛠️ Site Services (${services.length})` },
-            { id: 'leads', label: `📬 Client Leads (${leads.filter(l => l.status === 'New').length} New)` }
+            { id: 'leads', label: `📬 Client Leads (${leads.filter(l => l.status === 'New').length} New)` },
+            { id: 'migrate', label: `🚀 Supabase Migration` }
           ].map(tab => (
             <button
               key={tab.id}
@@ -571,6 +612,46 @@ Include:
             </button>
           ))}
         </div>
+
+        {/* TAB: MIGRATE */}
+        {activeTab === 'migrate' && (
+          <div className="space-y-6">
+            <div className="glass-card p-6 border-l-4 border-l-[hsl(217,91%,54%)]">
+              <h2 className="text-xl font-bold mb-4">🚀 Supabase Data Migration</h2>
+              <p className="text-sm text-[hsl(215,20%,65%)] mb-6">
+                This tool safely extracts all local browser posts, server-memory posts, and initial source posts, removes duplicates, and pushes them securely to the permanent Supabase PostgreSQL database.
+              </p>
+              
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={executeMigration}
+                  disabled={isMigrating}
+                  className="btn-primary"
+                >
+                  {isMigrating ? 'Executing Migration...' : 'Execute Migration'}
+                </button>
+              </div>
+
+              {migrationReport && (
+                <div className="mt-8 p-6 bg-[hsl(222,47%,8%)] rounded-xl border border-[hsl(215,25%,22%)]">
+                  <h3 className="text-lg font-bold text-emerald-400 mb-4">✅ Migration Successful</h3>
+                  <ul className="space-y-2 text-sm">
+                    <li><span className="text-[hsl(215,20%,60%)]">Source Files (INITIAL_POSTS):</span> <span className="font-bold">{migrationReport.initialCount}</span></li>
+                    <li><span className="text-[hsl(215,20%,60%)]">Server Memory Posts:</span> <span className="font-bold">{migrationReport.memoryCount}</span></li>
+                    <li><span className="text-[hsl(215,20%,60%)]">Browser LocalStorage Posts:</span> <span className="font-bold">{migrationReport.localCount}</span></li>
+                    <li className="pt-2 border-t border-[hsl(215,25%,22%)]"><span className="text-[hsl(215,20%,60%)]">Total Combined (Before Deduplication):</span> <span className="font-bold">{migrationReport.combinedCount}</span></li>
+                    <li><span className="text-[hsl(215,20%,60%)]">Unique by ID:</span> <span className="font-bold">{migrationReport.dedupedByIdCount}</span></li>
+                    <li><span className="text-[hsl(215,20%,60%)]">Final Unique by Slug:</span> <span className="font-bold">{migrationReport.finalCount}</span></li>
+                    <li className="pt-2 border-t border-[hsl(215,25%,22%)] text-[hsl(217,91%,70%)]"><span className="font-bold text-white">Inserted/Upserted to Supabase:</span> <span className="font-bold">{migrationReport.supabaseInsertedCount}</span></li>
+                  </ul>
+                  <p className="mt-4 text-xs text-[hsl(215,20%,60%)] italic">
+                    All data is now safely stored in PostgreSQL. You can safely switch the public site to SSR.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* TAB 1: DASHBOARD OVERVIEW */}
         {activeTab === 'dashboard' && (

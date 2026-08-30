@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next';
-import { INITIAL_POSTS, BlogPost } from '@/lib/blogStore';
+import { getPublishedPosts } from '@/lib/blog/posts';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://educationhom.com';
+  const baseUrl = 'https://www.educationhom.com';
   
   const staticRoutes = [
     '',
@@ -26,15 +26,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1.0 : 0.8,
   }));
 
-  // Fetch dynamic blog posts from server memory / API
-  let dynamicBlogPosts: BlogPost[] = INITIAL_POSTS;
-
-  try {
-    const globalForBlog = globalThis as unknown as { serverPosts: BlogPost[] | undefined };
-    if (globalForBlog.serverPosts && Array.isArray(globalForBlog.serverPosts)) {
-      dynamicBlogPosts = globalForBlog.serverPosts;
-    }
-  } catch (e) {}
+  // Fetch dynamic blog posts from Supabase
+  const dynamicBlogPosts = await getPublishedPosts();
 
   const blogRoutes = dynamicBlogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,

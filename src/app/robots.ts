@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/',
     },
-    sitemap: 'https://markethom.agency/sitemap.xml',
+    sitemap: 'https://www.educationhom.com/sitemap.xml',
   };
 }

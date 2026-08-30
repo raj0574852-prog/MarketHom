@@ -1,55 +1,62 @@
-'use client';
-
-import { useState, useEffect, use } from 'react';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Head from 'next/head';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
-import { getPostBySlug, BlogPost } from '@/lib/blogStore';
+import { getPublishedPostBySlug } from '@/lib/blog/posts';
+import { Metadata, ResolvingMetadata } from 'next';
+
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const { slug } = use(params);
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
 
-  useEffect(() => {
-    const found = getPostBySlug(slug);
-    if (found) {
-      setPost(found);
-      if (typeof document !== 'undefined') {
-        document.title = found.metaTitle || `${found.title} | MarketHom Agency`;
-      }
-      setLoading(false);
-    } else {
-      fetch('/api/blog')
-        .then(res => res.json())
-        .then(data => {
-          if (data.posts && Array.isArray(data.posts)) {
-            const apiFound = data.posts.find((p: BlogPost) => p.slug === slug);
-            if (apiFound) {
-              setPost(apiFound);
-              if (typeof document !== 'undefined') {
-                document.title = apiFound.metaTitle || `${apiFound.title} | MarketHom Agency`;
-              }
-            }
-          }
-        })
-        .finally(() => setLoading(false));
-    }
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="pt-40 pb-20 text-center min-h-[60vh] flex flex-col items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[hsl(217,91%,54%)] border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-[hsl(215,20%,60%)]">Loading article...</p>
-      </div>
-    );
+  if (!post) {
+    return {
+      title: 'Article Not Found | MarketHom Agency',
+      description: 'The requested article could not be located.'
+    };
   }
+
+  const previousImages = (await parent).openGraph?.images || [];
+  const robots = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
+
+  return {
+    title: post.metaTitle || `${post.title} | MarketHom Agency`,
+    description: post.metaDescription || post.excerpt,
+    robots,
+    alternates: post.canonicalUrl ? { canonical: post.canonicalUrl } : undefined,
+    openGraph: {
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt || '',
+      url: `https://www.educationhom.com/blog/${post.slug}`,
+      siteName: 'MarketHom Agency',
+      images: post.featuredImage ? [post.featuredImage, ...previousImages] : previousImages,
+      locale: 'en_US',
+      type: 'article',
+      publishedTime: post.date,
+      modifiedTime: post.date,
+      authors: [post.author]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt || '',
+      images: post.featuredImage ? [post.featuredImage] : []
+    }
+  };
+}
+
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params;
+  const post = await getPublishedPostBySlug(slug);
 
   if (!post) {
     return (
@@ -66,14 +73,14 @@ export default function BlogPostPage({ params }: Props) {
 
   const robotsDirective = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
-  const jsonLdArticle = post ? {
+  const jsonLdArticle = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.metaDescription || post.excerpt,
-    image: post.featuredImage || 'https://educationhom.com/og-image.png',
-    datePublished: post.date,
-    dateModified: post.date,
+    image: post.featuredImage || 'https://www.educationhom.com/og-image.png',
+    datePublished: new Date(post.date).toISOString(),
+    dateModified: new Date(post.date).toISOString(),
     author: {
       '@type': 'Person',
       name: post.author || 'MarketHom Agency Expert',
@@ -84,30 +91,22 @@ export default function BlogPostPage({ params }: Props) {
       name: 'MarketHom Agency',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://educationhom.com/og-image.png'
+        url: 'https://www.educationhom.com/og-image.png'
       }
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://educationhom.com/blog/${post.slug}`
+      '@id': `https://www.educationhom.com/blog/${post.slug}`
     },
     keywords: [post.category, 'MarketHom Agency', 'SEO', 'AI Content Intelligence']
-  } : null;
+  };
 
   return (
     <>
-      <Head>
-        <title>{post.metaTitle || `${post.title} | MarketHom Agency`}</title>
-        <meta name="description" content={post.metaDescription || post.excerpt} />
-        <meta name="robots" content={robotsDirective} />
-        {post.canonicalUrl && <link rel="canonical" href={post.canonicalUrl} />}
-        {jsonLdArticle && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
-          />
-        )}
-      </Head>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+      />
 
       <article className="pt-32 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">
         <div className="container-custom relative z-10">
@@ -144,7 +143,7 @@ export default function BlogPostPage({ params }: Props) {
                   <div className="h-10 w-px bg-[hsl(215,25%,22%)]/40" />
                   <div className="text-left">
                      <div className="text-xs font-bold text-white">{post.date}</div>
-                     <div className="text-[10px] text-[hsl(215,20%,50%)] uppercase tracking-widest font-bold">{post.readTime}</div>
+                     <div className="text-[10px] text-[hsl(215,20%,50%)] uppercase tracking-widest font-bold">{post.readTime || '5 min read'}</div>
                   </div>
                </div>
             </div>
