@@ -85,7 +85,7 @@ export function getStoredPosts(): BlogPost[] {
   if (typeof window === 'undefined') return INITIAL_POSTS;
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) {
+    if (data === null) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_POSTS));
       return INITIAL_POSTS;
     }
@@ -105,7 +105,7 @@ export function savePost(post: Omit<BlogPost, 'id'> & { id?: string }): BlogPost
 
   if (post.id) {
     savedPost = { ...post, id: post.id, date: dateStr, slug } as BlogPost;
-    const updated = posts.map(p => p.id === post.id ? savedPost : p);
+    const updated = posts.map(p => (p.id === post.id || p.slug === slug) ? savedPost : p);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
@@ -136,14 +136,14 @@ export function savePost(post: Omit<BlogPost, 'id'> & { id?: string }): BlogPost
 
 export function deletePost(id: string): void {
   const posts = getStoredPosts();
-  const updated = posts.filter(p => p.id !== id);
+  const updated = posts.filter(p => p.id !== id && p.slug !== id);
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   }
 
   // Sync delete with Server API /api/blog
   if (typeof window !== 'undefined') {
-    fetch(`/api/blog?id=${id}`, {
+    fetch(`/api/blog?id=${encodeURIComponent(id)}`, {
       method: 'DELETE'
     }).catch(() => {});
   }

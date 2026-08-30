@@ -81,9 +81,10 @@ export default function AdminDashboardPage() {
     }
     loadData();
 
-    // Real-time polling for new client lead inquiries every 4 seconds
+    // Real-time polling for new client lead inquiries & blog posts every 4 seconds
     const interval = setInterval(() => {
       fetchLeadsFromApi();
+      fetchPostsFromApi();
     }, 4000);
 
     return () => clearInterval(interval);
@@ -220,7 +221,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handlePublishPost = (e: React.FormEvent) => {
+  const handlePublishPost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle || !formContent) {
       alert('Please fill out the article title and content.');
@@ -237,10 +238,10 @@ export default function AdminDashboardPage() {
         .join('\n\n');
     }
 
-    const saved = savePost({
+    const newPostData = {
       id: editingPostId || undefined,
       title: formTitle,
-      slug: formSlug || 'article-' + Date.now(),
+      slug: formSlug || formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
       excerpt: formExcerpt || formTitle,
       category: categoryToUse,
       author: formAuthor,
@@ -256,7 +257,26 @@ export default function AdminDashboardPage() {
       noFollow: formNoFollow,
       canonicalUrl: formCanonicalUrl,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
-    });
+    };
+
+    const saved = savePost(newPostData);
+
+    try {
+      const res = await fetch('/api/blog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(saved)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.posts && Array.isArray(data.posts)) {
+          setPosts(data.posts);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
+          }
+        }
+      }
+    } catch (err) {}
 
     setPublishSuccessMsg(editingPostId ? 'Article updated successfully!' : '🎉 Article published live to the Blog section!');
     loadData();
@@ -308,9 +328,25 @@ export default function AdminDashboardPage() {
     setActiveTab('publish');
   };
 
-  const handleDeletePost = (id: string) => {
+  const handleDeletePost = async (id: string) => {
     if (confirm('Are you sure you want to delete this article?')) {
       deletePost(id);
+      // Immediately filter local state
+      setPosts(prev => prev.filter(p => p.id !== id && p.slug !== id));
+      try {
+        const res = await fetch(`/api/blog?id=${encodeURIComponent(id)}`, {
+          method: 'DELETE'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.posts && Array.isArray(data.posts)) {
+            setPosts(data.posts);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
+            }
+          }
+        }
+      } catch (err) {}
       loadData();
     }
   };

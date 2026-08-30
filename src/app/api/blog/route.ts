@@ -6,14 +6,17 @@ const globalForBlog = globalThis as unknown as {
   serverPosts: BlogPost[] | undefined;
 };
 
-if (!globalForBlog.serverPosts) {
+if (globalForBlog.serverPosts === undefined) {
   globalForBlog.serverPosts = INITIAL_POSTS;
 }
 
 export async function GET() {
+  if (globalForBlog.serverPosts === undefined) {
+    globalForBlog.serverPosts = INITIAL_POSTS;
+  }
   return NextResponse.json({
     success: true,
-    posts: globalForBlog.serverPosts || INITIAL_POSTS
+    posts: globalForBlog.serverPosts
   });
 }
 
@@ -28,14 +31,14 @@ export async function POST(request: Request) {
     const dateStr = body.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     const slug = body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     
-    let currentPosts = globalForBlog.serverPosts || INITIAL_POSTS;
+    let currentPosts = globalForBlog.serverPosts || [];
 
     let updatedPost: BlogPost;
 
     if (body.id) {
       // Update existing post
       updatedPost = { ...body, date: dateStr, slug };
-      currentPosts = currentPosts.map(p => p.id === body.id ? updatedPost : p);
+      currentPosts = currentPosts.map(p => p.id === body.id || p.slug === slug ? updatedPost : p);
     } else {
       // Create new post
       updatedPost = {
@@ -70,12 +73,12 @@ export async function DELETE(request: Request) {
     }
 
     if (globalForBlog.serverPosts) {
-      globalForBlog.serverPosts = globalForBlog.serverPosts.filter(p => p.id !== id);
+      globalForBlog.serverPosts = globalForBlog.serverPosts.filter(p => p.id !== id && p.slug !== id);
     }
 
     return NextResponse.json({
       success: true,
-      posts: globalForBlog.serverPosts || INITIAL_POSTS
+      posts: globalForBlog.serverPosts
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Failed to delete article' }, { status: 500 });
