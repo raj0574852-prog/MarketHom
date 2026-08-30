@@ -247,6 +247,24 @@ Include:
     }
   };
 
+  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Image size is too large. Please select an image under 8MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setFormFeaturedImage(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const exportArticlesJson = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(posts, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -710,16 +728,45 @@ Include:
                     <label className="block text-xs font-bold text-[hsl(217,91%,70%)] uppercase tracking-wider">
                       🖼️ Featured Banner Cover Image
                     </label>
-                    <span className="text-[10px] text-[hsl(215,20%,50%)]">Single-click preset picker or custom URL</span>
+                    <span className="text-[10px] text-[hsl(215,20%,50%)]">Upload file, paste URL, or pick 1-click preset</span>
                   </div>
 
-                  <input
-                    type="text"
-                    value={formFeaturedImage}
-                    onChange={(e) => setFormFeaturedImage(e.target.value)}
-                    placeholder="Enter custom image URL (e.g. https://images.unsplash.com/...)"
-                    className="w-full px-4 py-3 bg-[hsl(222,47%,10%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] text-xs font-mono"
-                  />
+                  {/* URL Input & Upload Button */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="text"
+                      value={formFeaturedImage}
+                      onChange={(e) => setFormFeaturedImage(e.target.value)}
+                      placeholder="Paste image URL (or click Upload File →)"
+                      className="flex-1 px-4 py-3 bg-[hsl(222,47%,10%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] text-xs font-mono"
+                    />
+                    <label className="px-4 py-3 rounded-xl bg-[hsl(217,91%,54%)] hover:bg-[hsl(217,91%,60%)] text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md shrink-0">
+                      <span>📁 Upload Image File</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+
+                  {/* CHATGPT URL WARNING BANNER */}
+                  {(formFeaturedImage.includes('chatgpt.com') || formFeaturedImage.includes('oaiusercontent.com')) && (
+                    <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-300 text-xs leading-relaxed space-y-2">
+                      <div className="font-bold flex items-center gap-2 text-amber-200">
+                        <span>⚠️ ChatGPT Links are Private & Temporary!</span>
+                      </div>
+                      <p>
+                        ChatGPT URLs (like <code className="text-white bg-black/40 px-1 rounded">chatgpt.com/backend-api...</code>) block external websites from loading them.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 pt-1 font-bold">
+                        <span className="text-white">To fix this:</span>
+                        <span>1. Right-click your ChatGPT image & save to computer</span>
+                        <span>2. Click <strong className="text-white underline">"📁 Upload Image File"</strong> above!</span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* 1-CLICK QUICK IMAGE PRESETS */}
                   <div>
@@ -746,8 +793,16 @@ Include:
 
                   {/* LIVE IMAGE PREVIEW CARD */}
                   {formFeaturedImage ? (
-                    <div className="relative h-40 w-full rounded-xl overflow-hidden border border-[hsl(217,91%,54%)]/40 bg-black/40">
-                      <img src={formFeaturedImage} alt="Cover Preview" className="w-full h-full object-cover" />
+                    <div className="relative h-44 w-full rounded-xl overflow-hidden border border-[hsl(217,91%,54%)]/40 bg-black/40">
+                      <img
+                        src={formFeaturedImage}
+                        alt="Cover Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Automatic fallback if private/broken URL
+                          (e.target as HTMLImageElement).src = PRESET_COVER_IMAGES[0].url;
+                        }}
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3 justify-between">
                         <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -764,7 +819,7 @@ Include:
                     </div>
                   ) : (
                     <div className="p-4 rounded-xl border border-dashed border-[hsl(215,25%,25%)] text-center text-xs text-[hsl(215,20%,50%)]">
-                      📷 Select a preset image above or paste your custom image link
+                      📷 Upload an image file from your computer, paste a public URL, or select a 1-click preset above
                     </div>
                   )}
                 </div>
