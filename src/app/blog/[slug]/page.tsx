@@ -151,8 +151,8 @@ export default function BlogPostPage({ params }: Props) {
 
             {/* Featured Cover Banner Image */}
             {post.featuredImage && (
-              <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl border border-[hsl(215,25%,22%)]">
-                <img src={post.featuredImage} alt={post.title} className="w-full h-[400px] object-cover" />
+              <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl border border-[hsl(215,25%,22%)] bg-[hsl(222,47%,8%)] p-2 md:p-4 flex items-center justify-center">
+                <img src={post.featuredImage} alt={post.title} className="w-full h-auto max-h-[700px] object-contain rounded-2xl" />
               </div>
             )}
 

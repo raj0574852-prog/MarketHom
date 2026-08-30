@@ -793,25 +793,25 @@ Include:
 
                   {/* LIVE IMAGE PREVIEW CARD */}
                   {formFeaturedImage ? (
-                    <div className="relative h-44 w-full rounded-xl overflow-hidden border border-[hsl(217,91%,54%)]/40 bg-black/40">
+                    <div className="relative w-full rounded-xl overflow-hidden border border-[hsl(217,91%,54%)]/40 bg-black/60 p-2 flex items-center justify-center min-h-[160px]">
                       <img
                         src={formFeaturedImage}
                         alt="Cover Preview"
-                        className="w-full h-full object-cover"
+                        className="w-full h-auto max-h-72 object-contain rounded-lg"
                         onError={(e) => {
                           // Automatic fallback if private/broken URL
                           (e.target as HTMLImageElement).src = PRESET_COVER_IMAGES[0].url;
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3 justify-between">
-                        <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-3 justify-between pointer-events-none">
+                        <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5 pointer-events-auto">
                           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                          Banner Ready
+                          Banner Ready (Uncropped Full Image)
                         </span>
                         <button
                           type="button"
                           onClick={() => setFormFeaturedImage('')}
-                          className="px-2.5 py-1 rounded bg-red-500/80 text-white text-[10px] font-bold hover:bg-red-600 transition-colors"
+                          className="px-2.5 py-1 rounded bg-red-500/80 text-white text-[10px] font-bold hover:bg-red-600 transition-colors pointer-events-auto"
                         >
                           Remove Image
                         </button>
