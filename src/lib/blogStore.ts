@@ -68,73 +68,13 @@ export const INITIAL_POSTS: BlogPost[] = [
     icon: '💰',
     featured: false,
     content: `
-      <p className="text-lg leading-relaxed mb-6">PPC campaigns require constant monitoring and precision targeting. A single negative keyword oversight can cost thousands in wasted ad spend.</p>
-      <h2 className="text-2xl font-bold mt-8 mb-4 text-white">The Danger of Broad Match Without Negatives</h2>
-      <p className="mb-6 leading-relaxed">Broad match can drive impression volume, but without an aggressive negative keyword list, you will pay for unqualified clicks. Always pair broad match with smart bidding and robust negative lists.</p>
-    `
-  },
-  {
-    id: '3',
-    slug: 'local-seo-guide-2025',
-    title: 'The Ultimate Local SEO Guide for 2025: Rank #1 in Your City',
-    excerpt: 'Local search has never been more competitive. This comprehensive guide walks you through every step to dominate local search results.',
-    category: 'Local SEO',
-    author: 'Marcus Chen',
-    authorRole: 'Local Search Lead',
-    date: 'Apr 14, 2025',
-    readTime: '12 min read',
-    icon: '📍',
-    featured: false,
-    content: `
-      <p className="text-lg leading-relaxed mb-6">Dominating local search means optimizing your Google Business Profile, accumulating high-quality local reviews, and building geo-targeted citations.</p>
-    `
-  },
-  {
-    id: '4',
-    slug: 'future-of-link-building',
-    title: 'The Future of Link Building: Beyond Guest Posting',
-    excerpt: 'Digital PR and brand mentions are the new backlinks. Learn how to build a natural link profile that Google loves.',
-    category: 'Link Building',
-    author: 'Sofia Laurent',
-    authorRole: 'Digital PR Director',
-    date: 'Apr 07, 2025',
-    readTime: '10 min read',
-    icon: '🔗',
-    featured: false,
-    content: `
-      <p className="text-lg leading-relaxed mb-6">Traditional guest posts are losing impact. Today's search engines value earned editorial links from authoritative news outlets and industry publications.</p>
-    `
-  },
-  {
-    id: '5',
-    slug: 'nextjs-for-seo',
-    title: 'Why Next.js is the Best Framework for SEO in 2025',
-    excerpt: 'Performance is a ranking factor. Discover why Next.js is the preferred choice for high-performance, SEO-first websites.',
-    category: 'Web Dev',
-    author: 'James O\'Brien',
-    authorRole: 'Technical Lead',
-    date: 'Mar 31, 2025',
-    readTime: '7 min read',
-    icon: '⚛️',
-    featured: false,
-    content: `
-      <p className="text-lg leading-relaxed mb-6">Server-Side Rendering (SSR) and Static Site Generation (SSG) in Next.js give search engine crawlers instant access to fully rendered HTML, boosting indexing speed and Core Web Vitals score.</p>
-    `
-  },
-  {
-    id: '6',
-    slug: 'conversion-rate-optimization-tips',
-    title: '15 CRO Tips to Double Your Website Conversions',
-    excerpt: 'Traffic is vanity, conversions are sanity. Use these 15 tested tips to turn more of your visitors into paying customers.',
-    category: 'CRO',
-    author: 'Aisha Patel',
-    authorRole: 'CRO Specialist',
-    date: 'Mar 24, 2025',
-    readTime: '9 min read',
-    icon: '📈',
-    featured: false,
-    content: `
-      <p className="text-lg leading-relaxed mb-6">Optimizing your call to action, shortening friction points in forms, and displaying social proof can dramatically increase your landing page conversion rates.</p>
+      <p className="text-lg leading-relaxed mb-6">Running Google or Meta ads without a rigorous strategy is the fastest way to burn through your marketing budget. Over the past year, our team audited over $5M in ad spend across 100+ accounts. Here are the 7 most frequent (and expensive) mistakes we uncover.</p>
+      
+      <h2 className="text-2xl font-bold mt-8 mb-4 text-white">1. Broad Match Without Negative Keyword Lists</h2>
+      <p className="mb-6 leading-relaxed">Broad match keywords can bring in traffic, but without an aggressive, updated list of negative keywords, you will end up paying for irrelevant searches that never convert.</p>
+      
+      <h2 className="text-2xl font-bold mt-8 mb-4 text-white">2. Sending Paid Traffic to Generic Homepages</h2>
+      <p className="mb-6 leading-relaxed">Never send ad clicks to your homepage. Dedicated, high-converting landing pages tailored specifically to the ad copy increase conversion rates by up to 300%.</p>
     `
   }
 ];
@@ -159,25 +99,39 @@ export function getStoredPosts(): BlogPost[] {
 export function savePost(post: Omit<BlogPost, 'id'> & { id?: string }): BlogPost {
   const posts = getStoredPosts();
   const dateStr = post.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+  const slug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   
+  let savedPost: BlogPost;
+
   if (post.id) {
-    const updated = posts.map(p => p.id === post.id ? { ...p, ...post, date: dateStr } : p);
+    savedPost = { ...post, id: post.id, date: dateStr, slug } as BlogPost;
+    const updated = posts.map(p => p.id === post.id ? savedPost : p);
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
-    return { ...post, id: post.id, date: dateStr } as BlogPost;
   } else {
-    const newPost: BlogPost = {
+    savedPost = {
       ...post,
-      id: Date.now().toString(),
+      id: 'post-' + Date.now(),
       date: dateStr,
+      slug
     };
-    const updated = [newPost, ...posts];
+    const updated = [savedPost, ...posts];
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     }
-    return newPost;
   }
+
+  // Sync with Server API /api/blog
+  if (typeof window !== 'undefined') {
+    fetch('/api/blog', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(savedPost)
+    }).catch(() => {});
+  }
+
+  return savedPost;
 }
 
 export function deletePost(id: string): void {
@@ -185,6 +139,13 @@ export function deletePost(id: string): void {
   const updated = posts.filter(p => p.id !== id);
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  }
+
+  // Sync delete with Server API /api/blog
+  if (typeof window !== 'undefined') {
+    fetch(`/api/blog?id=${id}`, {
+      method: 'DELETE'
+    }).catch(() => {});
   }
 }
 

@@ -94,6 +94,29 @@ export default function AdminDashboardPage() {
     setServices(getServices());
     setLeads(getLeads());
     fetchLeadsFromApi();
+    fetchPostsFromApi();
+  };
+
+  const fetchPostsFromApi = async () => {
+    try {
+      const res = await fetch('/api/blog');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.posts && Array.isArray(data.posts)) {
+          const localPosts = getStoredPosts();
+          const mergedMap = new Map<string, BlogPost>();
+          data.posts.forEach((p: BlogPost) => mergedMap.set(p.id, p));
+          localPosts.forEach((p: BlogPost) => {
+            if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
+          });
+          const mergedList = Array.from(mergedMap.values());
+          setPosts(mergedList);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('markethom_blog_posts', JSON.stringify(mergedList));
+          }
+        }
+      }
+    } catch (err) {}
   };
 
   const fetchLeadsFromApi = async () => {

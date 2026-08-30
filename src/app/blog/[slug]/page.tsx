@@ -23,8 +23,23 @@ export default function BlogPostPage({ params }: Props) {
       if (typeof document !== 'undefined') {
         document.title = found.metaTitle || `${found.title} | MarketHom Agency`;
       }
+      setLoading(false);
+    } else {
+      fetch('/api/blog')
+        .then(res => res.json())
+        .then(data => {
+          if (data.posts && Array.isArray(data.posts)) {
+            const apiFound = data.posts.find((p: BlogPost) => p.slug === slug);
+            if (apiFound) {
+              setPost(apiFound);
+              if (typeof document !== 'undefined') {
+                document.title = apiFound.metaTitle || `${apiFound.title} | MarketHom Agency`;
+              }
+            }
+          }
+        })
+        .finally(() => setLoading(false));
     }
-    setLoading(false);
   }, [slug]);
 
   if (loading) {

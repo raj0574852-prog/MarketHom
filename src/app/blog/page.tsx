@@ -11,7 +11,29 @@ export default function BlogIndexPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   useEffect(() => {
-    setPosts(getStoredPosts());
+    // 1. Initial local load
+    const local = getStoredPosts();
+    setPosts(local);
+
+    // 2. Fetch latest server posts from /api/blog
+    fetch('/api/blog')
+      .then(res => res.json())
+      .then(data => {
+        if (data.posts && Array.isArray(data.posts)) {
+          // Merge local and server posts
+          const mergedMap = new Map<string, BlogPost>();
+          data.posts.forEach((p: BlogPost) => mergedMap.set(p.id, p));
+          local.forEach((p: BlogPost) => {
+            if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
+          });
+          const mergedList = Array.from(mergedMap.values());
+          setPosts(mergedList);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('markethom_blog_posts', JSON.stringify(mergedList));
+          }
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const categories = ['All', 'SEO', 'AI SEO', 'PPC', 'Web Dev', 'Link Building', 'CRO', 'Local SEO'];
@@ -65,29 +87,30 @@ export default function BlogIndexPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPosts.map((post) => (
                 <Link key={post.id || post.slug} href={`/blog/${post.slug}`} className="glass-card flex flex-col group overflow-hidden">
-                  <div className="h-48 bg-[hsl(215,25%,14%)] flex items-center justify-center text-5xl group-hover:scale-105 transition-transform duration-500">
-                    {post.icon || '📝'}
+                  <div className="h-48 bg-[hsl(215,25%,14%)] flex items-center justify-center text-5xl group-hover:scale-105 transition-transform duration-500 relative overflow-hidden">
+                    {post.featuredImage ? (
+                      <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{post.icon || '📝'}</span>
+                    )}
                   </div>
-                  <div className="p-8 flex flex-col flex-1">
-                    <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest font-bold text-[hsl(215,20%,40%)] mb-4">
-                      <span className="text-[hsl(217,91%,70%)]">{post.category}</span>
-                      <span>•</span>
-                      <span>{post.date}</span>
-                    </div>
-                    <h2 className="text-xl font-bold mb-4 text-white group-hover:text-[hsl(217,91%,75%)] transition-colors leading-tight">
-                      {post.title}
-                    </h2>
-                    <p className="text-sm text-[hsl(215,20%,60%)] leading-relaxed mb-6 flex-1 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between pt-6 border-t border-[hsl(215,25%,22%)]/40">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-[hsl(217,91%,54%)]/20 flex items-center justify-center text-[10px] font-bold text-white">
-                          {post.author ? post.author.split(' ').map(n => n[0]).join('') : 'MH'}
-                        </div>
-                        <span className="text-[10px] font-bold text-[hsl(215,20%,50%)]">{post.author}</span>
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-3 text-xs">
+                        <span className="badge">{post.category}</span>
+                        <span className="text-[hsl(215,20%,50%)]">•</span>
+                        <span className="text-[hsl(215,20%,50%)]">{post.date}</span>
                       </div>
-                      <span className="text-[10px] font-bold text-[hsl(215,20%,40%)]">{post.readTime}</span>
+                      <h2 className="text-xl font-bold mb-3 text-white group-hover:text-[hsl(217,91%,75%)] transition-colors line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <p className="text-[hsl(215,20%,60%)] text-sm leading-relaxed mb-6 line-clamp-3">
+                        {post.excerpt}
+                      </p>
+                    </div>
+                    <div className="pt-4 border-t border-[hsl(215,25%,22%)]/40 flex items-center justify-between text-xs text-[hsl(215,20%,50%)]">
+                      <span>{post.author}</span>
+                      <span className="font-semibold text-[hsl(217,91%,70%)] group-hover:translate-x-1 transition-transform">Read Article →</span>
                     </div>
                   </div>
                 </Link>
