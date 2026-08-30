@@ -66,6 +66,34 @@ export default function BlogPostPage({ params }: Props) {
 
   const robotsDirective = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
+  const jsonLdArticle = post ? {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.metaDescription || post.excerpt,
+    image: post.featuredImage || 'https://educationhom.com/og-image.png',
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      '@type': 'Person',
+      name: post.author || 'MarketHom Agency Expert',
+      jobTitle: post.authorRole || 'Senior Strategist'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'MarketHom Agency',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://educationhom.com/og-image.png'
+      }
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://educationhom.com/blog/${post.slug}`
+    },
+    keywords: [post.category, 'MarketHom Agency', 'SEO', 'AI Content Intelligence']
+  } : null;
+
   return (
     <>
       <Head>
@@ -73,6 +101,12 @@ export default function BlogPostPage({ params }: Props) {
         <meta name="description" content={post.metaDescription || post.excerpt} />
         <meta name="robots" content={robotsDirective} />
         {post.canonicalUrl && <link rel="canonical" href={post.canonicalUrl} />}
+        {jsonLdArticle && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+          />
+        )}
       </Head>
 
       <article className="pt-32 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">

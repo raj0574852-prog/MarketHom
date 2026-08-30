@@ -11,20 +11,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://markethom.agency'),
+  metadataBase: new URL('https://educationhom.com'),
   title: {
-    default: 'MarketHom Agency | Premium Digital Marketing Agency',
+    default: 'MarketHom Agency | Premium Digital Marketing & AI SEO Agency',
     template: '%s | MarketHom Agency',
   },
   description:
-    'MarketHom Agency is a results-driven digital marketing agency offering SEO, AI SEO, PPC, Social Media Marketing, Link Building, and Web Development services. Grow your business online today.',
+    'MarketHom Agency is an AI-powered digital marketing agency specializing in Google SEO, AI Search Engine Optimization (AEO), GEO (Generative Engine Optimization), PPC, Link Building, and Web Development.',
   keywords: [
     'digital marketing agency',
     'SEO services',
     'AI SEO',
+    'AEO Answer Engine Optimization',
+    'GEO Generative Engine Optimization',
     'PPC management',
-    'social media marketing',
     'link building',
+    'guest posting',
     'web development',
     'MarketHom Agency',
   ],
@@ -33,11 +35,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://markethom.agency',
+    url: 'https://educationhom.com',
     siteName: 'MarketHom Agency',
-    title: 'MarketHom Agency | Premium Digital Marketing Agency',
+    title: 'MarketHom Agency | AI Content Intelligence & SEO Agency',
     description:
-      'Drive growth with MarketHom Agency – experts in SEO, AI SEO, PPC, SMM, Link Building & Web Development.',
+      'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: [
       {
         url: '/og-image.png',
@@ -49,9 +51,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MarketHom Agency | Premium Digital Marketing Agency',
+    title: 'MarketHom Agency | AI Content Intelligence & SEO Agency',
     description:
-      'Drive growth with MarketHom Agency – experts in SEO, AI SEO, PPC, SMM, Link Building & Web Development.',
+      'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: ['/og-image.png'],
   },
   robots: {
@@ -70,6 +72,47 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLdOrganization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'MarketHom Agency',
+  url: 'https://educationhom.com',
+  logo: 'https://educationhom.com/og-image.png',
+  description: 'AI Content Intelligence, Google SEO, AEO, GEO, PPC, and Web Development Agency.',
+  sameAs: [
+    'https://twitter.com/markethomagency',
+    'https://linkedin.com/company/markethomagency'
+  ],
+  knowsAbout: [
+    'Search Engine Optimization (SEO)',
+    'AI Search Engine Optimization (AEO)',
+    'Generative Engine Optimization (GEO)',
+    'Content Intelligence',
+    'Pay-Per-Click Advertising (PPC)',
+    'High DA Guest Posting',
+    'Web Development'
+  ],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+1-800-555-0199',
+    contactType: 'customer service',
+    areaServed: 'Worldwide',
+    availableLanguage: 'English'
+  }
+};
+
+const jsonLdWebSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'MarketHom Agency',
+  url: 'https://educationhom.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://educationhom.com/blog?q={search_term_string}',
+    'query-input': 'required name=search_term_string'
+  }
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -77,6 +120,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
+      </head>
       <body className={`${inter.variable} font-sans antialiased bg-[hsl(222,47%,7%)] text-white min-h-screen flex flex-col`}>
         <Header />
         <main className="flex-1">{children}</main>
