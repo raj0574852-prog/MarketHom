@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { BlogPost } from '@/lib/blogStore';
 import { getPublishedPosts, getAllPostsForAdmin, createPost, updatePost, deletePost, getPublishedPostBySlug } from '@/lib/blog/posts';
 import crypto from 'crypto';
@@ -78,6 +79,14 @@ export async function POST(request: Request) {
 
     const allPosts = await getAllPostsForAdmin();
 
+    try {
+      revalidatePath('/blog');
+      revalidatePath('/blog/[slug]', 'page');
+      revalidatePath('/');
+    } catch (e) {
+      console.warn('Failed to revalidate cache', e);
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Article published live on Supabase',
@@ -123,6 +132,13 @@ export async function DELETE(request: Request) {
 
     await deletePost(id);
     const allPosts = await getAllPostsForAdmin();
+
+    try {
+      revalidatePath('/blog');
+      revalidatePath('/');
+    } catch (e) {
+      console.warn('Failed to revalidate cache', e);
+    }
 
     return NextResponse.json({
       success: true,
