@@ -20,16 +20,9 @@ export default function BlogIndexPage() {
       .then(res => res.json())
       .then(data => {
         if (data.posts && Array.isArray(data.posts)) {
-          // Merge local and server posts
-          const mergedMap = new Map<string, BlogPost>();
-          data.posts.forEach((p: BlogPost) => mergedMap.set(p.id, p));
-          local.forEach((p: BlogPost) => {
-            if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
-          });
-          const mergedList = Array.from(mergedMap.values());
-          setPosts(mergedList);
+          setPosts(data.posts);
           if (typeof window !== 'undefined') {
-            localStorage.setItem('markethom_blog_posts', JSON.stringify(mergedList));
+            localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
           }
         }
       })

@@ -33,17 +33,19 @@ export async function POST(request: Request) {
     
     let currentPosts = globalForBlog.serverPosts || [];
 
+    const existingIndex = currentPosts.findIndex(p => p.id === body.id || (body.id && p.id === body.id) || p.slug === slug);
+
     let updatedPost: BlogPost;
 
-    if (body.id) {
-      // Update existing post
-      updatedPost = { ...body, date: dateStr, slug };
-      currentPosts = currentPosts.map(p => p.id === body.id || p.slug === slug ? updatedPost : p);
+    if (existingIndex >= 0) {
+      // Update existing post at exact index
+      updatedPost = { ...currentPosts[existingIndex], ...body, date: dateStr, slug };
+      currentPosts[existingIndex] = updatedPost;
     } else {
       // Create new post
       updatedPost = {
         ...body,
-        id: 'post-' + Date.now(),
+        id: body.id || 'post-' + Date.now(),
         date: dateStr,
         slug
       };
