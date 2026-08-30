@@ -12,7 +12,7 @@ const globalForBlog = globalThis as unknown as {
 
 // Helper to read posts from disk or memory
 function loadPermanentPosts(): BlogPost[] {
-  if (globalForBlog.serverPosts && globalForBlog.serverPosts.length > 0) {
+  if (globalForBlog.serverPosts !== undefined) {
     return globalForBlog.serverPosts;
   }
 
@@ -20,7 +20,7 @@ function loadPermanentPosts(): BlogPost[] {
     if (fs.existsSync(STORAGE_FILE)) {
       const fileData = fs.readFileSync(STORAGE_FILE, 'utf-8');
       const parsed = JSON.parse(fileData);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         globalForBlog.serverPosts = parsed;
         return parsed;
       }
