@@ -81,7 +81,9 @@ export async function POST(request: Request) {
 
     try {
       revalidatePath('/blog');
-      revalidatePath('/blog/[slug]', 'page');
+      if (savedPost && savedPost.slug) {
+        revalidatePath('/blog/' + savedPost.slug);
+      }
       revalidatePath('/');
     } catch (e) {
       console.warn('Failed to revalidate cache', e);
