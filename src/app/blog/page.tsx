@@ -3,8 +3,8 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 import { getPublishedPosts } from '@/lib/blog/posts';
 
-// Next.js config for caching - revalidate every 1 hour (or false for dynamic)
-export const revalidate = 3600;
+// Force dynamic rendering to completely bypass Next.js caching
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Blog | MarketHom',

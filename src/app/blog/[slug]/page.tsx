@@ -5,7 +5,7 @@ import CTASection from '@/components/home/CTASection';
 import { getPublishedPostBySlug } from '@/lib/blog/posts';
 import { Metadata, ResolvingMetadata } from 'next';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: Promise<{ slug: string }>;
