@@ -1,6 +1,40 @@
 import { supabase, getServiceSupabase } from '../supabaseClient';
 import { BlogPost } from '../blogStore';
 
+// Mappers to translate between Frontend (camelCase) and Supabase (snake_case)
+function mapToSupabase(post: Partial<BlogPost>) {
+  const mapped: any = { ...post };
+  
+  // Map camelCase to snake_case
+  if (post.authorRole !== undefined) { mapped.author_role = post.authorRole; delete mapped.authorRole; }
+  if (post.readTime !== undefined) { mapped.read_time = post.readTime; delete mapped.readTime; }
+  if (post.featuredImage !== undefined) { mapped.featured_image = post.featuredImage; delete mapped.featuredImage; }
+  if (post.metaTitle !== undefined) { mapped.meta_title = post.metaTitle; delete mapped.metaTitle; }
+  if (post.metaDescription !== undefined) { mapped.meta_description = post.metaDescription; delete mapped.metaDescription; }
+  if (post.noIndex !== undefined) { mapped.no_index = post.noIndex; delete mapped.noIndex; }
+  if (post.noFollow !== undefined) { mapped.no_follow = post.noFollow; delete mapped.noFollow; }
+  if (post.canonicalUrl !== undefined) { mapped.canonical_url = post.canonicalUrl; delete mapped.canonicalUrl; }
+  
+  // Always ensure status is set to published for public viewing
+  if (!mapped.status) mapped.status = 'published';
+  
+  return mapped;
+}
+
+function mapFromSupabase(row: any): BlogPost {
+  return {
+    ...row,
+    authorRole: row.author_role,
+    readTime: row.read_time,
+    featuredImage: row.featured_image,
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
+    noIndex: row.no_index,
+    noFollow: row.no_follow,
+    canonicalUrl: row.canonical_url,
+  } as BlogPost;
+}
+
 export async function getPublishedPosts(): Promise<BlogPost[]> {
   const { data, error } = await supabase
     .from('posts')
@@ -13,7 +47,7 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
     return [];
   }
 
-  return data as BlogPost[];
+  return (data || []).map(mapFromSupabase);
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -24,12 +58,14 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
     .eq('status', 'published')
     .single();
 
-  if (error) {
-    console.error(`Error fetching post by slug ${slug}:`, error);
+  if (error || !data) {
+    if (error && error.code !== 'PGRST116') { // Ignore "no rows returned" error
+      console.error(`Error fetching post by slug ${slug}:`, error);
+    }
     return null;
   }
 
-  return data as BlogPost;
+  return mapFromSupabase(data);
 }
 
 export async function getRecentPublishedPosts(limit: number = 3): Promise<BlogPost[]> {
@@ -45,7 +81,7 @@ export async function getRecentPublishedPosts(limit: number = 3): Promise<BlogPo
     return [];
   }
 
-  return data as BlogPost[];
+  return (data || []).map(mapFromSupabase);
 }
 
 // Admin only operations
@@ -61,14 +97,14 @@ export async function getAllPostsForAdmin(): Promise<BlogPost[]> {
     return [];
   }
 
-  return data as BlogPost[];
+  return (data || []).map(mapFromSupabase);
 }
 
 export async function createPost(post: BlogPost): Promise<BlogPost | null> {
   const adminSupabase = getServiceSupabase();
   const { data, error } = await adminSupabase
     .from('posts')
-    .insert([post])
+    .insert([mapToSupabase(post)])
     .select()
     .single();
 
@@ -77,14 +113,14 @@ export async function createPost(post: BlogPost): Promise<BlogPost | null> {
     throw error;
   }
 
-  return data as BlogPost;
+  return mapFromSupabase(data);
 }
 
 export async function updatePost(id: string, updates: Partial<BlogPost>): Promise<BlogPost | null> {
   const adminSupabase = getServiceSupabase();
   const { data, error } = await adminSupabase
     .from('posts')
-    .update({ ...updates, updated_at: new Date().toISOString() })
+    .update({ ...mapToSupabase(updates), updated_at: new Date().toISOString() })
     .eq('id', id)
     .select()
     .single();
@@ -94,7 +130,7 @@ export async function updatePost(id: string, updates: Partial<BlogPost>): Promis
     throw error;
   }
 
-  return data as BlogPost;
+  return mapFromSupabase(data);
 }
 
 export async function deletePost(id: string): Promise<boolean> {
@@ -116,7 +152,7 @@ export async function upsertPost(post: BlogPost): Promise<BlogPost | null> {
   const adminSupabase = getServiceSupabase();
   const { data, error } = await adminSupabase
     .from('posts')
-    .upsert([post], { onConflict: 'id' })
+    .upsert([mapToSupabase(post)], { onConflict: 'id' })
     .select()
     .single();
 
@@ -125,5 +161,5 @@ export async function upsertPost(post: BlogPost): Promise<BlogPost | null> {
     throw error;
   }
 
-  return data as BlogPost;
+  return mapFromSupabase(data);
 }
