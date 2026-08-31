@@ -80,11 +80,7 @@ export async function POST(request: Request) {
     const allPosts = await getAllPostsForAdmin();
 
     try {
-      revalidatePath('/blog');
-      if (savedPost && savedPost.slug) {
-        revalidatePath('/blog/' + savedPost.slug);
-      }
-      revalidatePath('/');
+      revalidatePath('/', 'layout');
     } catch (e) {
       console.warn('Failed to revalidate cache', e);
     }
@@ -136,8 +132,7 @@ export async function DELETE(request: Request) {
     const allPosts = await getAllPostsForAdmin();
 
     try {
-      revalidatePath('/blog');
-      revalidatePath('/');
+      revalidatePath('/', 'layout');
     } catch (e) {
       console.warn('Failed to revalidate cache', e);
     }
