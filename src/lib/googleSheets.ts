@@ -112,7 +112,7 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
 
         if (results.errors.length > 0) {
           // Check if it's a fatal parsing error
-          const hasFatalError = results.errors.some(e => e.type === 'FieldMismatch' || e.code === 'UndetectedDelimiter' || e.code === 'TooFewFields');
+          const hasFatalError = results.errors.some(e => e.type === 'FieldMismatch' || e.code === 'UndetectableDelimiter' || e.code === 'TooFewFields');
           if (hasFatalError) {
             reject(new Error(`Fatal CSV Parsing Error: ${results.errors[0].message}`));
             return;
