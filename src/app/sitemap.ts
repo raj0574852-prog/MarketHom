@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/blog/posts';
+import { getServiceSupabase } from '@/lib/supabaseClient';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.educationhom.com';
@@ -19,11 +20,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/services/web-development',
     '/blog',
     '/case-studies',
+    '/websites', // Added marketplace base route
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === '/blog' ? ('daily' as const) : ('weekly' as const),
-    priority: route === '' ? 1.0 : 0.8,
+    changeFrequency: route === '/blog' || route === '/websites' ? ('daily' as const) : ('weekly' as const),
+    priority: route === '' ? 1.0 : (route === '/websites' ? 0.9 : 0.8),
   }));
 
   // Fetch dynamic blog posts from Supabase
@@ -36,5 +38,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
-  return [...staticRoutes, ...blogRoutes];
+  // Fetch published websites
+  const supabase = getServiceSupabase();
+  const { data: websites } = await supabase
+    .from('website_listings')
+    .select('slug, updated_at')
+    .eq('status', 'published');
+
+  const websiteRoutes = (websites || []).map((site) => ({
+    url: `${baseUrl}/websites/${site.slug}`,
+    lastModified: new Date(site.updated_at || Date.now()),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...blogRoutes, ...websiteRoutes];
 }

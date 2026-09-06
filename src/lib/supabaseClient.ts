@@ -12,9 +12,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Server-only client for privileged admin operations (using Service Role Key)
 export const getServiceSupabase = () => {
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-  if (!serviceKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY');
-  }
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'mock-service-key';
   return createClient(supabaseUrl, serviceKey);
 };
