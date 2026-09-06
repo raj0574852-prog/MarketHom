@@ -19,10 +19,11 @@ export default function HeroSection() {
       {/* Background Image Overlay */}
       <div className="absolute inset-0 z-0 opacity-20 grayscale pointer-events-none">
         <Image 
-          src="/hero-bg.png" 
+          src="/hero-bg.webp" 
           alt="Growth Background" 
           fill 
           className="object-cover"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222,47%,7%)] via-transparent to-[hsl(222,47%,7%)]" />
       </div>
