@@ -11,20 +11,6 @@ const FloatingOrb = ({ className }: { className: string }) => (
 export default function HeroSection() {
   const heroRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!heroRef.current) return;
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      const x = (clientX / innerWidth - 0.5) * 20;
-      const y = (clientY / innerHeight - 0.5) * 20;
-      heroRef.current.style.setProperty('--mouse-x', `${x}px`);
-      heroRef.current.style.setProperty('--mouse-y', `${y}px`);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   return (
     <section
       ref={heroRef}
@@ -37,14 +23,13 @@ export default function HeroSection() {
           alt="Growth Background" 
           fill 
           className="object-cover"
-          priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222,47%,7%)] via-transparent to-[hsl(222,47%,7%)]" />
       </div>
 
       {/* Animated background orbs */}
-      <FloatingOrb className="w-[600px] h-[600px] bg-[hsl(217,91%,54%)]/10 top-[-100px] left-[-200px] animate-pulse-glow" />
-      <FloatingOrb className="w-[500px] h-[500px] bg-[hsl(270,80%,60%)]/8 bottom-[-150px] right-[-100px] animate-float" />
+      <FloatingOrb className="w-[600px] h-[600px] bg-[hsl(217,91%,54%)]/10 top-[-100px] left-[-200px] animate-pulse" />
+      <FloatingOrb className="w-[500px] h-[500px] bg-[hsl(270,80%,60%)]/8 bottom-[-150px] right-[-100px] animate-pulse delay-500" />
       <FloatingOrb className="w-[300px] h-[300px] bg-[hsl(39,100%,58%)]/5 top-[30%] right-[20%]" />
 
       {/* Grid pattern overlay */}
