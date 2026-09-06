@@ -22,11 +22,18 @@ function mapToSupabase(post: Partial<BlogPost>) {
 }
 
 function mapFromSupabase(row: any): BlogPost {
+  // Sanitize massive base64 strings that bloat the HTML payload to multiple megabytes
+  let sanitizedImage = row.featured_image;
+  if (sanitizedImage && sanitizedImage.startsWith('data:image') && sanitizedImage.length > 50000) {
+    console.warn(`Stripped massive base64 image from post ${row.slug}`);
+    sanitizedImage = undefined;
+  }
+
   return {
     ...row,
     authorRole: row.author_role,
     readTime: row.read_time,
-    featuredImage: row.featured_image,
+    featuredImage: sanitizedImage,
     metaTitle: row.meta_title,
     metaDescription: row.meta_description,
     noIndex: row.no_index,
