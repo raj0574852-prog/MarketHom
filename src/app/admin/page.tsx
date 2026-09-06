@@ -593,12 +593,22 @@ Include:
         <div className="flex flex-wrap gap-2 mb-8 p-1.5 bg-[hsl(222,47%,8%)] border border-[hsl(215,25%,18%)] rounded-2xl">
           {[
             { id: 'dashboard', label: '📊 Dashboard Overview' },
+            { id: 'websites', label: '🌍 Manage Websites', isLink: true, href: '/admin/websites' },
             { id: 'publish', label: editingPostId ? '✏️ Edit Article' : '✍️ Publish Article' },
             { id: 'articles', label: `📚 Manage Articles (${posts.length})` },
             { id: 'resources', label: `🛠️ Site Services (${services.length})` },
             { id: 'leads', label: `📬 Client Leads (${leads.filter(l => l.status === 'New').length} New)` },
             { id: 'migrate', label: `🚀 Supabase Migration` }
           ].map(tab => (
+            tab.isLink ? (
+              <Link 
+                key={tab.id} 
+                href={tab.href!}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all text-white bg-[hsl(217,91%,54%)]/20 border border-[hsl(217,91%,54%)]/50 hover:bg-[hsl(217,91%,54%)]/40 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+              >
+                {tab.label}
+              </Link>
+            ) : (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
@@ -610,6 +620,7 @@ Include:
             >
               {tab.label}
             </button>
+            )
           ))}
         </div>
 
