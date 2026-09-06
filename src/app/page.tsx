@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import HeroSection from '@/components/home/HeroSection';
-import StatsSection from '@/components/home/StatsSection';
-import ServicesSection from '@/components/home/ServicesSection';
-import ProcessSection from '@/components/home/ProcessSection';
-import ResultsSection from '@/components/home/ResultsSection';
-import TestimonialsSection from '@/components/home/TestimonialsSection';
-import PricingPreview from '@/components/home/PricingPreview';
-import BlogPreview from '@/components/home/BlogPreview';
-import CTASection from '@/components/home/CTASection';
+
+const StatsSection = dynamic(() => import('@/components/home/StatsSection'), { ssr: true });
+const ServicesSection = dynamic(() => import('@/components/home/ServicesSection'), { ssr: true });
+const ProcessSection = dynamic(() => import('@/components/home/ProcessSection'), { ssr: true });
+const ResultsSection = dynamic(() => import('@/components/home/ResultsSection'), { ssr: true });
+const TestimonialsSection = dynamic(() => import('@/components/home/TestimonialsSection'), { ssr: true });
+const PricingPreview = dynamic(() => import('@/components/home/PricingPreview'), { ssr: true });
+const BlogPreview = dynamic(() => import('@/components/home/BlogPreview'), { ssr: true });
+const CTASection = dynamic(() => import('@/components/home/CTASection'), { ssr: true });
 
 export const metadata: Metadata = {
   title: 'MarketHom Agency | #1 Digital Marketing Agency for Growth',
