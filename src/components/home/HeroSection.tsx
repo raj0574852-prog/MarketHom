@@ -1,6 +1,3 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -9,11 +6,8 @@ const FloatingOrb = ({ className }: { className: string }) => (
 );
 
 export default function HeroSection() {
-  const heroRef = useRef<HTMLDivElement>(null);
-
   return (
     <section
-      ref={heroRef}
       className="relative min-h-screen flex items-center overflow-hidden bg-[hsl(222,47%,7%)] pt-20"
     >
       {/* Background Image Overlay */}

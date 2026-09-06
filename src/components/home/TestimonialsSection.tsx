@@ -61,6 +61,7 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   const [active, setActive] = useState(0);
+  const t = testimonials[active];
 
   return (
     <section className="section-padding bg-[hsl(222,47%,5%)]" id="testimonials">
@@ -72,62 +73,55 @@ export default function TestimonialsSection() {
             <span className="gradient-text">Say About Us</span>
           </h2>
           <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            500+ businesses trust MarketHom Agency. Here's what they're saying.
+            500+ businesses trust MarketHom Agency. Here&apos;s what they&apos;re saying.
           </p>
         </div>
 
         {/* Featured Testimonial */}
         <div className="max-w-3xl mx-auto mb-12">
           <div className="glass-card p-8 md:p-10 text-center relative overflow-hidden">
-            {/* Glow */}
             <div
               className="absolute inset-0 opacity-5 pointer-events-none"
-              style={{ background: `radial-gradient(circle at center, ${testimonials[active].color}, transparent 70%)` }}
+              style={{ background: `radial-gradient(circle at center, ${t.color}, transparent 70%)` }}
             />
-
-            {/* Stars */}
             <div className="flex justify-center gap-1 mb-6">
-              {Array.from({ length: testimonials[active].rating }).map((_, i) => (
+              {Array.from({ length: t.rating }).map((_, i) => (
                 <svg key={i} className="w-5 h-5 text-[hsl(39,100%,58%)]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
               ))}
             </div>
-
-            {/* Quote */}
             <blockquote className="text-lg md:text-xl text-[hsl(215,20%,80%)] leading-relaxed mb-8 italic relative z-10">
-              "{testimonials[active].text}"
+              &ldquo;{t.text}&rdquo;
             </blockquote>
-
-            {/* Author */}
             <div className="flex items-center justify-center gap-4">
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                style={{ background: `linear-gradient(135deg, ${testimonials[active].color}, hsl(270,80%,60%))` }}
+                style={{ background: `linear-gradient(135deg, ${t.color}, hsl(270,80%,60%))` }}
               >
-                {testimonials[active].avatar}
+                {t.avatar}
               </div>
               <div className="text-left">
-                <div className="font-bold text-white">{testimonials[active].name}</div>
-                <div className="text-sm text-[hsl(215,20%,55%)]">{testimonials[active].title}</div>
+                <div className="font-bold text-white">{t.name}</div>
+                <div className="text-sm text-[hsl(215,20%,55%)]">{t.title}</div>
               </div>
               <span
                 className="ml-4 text-xs font-bold px-3 py-1.5 rounded-full"
                 style={{
-                  background: `${testimonials[active].color}20`,
-                  color: testimonials[active].color,
-                  border: `1px solid ${testimonials[active].color}40`,
+                  background: `${t.color}20`,
+                  color: t.color,
+                  border: `1px solid ${t.color}40`,
                 }}
               >
-                {testimonials[active].result}
+                {t.result}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Testimonial Selector */}
+        {/* Testimonial Selector Buttons */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {testimonials.map((t, i) => (
+          {testimonials.map((item, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
@@ -139,12 +133,12 @@ export default function TestimonialsSection() {
             >
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mb-2"
-                style={{ background: `${t.color}` }}
+                style={{ background: item.color }}
               >
-                {t.avatar}
+                {item.avatar}
               </div>
-              <div className="text-xs font-semibold text-white truncate">{t.name}</div>
-              <div className="text-[10px] text-[hsl(215,20%,50%)] truncate">{t.title.split(',')[0]}</div>
+              <div className="text-xs font-semibold text-white truncate">{item.name}</div>
+              <div className="text-[10px] text-[hsl(215,20%,50%)] truncate">{item.title.split(',')[0]}</div>
             </button>
           ))}
         </div>

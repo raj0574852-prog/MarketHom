@@ -1,16 +1,13 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getServices, SiteService } from '@/lib/resourcesStore';
 
-const defaultServices = [
+const services = [
   {
     icon: '🔍',
     name: 'SEO Services',
     category: 'SEO',
     priceRange: '$1,500 - $4,500/mo',
     description: 'Dominate organic search results with our data-driven SEO strategies. Technical audits to content optimization.',
+    href: '/services/seo',
   },
   {
     icon: '🤖',
@@ -18,6 +15,7 @@ const defaultServices = [
     category: 'SEO',
     priceRange: '$2,000 - $5,000/mo',
     description: 'Harness the power of artificial intelligence to stay ahead of algorithm updates and build topical authority faster.',
+    href: '/services/ai-seo',
   },
   {
     icon: '💰',
@@ -25,6 +23,7 @@ const defaultServices = [
     category: 'PPC',
     priceRange: '$2,000 - $6,000/mo',
     description: 'Maximize every dollar with laser-targeted PPC campaigns across Google, Meta, and LinkedIn. Stop wasting budget.',
+    href: '/services/ppc',
   },
   {
     icon: '💻',
@@ -32,6 +31,7 @@ const defaultServices = [
     category: 'Web Dev',
     priceRange: '$3,500 - $12,000',
     description: 'Get a blazing-fast, conversion-optimized website built on Next.js and React. Sites that rank and convert.',
+    href: '/services/web-development',
   },
   {
     icon: '🔗',
@@ -39,6 +39,7 @@ const defaultServices = [
     category: 'Link Building',
     priceRange: '$1,200 - $3,500/mo',
     description: 'Earn high-authority backlinks that boost your domain strength and push you to the top of Google\'s search results.',
+    href: '/services/link-building',
   },
   {
     icon: '📱',
@@ -46,30 +47,12 @@ const defaultServices = [
     category: 'Social',
     priceRange: '$1,500 - $4,000/mo',
     description: 'Build a loyal community and drive real business results through strategic social media marketing.',
-  }
+    href: '/services/smm',
+  },
 ];
 
+// This is now a pure Server Component — no JS sent to the browser for this section
 export default function ServicesSection() {
-  const [allServices, setAllServices] = useState<SiteService[]>([]);
-
-  useEffect(() => {
-    const custom = getServices();
-    const list = [...custom];
-    defaultServices.forEach(def => {
-      if (!list.some(c => c.name.toLowerCase() === def.name.toLowerCase())) {
-        list.push({
-          id: def.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-          name: def.name,
-          category: def.category,
-          status: 'Active',
-          priceRange: def.priceRange,
-          description: def.description
-        });
-      }
-    });
-    setAllServices(list);
-  }, []);
-
   return (
     <section className="section-padding mesh-bg" id="services">
       <div className="container-custom">
@@ -81,21 +64,21 @@ export default function ServicesSection() {
             <span className="gradient-text">Dominate Online</span>
           </h2>
           <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            We don't offer cookie-cutter solutions. Every strategy is custom-built to your business goals, market, and competition.
+            We don&apos;t offer cookie-cutter solutions. Every strategy is custom-built to your business goals, market, and competition.
           </p>
         </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allServices.map((service) => (
+          {services.map((service) => (
             <div
-              key={service.id}
-              className="glass-card p-7 group block flex flex-col justify-between"
+              key={service.name}
+              className="glass-card p-7 group flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] flex items-center justify-center text-xl shadow-lg shadow-[hsl(217,91%,54%)]/20">
-                    🚀
+                    {service.icon}
                   </div>
                   <span className="px-3 py-1 rounded-full bg-[hsl(217,91%,54%)]/15 text-[hsl(217,91%,70%)] text-xs font-bold font-mono">
                     {service.priceRange}
