@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-const FloatingOrb = ({ className }: { className: string }) => (
-  <div className={`absolute rounded-full blur-3xl pointer-events-none ${className}`} />
+const FloatingOrb = ({ className, color }: { className: string, color: string }) => (
+  <div 
+    className={`absolute rounded-full pointer-events-none ${className}`} 
+    style={{ background: `radial-gradient(circle, ${color} 0%, transparent 70%)` }}
+  />
 );
 
 export default function HeroSection() {
@@ -22,10 +25,10 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222,47%,7%)] via-transparent to-[hsl(222,47%,7%)]" />
       </div>
 
-      {/* Animated background orbs */}
-      <FloatingOrb className="w-[600px] h-[600px] bg-[hsl(217,91%,54%)]/10 top-[-100px] left-[-200px] animate-pulse" />
-      <FloatingOrb className="w-[500px] h-[500px] bg-[hsl(270,80%,60%)]/8 bottom-[-150px] right-[-100px] animate-pulse delay-500" />
-      <FloatingOrb className="w-[300px] h-[300px] bg-[hsl(39,100%,58%)]/5 top-[30%] right-[20%]" />
+      {/* Static background orbs (optimized for mobile) */}
+      <FloatingOrb className="w-[600px] h-[600px] top-[-100px] left-[-200px]" color="hsla(217,91%,54%,0.1)" />
+      <FloatingOrb className="w-[500px] h-[500px] bottom-[-150px] right-[-100px]" color="hsla(270,80%,60%,0.08)" />
+      <FloatingOrb className="w-[300px] h-[300px] top-[30%] right-[20%]" color="hsla(39,100%,58%,0.05)" />
 
       {/* Grid pattern overlay */}
       <div
