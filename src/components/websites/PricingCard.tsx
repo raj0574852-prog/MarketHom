@@ -9,7 +9,7 @@ export default function PricingCard({ website }: { website: WebsiteListing }) {
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 lg:p-8 sticky top-6">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 lg:p-8">
       <div className="space-y-6">
         <div>
           <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold mb-1">Starting At</p>
