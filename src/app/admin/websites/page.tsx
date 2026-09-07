@@ -147,14 +147,16 @@ export default function AdminWebsitesPage() {
                         </span>
                       </td>
                       <td className="p-5 text-right flex items-center justify-end gap-2">
-                        <Link 
-                          href={`/websites/${website.slug}`}
-                          target="_blank"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg font-medium transition-colors opacity-0 group-hover:opacity-100"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                          View Live
-                        </Link>
+                        {website.status === 'published' && (
+                          <Link 
+                            href={`/websites/${website.slug}`}
+                            target="_blank"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg font-medium transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            View Live
+                          </Link>
+                        )}
                         <Link 
                           href={`/admin/websites/${website.id}`}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[hsl(217,91%,54%)] bg-[hsl(217,91%,54%)]/10 hover:bg-[hsl(217,91%,54%)]/20 rounded-lg font-medium transition-colors opacity-0 group-hover:opacity-100"
