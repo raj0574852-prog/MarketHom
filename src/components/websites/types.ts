@@ -17,6 +17,7 @@ export interface WebsiteListing {
   content_type?: string;
   platform_type?: string;
   price?: number;
+  content_placement_price?: number;
   discount_price?: number;
   currency?: string;
   status: string;
