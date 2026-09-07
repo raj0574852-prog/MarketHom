@@ -53,14 +53,14 @@ export function mapHeaders(header: string): string {
   if (h === 'language') return 'language';
   
   // Specific Pricing Mappings
-  if (h === 'content placement price') return 'content_placement_price';
-  if (h === 'link insert price') return 'link_insert_price';
-  if (h === 'cbd content placement price') return 'cbd_content_placement_price';
-  if (h === 'cbd content creation & placement price') return 'cbd_content_creation_placement_price';
-  if (h === 'cbd link insert price') return 'cbd_link_insert_price';
-  if (h === 'adult content placement price') return 'adult_content_placement_price';
-  if (h === 'adult content creation & placement price') return 'adult_content_creation_placement_price';
-  if (h === 'adult link insert price') return 'adult_link_insert_price';
+  if (h === 'content placement price' || h === 'content placement') return 'content_placement_price';
+  if (h === 'link insert price' || h === 'link insert') return 'link_insert_price';
+  if (h === 'cbd content placement price' || h === 'cbd content placement') return 'cbd_content_placement_price';
+  if (h === 'cbd content creation & placement price' || h === 'cbd content creation & price') return 'cbd_content_creation_placement_price';
+  if (h === 'cbd link insert price' || h === 'cbd link insert') return 'cbd_link_insert_price';
+  if (h === 'adult content placement price' || h === 'adult content placement') return 'adult_content_placement_price';
+  if (h === 'adult content creation & placement price' || h === 'adult content creation & price') return 'adult_content_creation_placement_price';
+  if (h === 'adult link insert price' || h === 'adult link insert') return 'adult_link_insert_price';
   
   // Fallback for basic price if it doesn't match the specific ones
   if (h.includes('price') && !h.includes('cbd') && !h.includes('adult')) return 'price'; 
