@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 import { isAdminAuthenticated } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -51,6 +52,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (error) {
       console.error('Error updating website listing:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Clear the cache so changes appear instantly on the public site
+    revalidatePath('/websites');
+    if (data.slug) {
+      revalidatePath(`/websites/${data.slug}`);
     }
 
     return NextResponse.json(data);
