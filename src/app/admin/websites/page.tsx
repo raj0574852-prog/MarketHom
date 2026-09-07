@@ -8,6 +8,8 @@ export default function AdminWebsitesPage() {
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
 
   const fetchWebsites = async () => {
     try {
@@ -65,6 +67,32 @@ export default function AdminWebsitesPage() {
     }
   };
 
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    setUpdatingStatusId(id);
+    try {
+      const res = await fetch(`/api/websites/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        setWebsites(websites.map(w => w.id === id ? { ...w, status: newStatus } : w));
+      } else {
+        alert('Failed to update status');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error updating status');
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
+
+  const filteredWebsites = websites.filter(w => 
+    (w.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (w.domain || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-8 pt-32 text-white min-h-screen">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -102,6 +130,21 @@ export default function AdminWebsitesPage() {
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
+            <div className="relative w-full max-w-md">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input 
+                type="text" 
+                placeholder="Search by domain or name..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+              />
+            </div>
+            <div className="text-sm text-slate-400 font-medium">
+              Showing {filteredWebsites.length} {filteredWebsites.length === 1 ? 'website' : 'websites'}
+            </div>
+          </div>
           {loading ? (
             <div className="p-12 flex flex-col items-center justify-center text-slate-400 space-y-4">
               <div className="w-8 h-8 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin"></div>
@@ -121,7 +164,7 @@ export default function AdminWebsitesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/50 text-sm">
-                  {websites.map((website) => (
+                  {filteredWebsites.map((website) => (
                     <tr key={website.id} className="hover:bg-slate-800/30 transition-colors group">
                       <td className="p-5 font-medium text-white">{website.name}</td>
                       <td className="p-5 text-slate-400 flex items-center gap-2">
@@ -138,13 +181,26 @@ export default function AdminWebsitesPage() {
                         </span>
                       </td>
                       <td className="p-5">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          website.status === 'published' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                          website.status === 'archived' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-                          'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                        }`}>
-                          {website.status}
-                        </span>
+                        <div className="relative inline-block">
+                          <select 
+                            value={website.status}
+                            onChange={(e) => handleStatusChange(website.id, e.target.value)}
+                            disabled={updatingStatusId === website.id}
+                            className={`appearance-none px-3 py-1.5 pr-8 rounded-full text-xs font-bold cursor-pointer border focus:outline-none transition-colors ${
+                              website.status === 'published' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' :
+                              website.status === 'archived' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20' :
+                              'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20'
+                            } ${updatingStatusId === website.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            <option value="draft" className="bg-slate-900 text-amber-400">Draft</option>
+                            <option value="published" className="bg-slate-900 text-emerald-400">Published</option>
+                            <option value="archived" className="bg-slate-900 text-rose-400">Archived</option>
+                          </select>
+                          <svg className={`absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none transition-opacity ${updatingStatusId === website.id ? 'opacity-0' : 'opacity-70'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                          {updatingStatusId === website.id && (
+                            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 border-2 border-t-transparent border-current rounded-full animate-spin opacity-70"></div>
+                          )}
+                        </div>
                       </td>
                       <td className="p-5 text-right flex items-center justify-end gap-2">
                         {website.status === 'published' && (
@@ -167,7 +223,7 @@ export default function AdminWebsitesPage() {
                       </td>
                     </tr>
                   ))}
-                  {websites.length === 0 && (
+                  {filteredWebsites.length === 0 && (
                     <tr>
                       <td colSpan={5} className="p-16">
                         <div className="flex flex-col items-center justify-center text-center">
