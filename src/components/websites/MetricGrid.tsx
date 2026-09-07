@@ -8,13 +8,6 @@ const metricInfo: Record<string, { label: string, description: string, what: str
     how: 'A higher DA generally means the site has a strong backlink profile and established trust.',
     limit: 'DA is a third-party metric, not used by Google. A high DA does not guarantee rankings.'
   },
-  'PA': { 
-    label: 'Page Authority (PA)', 
-    description: 'Moz metric predicting page ranking.',
-    what: 'A score from 1-100 developed by Moz predicting the ranking strength of a single specific page.',
-    how: 'Helps evaluate the specific power of the page your link will be placed on.',
-    limit: 'PA is relative and constantly fluctuates. It is not an official Google metric.'
-  },
   'DR': { 
     label: 'Domain Rating (DR)', 
     description: 'Ahrefs metric for backlink profile strength.',
@@ -105,7 +98,7 @@ export default function MetricGrid({ metrics }: { metrics: any[] }) {
     <div className="space-y-12">
       <div>
         <h2 className="text-2xl font-bold text-slate-900 mb-6">SEO Metrics</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.keys(metricInfo).map(type => renderCard(type))}
         </div>
       </div>

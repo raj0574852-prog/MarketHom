@@ -102,10 +102,58 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Main Content Column (2/3) */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* 1. Hero Section (Top on mobile, Top-Left on desktop) */}
+          <div className="lg:col-span-2 order-1">
             <WebsiteHero website={website} />
+          </div>
+
+          {/* 2. Sidebar Column (Middle on mobile, Right on desktop) */}
+          <div className="lg:col-span-1 lg:row-span-2 space-y-6 order-2">
+            <PricingCard website={website} />
             
+            {/* Sidebar Benefits Card */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+              <h3 className="font-bold text-slate-900 mb-4">Why Choose {website.name}?</h3>
+              <ul className="space-y-3">
+                {website.category_id && (
+                  <li className="flex gap-3 text-slate-600 text-sm">
+                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Relevant audience in the {website.category_id} sector
+                  </li>
+                )}
+                {website.max_dofollow_links > 0 && (
+                  <li className="flex gap-3 text-slate-600 text-sm">
+                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                    Allows up to {website.max_dofollow_links} dofollow links
+                  </li>
+                )}
+                {website.original_content_required && (
+                  <li className="flex gap-3 text-slate-600 text-sm">
+                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    Maintains high standards with original content
+                  </li>
+                )}
+                {website.last_verified_at && (
+                  <li className="flex gap-3 text-slate-600 text-sm">
+                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    Manually verified by our editorial team
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            {/* Need Help Card */}
+            <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-6 text-white">
+              <h3 className="font-bold mb-2">Need Help?</h3>
+              <p className="text-slate-400 text-sm mb-4">Not sure if this website is the right fit for your brand? Our SEO experts can help you build the perfect placement strategy.</p>
+              <Link href="/contact" className="text-[hsl(217,91%,54%)] font-semibold text-sm hover:text-white transition-colors">
+                Contact Strategy Team &rarr;
+              </Link>
+            </div>
+          </div>
+
+          {/* 3. Main Content Column (Bottom on mobile, Bottom-Left on desktop) */}
+          <div className="lg:col-span-2 space-y-8 order-3">
             <MetricGrid metrics={website.website_metrics} />
 
             {/* About Section */}
@@ -148,51 +196,6 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             </div>
 
             <RelatedWebsites categoryId={website.category_id} currentId={website.id} />
-          </div>
-
-          {/* Sidebar Column (1/3) */}
-          <div className="lg:col-span-1 space-y-6">
-            <PricingCard website={website} />
-            
-            {/* Sidebar Benefits Card */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h3 className="font-bold text-slate-900 mb-4">Why Choose {website.name}?</h3>
-              <ul className="space-y-3">
-                {website.category_id && (
-                  <li className="flex gap-3 text-slate-600 text-sm">
-                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Relevant audience in the {website.category_id} sector
-                  </li>
-                )}
-                {website.max_dofollow_links > 0 && (
-                  <li className="flex gap-3 text-slate-600 text-sm">
-                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                    Allows up to {website.max_dofollow_links} dofollow links
-                  </li>
-                )}
-                {website.original_content_required && (
-                  <li className="flex gap-3 text-slate-600 text-sm">
-                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                    Maintains high standards with original content
-                  </li>
-                )}
-                {website.last_verified_at && (
-                  <li className="flex gap-3 text-slate-600 text-sm">
-                    <svg className="w-5 h-5 text-[hsl(217,91%,54%)] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                    Manually verified by our editorial team
-                  </li>
-                )}
-              </ul>
-            </div>
-
-            {/* Need Help Card */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-6 text-white">
-              <h3 className="font-bold mb-2">Need Help?</h3>
-              <p className="text-slate-400 text-sm mb-4">Not sure if this website is the right fit for your brand? Our SEO experts can help you build the perfect placement strategy.</p>
-              <Link href="/contact" className="text-[hsl(217,91%,54%)] font-semibold text-sm hover:text-white transition-colors">
-                Contact Strategy Team &rarr;
-              </Link>
-            </div>
           </div>
         </div>
       </div>
