@@ -32,8 +32,8 @@ export default async function WebsitesIndexPage({
   
   // Use the new View that includes metrics as columns
   let query = supabase
-    .from('website_listings_search')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, da, dr, ahrefs_traffic, semrush_traffic, content_placement_price', { count: 'exact' })
+    .from('website_listings')
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price', { count: 'exact' })
     .eq('status', 'published')
     .eq('is_listed', true);
 
@@ -58,10 +58,7 @@ export default async function WebsitesIndexPage({
         currency: 'USD',
         logo_url: null,
         short_description: 'Premium publishing opportunity on channillo.com.',
-        da: 45,
-        dr: 42,
-        ahrefs_traffic: 12000,
-        semrush_traffic: 15000
+        content_placement_price: null
       }
     ];
     count = 1;
