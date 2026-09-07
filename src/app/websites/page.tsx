@@ -33,7 +33,7 @@ export default async function WebsitesIndexPage({
   // Use the new View that includes metrics as columns
   let query = supabase
     .from('website_listings_search')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, da, dr, ahrefs_traffic, semrush_traffic', { count: 'exact' })
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, da, dr, ahrefs_traffic, semrush_traffic, content_placement_price', { count: 'exact' })
     .eq('status', 'published')
     .eq('is_listed', true);
 
@@ -131,7 +131,7 @@ export default async function WebsitesIndexPage({
                       <div>
                         <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
                         <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                          {site.currency === 'USD' ? '$' : site.currency}{site.price}
+                          {site.currency === 'USD' ? '$' : site.currency}{site.price || site.content_placement_price || '0'}
                         </div>
                       </div>
                       <Link href={`/websites/${site.slug}`} className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md">
@@ -174,7 +174,7 @@ export default async function WebsitesIndexPage({
                       <div className="text-left sm:text-right">
                         <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
                         <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                          {site.currency === 'USD' ? '$' : site.currency}{site.price}
+                          {site.currency === 'USD' ? '$' : site.currency}{site.price || site.content_placement_price || '0'}
                         </div>
                       </div>
                       <Link href={`/websites/${site.slug}`} className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md mt-0 sm:mt-3">

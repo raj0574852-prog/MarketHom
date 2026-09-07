@@ -7,7 +7,7 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
   
   const { data: related, error } = await supabase
     .from('website_listings')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url')
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, content_placement_price')
     .eq('status', 'published')
     .eq('category_id', categoryId)
     .neq('id', currentId)
@@ -37,7 +37,7 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
               <div className="w-full pt-4 border-t border-slate-100 flex justify-between items-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{site.category_id}</span>
                 <span className="font-bold text-slate-900">
-                  {site.currency === 'USD' ? '$' : site.currency}{site.price}
+                  {site.currency === 'USD' ? '$' : site.currency}{site.price || site.content_placement_price || '0'}
                 </span>
               </div>
             </div>
