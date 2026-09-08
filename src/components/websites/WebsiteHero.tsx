@@ -35,13 +35,22 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
             Publish Guest Post on {website.name}
           </h1>
           
-          <div className="flex items-center gap-4 text-sm text-slate-500">
-            <a href={website.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
-              {website.domain}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-            </a>
-            {website.location && <span>• {website.location}</span>}
-            {website.language && <span>• {website.language}</span>}
+          <div className="flex flex-col gap-3 mt-2">
+            <div className="flex items-center gap-4 text-sm text-slate-500">
+              <a href={website.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+                {website.domain}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+              </a>
+              {website.location && <span>• {website.location}</span>}
+              {website.language && <span>• {website.language}</span>}
+            </div>
+            
+            {website.link_validity && (
+              <div className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700 bg-emerald-50 w-fit px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                {website.link_validity} Link Included
+              </div>
+            )}
           </div>
           
           {website.short_description && (

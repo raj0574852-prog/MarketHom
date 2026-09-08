@@ -14,14 +14,21 @@ export default function PricingCard({ website }: { website: WebsiteListing }) {
         {(website.content_placement_selling_price || website.price) ? (
           <div>
             <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold mb-1">Starting At</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-extrabold text-slate-900">
-                {website.currency === 'USD' ? '$' : website.currency}
-                {website.content_placement_selling_price || website.price}
-              </span>
-              {website.discount_price && (
-                <span className="text-lg text-slate-400 line-through">
-                  {website.currency === 'USD' ? '$' : website.currency}{website.discount_price}
+            <div className="flex items-center gap-3">
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-extrabold text-slate-900">
+                  {website.currency === 'USD' ? '$' : website.currency}
+                  {website.content_placement_selling_price || website.price}
+                </span>
+                {website.discount_price && (
+                  <span className="text-lg text-slate-400 line-through">
+                    {website.currency === 'USD' ? '$' : website.currency}{website.discount_price}
+                  </span>
+                )}
+              </div>
+              {website.link_validity && (
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md uppercase tracking-wider border border-emerald-200">
+                  {website.link_validity} Link
                 </span>
               )}
             </div>

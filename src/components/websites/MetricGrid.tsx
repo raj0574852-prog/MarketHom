@@ -67,7 +67,7 @@ const metricInfo: Record<string, { label: string, description: string, what: str
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function MetricGrid({ metrics }: { metrics: any[] }) {
+export default function MetricGrid({ metrics, linkValidity }: { metrics: any[], linkValidity?: string }) {
   
   const getMetricData = (type: string) => {
     return metrics?.find(m => m.metric_type === type) || null;
@@ -107,6 +107,25 @@ export default function MetricGrid({ metrics }: { metrics: any[] }) {
         <h2 className="text-2xl font-bold text-slate-900 mb-6">SEO Metrics</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.keys(metricInfo).map(type => renderCard(type))}
+          
+          {linkValidity && (
+            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow relative group">
+              <h3 className="text-sm font-semibold text-slate-500 mb-2 flex items-center gap-1">
+                Link Type
+                <div className="relative flex items-center justify-center w-4 h-4 rounded-full bg-slate-100 text-slate-400 text-[10px] font-bold cursor-help">
+                  ?
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
+                    <p className="font-bold mb-1">Link Type</p>
+                    <p>The type of backlink provided (e.g. DoFollow, NoFollow). DoFollow passes SEO link juice.</p>
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
+                  </div>
+                </div>
+              </h3>
+              <p className="text-2xl font-bold text-emerald-600">
+                {linkValidity}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

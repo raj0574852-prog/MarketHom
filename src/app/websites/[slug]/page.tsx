@@ -154,7 +154,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
           {/* 3. Main Content Column (Bottom on mobile, Bottom-Left on desktop) */}
           <div className="lg:col-span-2 space-y-8 order-3">
-            <MetricGrid metrics={website.website_metrics} />
+            <MetricGrid metrics={website.website_metrics} linkValidity={website.link_validity} />
 
             {/* About Section */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
