@@ -101,7 +101,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       // 5. Fetch all existing websites to compare
       const { data: existingSites, error: fetchError } = await supabase
         .from('website_listings')
-        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug');
+        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url');
 
       if (fetchError) throw fetchError;
 
@@ -133,6 +133,9 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             sitesToUpdate.push({
               id: existing.id,
               domain: row.domain,
+              slug: existing.slug || row.domain,
+              name: existing.name || row.domain,
+              website_url: existing.website_url || `https://${row.domain}`,
               category_id: row.category_id,
               price: row.price,
               country: row.country,
