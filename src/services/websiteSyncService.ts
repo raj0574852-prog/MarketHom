@@ -1,4 +1,4 @@
-import { supabaseAdmin } from './supabaseAdmin';
+import { getServiceSupabase } from '../lib/supabaseClient';
 import { fetchGoogleSheet, WebsiteRow } from '../lib/googleSheets';
 import { revalidatePath } from 'next/cache';
 import { calculateContentPlacementSellingPrice } from '../lib/pricing/contentPlacement';
