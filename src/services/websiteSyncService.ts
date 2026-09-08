@@ -1,6 +1,8 @@
-import { getServiceSupabase } from '../lib/supabaseClient';
+import { supabaseAdmin } from './supabaseAdmin';
 import { fetchGoogleSheet, WebsiteRow } from '../lib/googleSheets';
 import { revalidatePath } from 'next/cache';
+import { calculateContentPlacementSellingPrice } from '../lib/pricing/contentPlacement';
+import crypto from 'crypto';
 
 export interface SyncResult {
   success: boolean;
@@ -142,6 +144,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               language: row.language,
               link_validity: row.link_validity,
               content_placement_price: row.content_placement_price,
+              content_placement_selling_price: calculateContentPlacementSellingPrice(row.content_placement_price)?.sellingPrice || null,
+              content_placement_markup_percentage: calculateContentPlacementSellingPrice(row.content_placement_price)?.markupPercentage || null,
               link_insert_price: row.link_insert_price,
               cbd_content_placement_price: row.cbd_content_placement_price,
               cbd_content_creation_placement_price: row.cbd_content_creation_placement_price,
@@ -187,6 +191,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             language: row.language,
             link_validity: row.link_validity,
             content_placement_price: row.content_placement_price,
+            content_placement_selling_price: calculateContentPlacementSellingPrice(row.content_placement_price)?.sellingPrice || null,
+            content_placement_markup_percentage: calculateContentPlacementSellingPrice(row.content_placement_price)?.markupPercentage || null,
             link_insert_price: row.link_insert_price,
             cbd_content_placement_price: row.cbd_content_placement_price,
             cbd_content_creation_placement_price: row.cbd_content_creation_placement_price,

@@ -18,6 +18,8 @@ export interface WebsiteListing {
   platform_type?: string;
   price?: number;
   content_placement_price?: number;
+  content_placement_selling_price?: number;
+  content_placement_markup_percentage?: number;
   discount_price?: number;
   currency?: string;
   status: string;

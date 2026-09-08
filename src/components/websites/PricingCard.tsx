@@ -16,7 +16,7 @@ export default function PricingCard({ website }: { website: WebsiteListing }) {
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-extrabold text-slate-900">
               {website.currency === 'USD' ? '$' : website.currency}
-              {website.price || website.content_placement_price || '0'}
+              {website.content_placement_selling_price || website.price || '0'}
             </span>
             {website.discount_price && (
               <span className="text-lg text-slate-400 line-through">
