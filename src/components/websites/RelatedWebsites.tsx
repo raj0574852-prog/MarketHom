@@ -36,9 +36,13 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
               <p className="text-sm text-slate-500 mb-4">{site.domain}</p>
               <div className="w-full pt-4 border-t border-slate-100 flex justify-between items-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{site.category_id}</span>
-                <span className="font-bold text-slate-900">
-                  {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price || '0'}
-                </span>
+                {(site.content_placement_selling_price || site.price) ? (
+                  <span className="font-bold text-slate-900">
+                    {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price}
+                  </span>
+                ) : (
+                  <span className="font-bold text-[hsl(217,91%,54%)]">Buy Now</span>
+                )}
               </div>
             </div>
           </Link>

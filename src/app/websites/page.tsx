@@ -127,10 +127,16 @@ export default async function WebsitesIndexPage({
                     
                     <div className="border-t border-slate-100 pt-5 flex items-center justify-between mt-auto">
                       <div>
-                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
-                        <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                          {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price || '0'}
-                        </div>
+                        {(site.content_placement_selling_price || site.price) ? (
+                          <>
+                            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
+                            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-xl font-bold text-[hsl(217,91%,54%)] mt-2">Buy Now</div>
+                        )}
                       </div>
                       <Link href={`/websites/${site.slug}`} className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md">
                         View Details
@@ -170,10 +176,16 @@ export default async function WebsitesIndexPage({
                     
                     <div className="sm:border-l border-slate-100 sm:pl-6 flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0">
                       <div className="text-left sm:text-right">
-                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
-                        <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                          {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price || '0'}
-                        </div>
+                        {(site.content_placement_selling_price || site.price) ? (
+                          <>
+                            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
+                            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-xl font-bold text-[hsl(217,91%,54%)] mt-1">Buy Now</div>
+                        )}
                       </div>
                       <Link href={`/websites/${site.slug}`} className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md mt-0 sm:mt-3">
                         View Details
