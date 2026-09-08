@@ -103,7 +103,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       // 5. Fetch all existing websites to compare
       const { data: existingSites, error: fetchError } = await supabase
         .from('website_listings')
-        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url');
+        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url, content_placement_selling_price');
 
       if (fetchError) throw fetchError;
 
@@ -127,7 +127,13 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
         if (existing) {
           const newIsListed = row.is_listed !== false; // Default to true unless explicitly marked false
 
-          if (existing.source_hash === row.source_hash && existing.is_in_google_sheet === true && existing.is_listed === newIsListed) {
+          const newSellingPrice = calculateContentPlacementSellingPrice(row.content_placement_price)?.sellingPrice || null;
+          const newMarkupPercentage = calculateContentPlacementSellingPrice(row.content_placement_price)?.markupPercentage || null;
+
+          if (existing.source_hash === row.source_hash && 
+              existing.is_in_google_sheet === true && 
+              existing.is_listed === newIsListed &&
+              existing.content_placement_selling_price === newSellingPrice) {
             stats.unchanged++;
             continue; // No changes
           } else {
@@ -144,8 +150,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               language: row.language,
               link_validity: row.link_validity,
               content_placement_price: row.content_placement_price,
-              content_placement_selling_price: calculateContentPlacementSellingPrice(row.content_placement_price)?.sellingPrice || null,
-              content_placement_markup_percentage: calculateContentPlacementSellingPrice(row.content_placement_price)?.markupPercentage || null,
+              content_placement_selling_price: newSellingPrice,
+              content_placement_markup_percentage: newMarkupPercentage,
               link_insert_price: row.link_insert_price,
               cbd_content_placement_price: row.cbd_content_placement_price,
               cbd_content_creation_placement_price: row.cbd_content_creation_placement_price,
