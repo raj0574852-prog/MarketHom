@@ -8,6 +8,13 @@ const metricInfo: Record<string, { label: string, description: string, what: str
     how: 'A higher DA generally means the site has a strong backlink profile and established trust.',
     limit: 'DA is a third-party metric, not used by Google. A high DA does not guarantee rankings.'
   },
+  'PA': { 
+    label: 'Page Authority (PA)', 
+    description: 'Moz metric predicting page ranking potential.',
+    what: 'A score from 1-100 developed by Moz that predicts how likely a specific page is to rank in search engine result pages (SERPs).',
+    how: 'A higher PA generally means the specific page has a strong backlink profile.',
+    limit: 'PA is a third-party metric, not used by Google. A high PA does not guarantee rankings.'
+  },
   'DR': { 
     label: 'Domain Rating (DR)', 
     description: 'Ahrefs metric for backlink profile strength.',

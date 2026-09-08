@@ -160,6 +160,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             // Queue metrics
             metricsToUpsert.push(
               { website_listing_id: existing.id, metric_type: 'DA', value: row.da },
+              { website_listing_id: existing.id, metric_type: 'PA', value: row.pa },
               { website_listing_id: existing.id, metric_type: 'DR', value: row.dr },
               { website_listing_id: existing.id, metric_type: 'SEMRUSH_AUTHORITY', value: row.semrush_traffic },
               { website_listing_id: existing.id, metric_type: 'AHREFS_TRAFFIC', value: row.ahrefs_traffic },
@@ -204,6 +205,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
 
           metricsToUpsert.push(
             { website_listing_id: newId, metric_type: 'DA', value: row.da },
+            { website_listing_id: newId, metric_type: 'PA', value: row.pa },
             { website_listing_id: newId, metric_type: 'DR', value: row.dr },
             { website_listing_id: newId, metric_type: 'SEMRUSH_AUTHORITY', value: row.semrush_traffic },
             { website_listing_id: newId, metric_type: 'AHREFS_TRAFFIC', value: row.ahrefs_traffic },

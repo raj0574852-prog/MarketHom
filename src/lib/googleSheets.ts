@@ -8,6 +8,7 @@ export interface WebsiteRow {
   category_id?: string;
   price?: number;
   da?: number;
+  pa?: number;
   dr?: number;
   ahrefs_traffic?: number;
   semrush_traffic?: number;
@@ -44,9 +45,10 @@ export function mapHeaders(header: string): string {
   
   if (h === 'domain' || h === 'website' || h === 'website url' || h === 'url') return 'domain';
   if (h === 'da' || h === 'domain authority') return 'da';
+  if (h === 'pa' || h === 'page authority') return 'pa';
   if (h === 'dr' || h === 'domain rating') return 'dr';
   if (h === 'traffic' || h === 'monthly traffic' || h === 'organic traffic' || h.includes('ahrefs traffic')) return 'ahrefs_traffic';
-  if (h.includes('semrush traffic')) return 'semrush_traffic';
+  if (h === 'semrush score' || h.includes('semrush traffic')) return 'semrush_traffic';
   if (h === 'spam score') return 'spam_score';
   if (h === 'category' || h === 'niche') return 'category_id';
   if (h === 'country' || h === 'location') return 'country';
