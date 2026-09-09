@@ -15,7 +15,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     const { data, error } = await supabase
       .from('website_listings')
-      .select('*, website_metrics(*)')
+      .select('*, website_metrics(*), website_faqs(*)')
       .eq('id', id)
       .single();
 

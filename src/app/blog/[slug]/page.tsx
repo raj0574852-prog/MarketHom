@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 import { getPublishedPostBySlug } from '@/lib/blog/posts';
 import { Metadata, ResolvingMetadata } from 'next';
+import { CANONICAL_SITE_URL } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +37,7 @@ export async function generateMetadata(
     openGraph: {
       title: post.metaTitle || post.title,
       description: post.metaDescription || post.excerpt || '',
-      url: `https://www.educationhom.com/blog/${post.slug}`,
+      url: `${CANONICAL_SITE_URL}/blog/${post.slug}`,
       siteName: 'MarketHom Agency',
       images: post.featuredImage ? [post.featuredImage, ...previousImages] : previousImages,
       locale: 'en_US',

@@ -129,21 +129,6 @@ export default function MetricGrid({ metrics, linkValidity }: { metrics: any[], 
         </div>
       </div>
 
-      <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200">
-        <h2 className="text-xl font-bold text-slate-900 mb-6">Understanding These Metrics</h2>
-        <div className="space-y-6">
-          {Object.entries(metricInfo).map(([type, info]) => (
-            <div key={`info-${type}`} className="border-b border-slate-200 pb-4 last:border-0 last:pb-0">
-              <h4 className="font-bold text-slate-800 mb-2">{info.label}</h4>
-              <ul className="space-y-2 text-sm text-slate-600">
-                <li><strong className="text-slate-700">What it means:</strong> {info.what}</li>
-                <li><strong className="text-slate-700">How it can help:</strong> {info.how}</li>
-                <li><strong className="text-amber-700">Important limitation:</strong> {info.limit}</li>
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

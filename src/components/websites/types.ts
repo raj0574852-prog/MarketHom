@@ -50,4 +50,15 @@ export interface WebsiteListing {
   created_at?: string;
   updated_at?: string;
   website_metrics?: any[];
+  website_faqs?: WebsiteFAQ[];
+}
+
+export interface WebsiteFAQ {
+  id: string;
+  website_listing_id: string;
+  question: string;
+  answer: string;
+  display_order: number;
+  created_at?: string;
+  updated_at?: string;
 }

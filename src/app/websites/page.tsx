@@ -5,13 +5,24 @@ import Pagination from '@/components/websites/Pagination';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'SEO Marketplace | Premium Website Listings',
-  description: 'Browse our exclusive catalog of premium websites accepting guest posts and link placements. Boost your SEO with high DA/DR websites.',
-  alternates: {
-    canonical: 'https://educationhom.com/websites',
-  }
-};
+import { CANONICAL_SITE_URL } from '@/lib/constants';
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
+  const params = await searchParams;
+  const hasQueryParams = Object.keys(params).length > 0;
+
+  return {
+    title: 'SEO Marketplace | Premium Website Listings',
+    description: 'Browse our exclusive catalog of premium websites accepting guest posts and link placements. Boost your SEO with high DA/DR websites.',
+    alternates: {
+      canonical: `${CANONICAL_SITE_URL}/websites`,
+    },
+    robots: {
+      index: !hasQueryParams,
+      follow: true,
+    }
+  };
+}
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -98,7 +109,7 @@ export default async function WebsitesIndexPage({
         ) : (
           <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
             {websites.map(site => (
-              <div key={site.id} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
+              <Link key={site.id} href={`/websites/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
                 {view === 'grid' ? (
                   // GRID VIEW
                   <div className="p-6 flex-1 flex flex-col relative w-full">
@@ -138,9 +149,9 @@ export default async function WebsitesIndexPage({
                           <div className="text-xl font-bold text-[hsl(217,91%,54%)] mt-2">Buy Now</div>
                         )}
                       </div>
-                      <Link href={`/websites/${site.slug}`} className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md">
+                      <div className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md">
                         View Details
-                      </Link>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -187,13 +198,13 @@ export default async function WebsitesIndexPage({
                           <div className="text-xl font-bold text-[hsl(217,91%,54%)] mt-1">Buy Now</div>
                         )}
                       </div>
-                      <Link href={`/websites/${site.slug}`} className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md mt-0 sm:mt-3">
+                      <div className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md mt-0 sm:mt-3">
                         View Details
-                      </Link>
+                      </div>
                     </div>
                   </>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         )}

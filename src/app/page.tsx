@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/home/HeroSection';
+import { CANONICAL_SITE_URL } from '@/lib/constants';
 
 const StatsSection = dynamic(() => import('@/components/home/StatsSection'), { ssr: true });
 const ServicesSection = dynamic(() => import('@/components/home/ServicesSection'), { ssr: true });
@@ -37,8 +38,8 @@ export default function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: 'MarketHom Agency',
-            url: 'https://www.educationhom.com',
-            logo: 'https://www.educationhom.com/logo.png',
+            url: CANONICAL_SITE_URL,
+            logo: `${CANONICAL_SITE_URL}/logo.png`,
             description:
               'Premium digital marketing agency specializing in SEO, AI SEO, PPC, SMM, Link Building and Web Development.',
             contactPoint: {

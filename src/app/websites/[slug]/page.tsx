@@ -11,6 +11,7 @@ import MetricGrid from '@/components/websites/MetricGrid';
 import PublishingGuidelines from '@/components/websites/PublishingGuidelines';
 import AcceptedContent from '@/components/websites/AcceptedContent';
 import RelatedWebsites from '@/components/websites/RelatedWebsites';
+import FAQAccordion from '@/components/websites/FAQAccordion';
 
 export const revalidate = 60;
 
@@ -18,7 +19,7 @@ async function getListingData(slug: string) {
   const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from('website_listings')
-    .select('*, website_metrics(*)')
+    .select('*, website_metrics(*), website_faqs(*)')
     .eq('slug', slug)
     .eq('status', 'published')
     .single();
@@ -57,6 +58,9 @@ async function getListingData(slug: string) {
   return data;
 }
 
+import { CANONICAL_SITE_URL } from '@/lib/constants';
+import { evaluatePublisherIndexability } from '@/lib/seo/qualityGate';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const website = await getListingData(slug);
@@ -67,13 +71,31 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = website.seo_title || `Publish on ${website.name} | Premium Guest Post`;
   const description = website.seo_description || website.short_description || `Secure a premium guest post placement on ${website.domain}. High authority, verified SEO metrics, and strict editorial guidelines.`;
-  const canonical = website.canonical_url || `https://educationhom.com/websites/${website.slug}`;
+  const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
+
+  // Evaluate indexability dynamically
+  const { indexable } = evaluatePublisherIndexability(website);
 
   return {
     title,
     description,
     alternates: {
       canonical
+    },
+    robots: {
+      index: indexable,
+      follow: true, // Always follow to allow crawling other links even if this page is noindex
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'article', // Or 'website'
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
     }
   };
 }
@@ -88,6 +110,54 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900 pb-24 pt-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: CANONICAL_SITE_URL,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Marketplace',
+                item: `${CANONICAL_SITE_URL}/websites`,
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: website.name,
+                item: `${CANONICAL_SITE_URL}/websites/${website.slug}`,
+              },
+            ],
+          }),
+        }}
+      />
+      {website.website_faqs && website.website_faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: website.website_faqs.sort((a: any, b: any) => a.display_order - b.display_order).map((faq: any) => ({
+                '@type': 'Question',
+                name: faq.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: faq.answer
+                }
+              }))
+            })
+          }}
+        />
+      )}
       {/* Breadcrumbs (Light theme version for this page) */}
       <div className="bg-white border-b border-slate-200 py-3 text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 text-slate-500">
@@ -186,8 +256,10 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             </div>
 
             <AcceptedContent website={website} />
+            
+            <FAQAccordion faqs={website.website_faqs} />
 
-            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-sm text-blue-800">
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-sm text-blue-800 mt-8">
               <strong className="font-bold flex items-center gap-2 mb-2">
                 <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
                 Important Note

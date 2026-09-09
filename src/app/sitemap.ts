@@ -2,8 +2,11 @@ import { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/blog/posts';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 
+import { CANONICAL_SITE_URL } from '@/lib/constants';
+import { evaluatePublisherIndexability } from '@/lib/seo/qualityGate';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.educationhom.com';
+  const baseUrl = CANONICAL_SITE_URL;
   
   const staticRoutes = [
     '',
@@ -23,7 +26,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/websites', // Added marketplace base route
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
     changeFrequency: route === '/blog' || route === '/websites' ? ('daily' as const) : ('weekly' as const),
     priority: route === '' ? 1.0 : (route === '/websites' ? 0.9 : 0.8),
   }));
@@ -33,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const blogRoutes = dynamicBlogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.date || Date.now()),
+    ...(post.date ? { lastModified: new Date(post.date) } : {}),
     changeFrequency: 'daily' as const,
     priority: 0.9,
   }));
@@ -42,15 +44,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = getServiceSupabase();
   const { data: websites } = await supabase
     .from('website_listings')
-    .select('slug, updated_at')
+    .select('*, website_metrics(*)')
     .eq('status', 'published');
 
-  const websiteRoutes = (websites || []).map((site) => ({
-    url: `${baseUrl}/websites/${site.slug}`,
-    lastModified: new Date(site.updated_at || Date.now()),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
+  const websiteRoutes = (websites || [])
+    .filter((site) => evaluatePublisherIndexability(site).indexable)
+    .map((site) => {
+      const lastModDate = site.last_synced_at || site.updated_at || site.created_at;
+      return {
+        url: `${baseUrl}/websites/${site.slug}`,
+        ...(lastModDate ? { lastModified: new Date(lastModDate) } : {}),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      };
+    });
 
   return [...staticRoutes, ...blogRoutes, ...websiteRoutes];
 }

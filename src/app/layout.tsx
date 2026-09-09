@@ -4,6 +4,8 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
+import { CANONICAL_SITE_URL } from '@/lib/constants';
+
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -11,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://educationhom.com'),
+  metadataBase: new URL(CANONICAL_SITE_URL),
   title: {
     default: 'MarketHom Agency | Premium Digital Marketing & AI SEO Agency',
     template: '%s | MarketHom Agency',
@@ -35,14 +37,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://educationhom.com',
+    url: CANONICAL_SITE_URL,
     siteName: 'MarketHom Agency',
     title: 'MarketHom Agency | AI Content Intelligence & SEO Agency',
     description:
       'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: [
       {
-        url: '/og-image.png',
+        url: `${CANONICAL_SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'MarketHom Agency',
@@ -54,7 +56,7 @@ export const metadata: Metadata = {
     title: 'MarketHom Agency | AI Content Intelligence & SEO Agency',
     description:
       'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
-    images: ['/og-image.png'],
+    images: [`${CANONICAL_SITE_URL}/og-image.png`],
   },
   robots: {
     index: true,
@@ -76,8 +78,8 @@ const jsonLdOrganization = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'MarketHom Agency',
-  url: 'https://educationhom.com',
-  logo: 'https://educationhom.com/og-image.png',
+  url: CANONICAL_SITE_URL,
+  logo: `${CANONICAL_SITE_URL}/og-image.png`,
   description: 'AI Content Intelligence, Google SEO, AEO, GEO, PPC, and Web Development Agency.',
   sameAs: [
     'https://twitter.com/markethomagency',
@@ -105,10 +107,10 @@ const jsonLdWebSite = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'MarketHom Agency',
-  url: 'https://educationhom.com',
+  url: CANONICAL_SITE_URL,
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://educationhom.com/blog?q={search_term_string}',
+    target: `${CANONICAL_SITE_URL}/blog?q={search_term_string}`,
     'query-input': 'required name=search_term_string'
   }
 };

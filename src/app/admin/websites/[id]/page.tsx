@@ -8,6 +8,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
   const router = useRouter();
   const [website, setWebsite] = useState<any>(null);
   const [metrics, setMetrics] = useState<any[]>([]);
+  const [faqs, setFaqs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
@@ -20,6 +21,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
           const data = await res.json();
           setWebsite(data);
           setMetrics(data.website_metrics || []);
+          setFaqs(data.website_faqs || []);
         }
       } catch (err) {
         console.error(err);
@@ -89,6 +91,49 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
     }
   };
 
+  const handleFaqSave = async (faq: any) => {
+    try {
+      const isNew = !faq.id;
+      const url = isNew ? `/api/websites/${params.id}/faqs` : `/api/websites/${params.id}/faqs/${faq.id}`;
+      const method = isNew ? 'POST' : 'PATCH';
+      
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(faq)
+      });
+      
+      if (res.ok) {
+        const savedFaq = await res.json();
+        setFaqs(prev => {
+          if (isNew) return [...prev, savedFaq];
+          return prev.map(f => f.id === savedFaq.id ? savedFaq : f);
+        });
+        alert('FAQ saved!');
+      } else {
+        alert('Failed to save FAQ.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error saving FAQ.');
+    }
+  };
+
+  const handleFaqDelete = async (faqId: string) => {
+    if (!confirm('Are you sure you want to delete this FAQ?')) return;
+    try {
+      const res = await fetch(`/api/websites/${params.id}/faqs/${faqId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setFaqs(prev => prev.filter(f => f.id !== faqId));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting FAQ.');
+    }
+  };
+
   if (loading) return <div className="p-8 text-white">Loading...</div>;
   if (!website) return <div className="p-8 text-white">Not found</div>;
 
@@ -138,7 +183,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
               <h3 className="font-semibold mb-4 text-slate-300 uppercase text-xs tracking-wider">Navigation</h3>
               <nav className="space-y-1">
-                {['basic', 'content', 'guidelines', 'policies', 'seo', 'metrics', 'advanced_pricing'].map(tab => (
+                {['basic', 'content', 'guidelines', 'policies', 'seo', 'metrics', 'advanced_pricing', 'faqs'].map(tab => (
                   <button 
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -358,6 +403,86 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
                     <div><label className="block text-sm text-slate-400 mb-1">Adult Content Creation & Placement Price ($)</label><input type="number" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.adult_content_creation_placement_price || ''} onChange={e => handleChange('adult_content_creation_placement_price', e.target.value ? parseFloat(e.target.value) : null)} /></div>
                     <div><label className="block text-sm text-slate-400 mb-1">Adult Link Insert Price ($)</label><input type="number" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.adult_link_insert_price || ''} onChange={e => handleChange('adult_link_insert_price', e.target.value ? parseFloat(e.target.value) : null)} /></div>
                   </div>
+                </div>
+              )}
+
+              {activeTab === 'faqs' && (
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold border-b border-slate-800 pb-4">FAQs (Frequently Asked Questions)</h2>
+                  
+                  <div className="space-y-4">
+                    {faqs.sort((a, b) => a.display_order - b.display_order).map((faq, index) => (
+                      <div key={faq.id || `new-${index}`} className="bg-slate-950 border border-slate-800 rounded-lg p-4 space-y-4">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-semibold text-slate-300">FAQ Item {index + 1}</h4>
+                          {faq.id && (
+                            <button 
+                              onClick={() => handleFaqDelete(faq.id)}
+                              className="text-red-400 hover:text-red-300 text-sm"
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-sm text-slate-400 mb-1">Question</label>
+                          <input 
+                            type="text" 
+                            className="w-full bg-slate-900 border border-slate-800 rounded p-2" 
+                            value={faq.question || ''} 
+                            onChange={e => {
+                              const newFaqs = [...faqs];
+                              newFaqs[index].question = e.target.value;
+                              setFaqs(newFaqs);
+                            }} 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-slate-400 mb-1">Answer</label>
+                          <textarea 
+                            rows={3} 
+                            className="w-full bg-slate-900 border border-slate-800 rounded p-2" 
+                            value={faq.answer || ''} 
+                            onChange={e => {
+                              const newFaqs = [...faqs];
+                              newFaqs[index].answer = e.target.value;
+                              setFaqs(newFaqs);
+                            }} 
+                          />
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="w-1/3">
+                            <label className="block text-sm text-slate-400 mb-1">Order</label>
+                            <input 
+                              type="number" 
+                              className="w-full bg-slate-900 border border-slate-800 rounded p-2" 
+                              value={faq.display_order || 0} 
+                              onChange={e => {
+                                const newFaqs = [...faqs];
+                                newFaqs[index].display_order = parseInt(e.target.value) || 0;
+                                setFaqs(newFaqs);
+                              }} 
+                            />
+                          </div>
+                          <div className="w-2/3 flex items-end">
+                            <button 
+                              onClick={() => handleFaqSave(faq)}
+                              className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded font-bold transition-colors"
+                            >
+                              Save FAQ
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button 
+                    onClick={() => setFaqs([...faqs, { question: '', answer: '', display_order: faqs.length, website_listing_id: website.id }])}
+                    className="w-full py-3 border border-dashed border-slate-700 hover:border-slate-500 rounded-lg text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
+                    <span>+ Add New FAQ</span>
+                  </button>
                 </div>
               )}
 

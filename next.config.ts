@@ -21,6 +21,22 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['react', 'react-dom'],
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'educationhom.com',
+          },
+        ],
+        destination: 'https://www.educationhom.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   // Cache static assets for 1 year
   async headers() {
     return [
