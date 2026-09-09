@@ -63,8 +63,9 @@ export function evaluatePublisherIndexability(website: Partial<WebsiteListing> &
   }
 
   // Determine indexability.
-  // Essential rules: must be published, listed, and have a valid slug.
-  const isTechnicallyEligible = website.status === 'published' && website.is_listed !== false && !!website.slug;
+  // Essential rules: must be published and have a valid slug.
+  // Google Sheets removal sets is_listed to false, but MUST NOT cause noindex.
+  const isTechnicallyEligible = website.status === 'published' && !!website.slug;
   
   const indexable = isTechnicallyEligible;
 

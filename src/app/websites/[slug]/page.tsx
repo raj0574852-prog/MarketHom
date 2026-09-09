@@ -6,12 +6,15 @@ import { getServiceSupabase } from '@/lib/supabaseClient';
 
 // Components
 import WebsiteHero from '@/components/websites/WebsiteHero';
+import QuickOverview from '@/components/websites/QuickOverview';
+import PublishingOpportunity from '@/components/websites/PublishingOpportunity';
 import PricingCard from '@/components/websites/PricingCard';
 import MetricGrid from '@/components/websites/MetricGrid';
 import PublishingGuidelines from '@/components/websites/PublishingGuidelines';
 import AcceptedContent from '@/components/websites/AcceptedContent';
 import RelatedWebsites from '@/components/websites/RelatedWebsites';
 import FAQAccordion from '@/components/websites/FAQAccordion';
+import { generatePublisherFAQs } from '@/components/websites/faqGenerator';
 
 export const revalidate = 60;
 
@@ -69,8 +72,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return { title: 'Not Found' };
   }
 
-  const title = website.seo_title || `Publish on ${website.name} | Premium Guest Post`;
-  const description = website.seo_description || website.short_description || `Secure a premium guest post placement on ${website.domain}. High authority, verified SEO metrics, and strict editorial guidelines.`;
+  const categoryName = website.category_id || 'General';
+  const title = website.seo_title || `Publish Guest Post on ${website.domain} | Pricing & Publishing Details`;
+  
+  let description = website.seo_description || website.short_description;
+  if (!description) {
+    description = `Publishing opportunity on ${website.domain} in the ${categoryName} category.`;
+    if (website.content_placement_price) {
+      description += ` Listing includes $${website.content_placement_price} pricing`;
+    }
+    const hasMetrics = website.website_metrics && website.website_metrics.length > 0;
+    if (hasMetrics) {
+      description += ` and SEO metrics`;
+    }
+    description += `.`;
+  }
+  
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
 
   // Evaluate indexability dynamically
@@ -108,45 +125,61 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
     notFound();
   }
 
+  const faqs = generatePublisherFAQs(website);
+  const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
+
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900 pb-24 pt-20">
+      {/* WebPage & Breadcrumb Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'BreadcrumbList',
-            itemListElement: [
+            '@graph': [
               {
-                '@type': 'ListItem',
-                position: 1,
-                name: 'Home',
-                item: CANONICAL_SITE_URL,
+                '@type': 'WebPage',
+                '@id': canonical,
+                'url': canonical,
+                'name': website.seo_title || `Publish Guest Post on ${website.domain}`,
+                'description': website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`,
               },
               {
-                '@type': 'ListItem',
-                position: 2,
-                name: 'Marketplace',
-                item: `${CANONICAL_SITE_URL}/websites`,
-              },
-              {
-                '@type': 'ListItem',
-                position: 3,
-                name: website.name,
-                item: `${CANONICAL_SITE_URL}/websites/${website.slug}`,
-              },
-            ],
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  {
+                    '@type': 'ListItem',
+                    position: 1,
+                    name: 'Home',
+                    item: CANONICAL_SITE_URL,
+                  },
+                  {
+                    '@type': 'ListItem',
+                    position: 2,
+                    name: 'Marketplace',
+                    item: `${CANONICAL_SITE_URL}/websites`,
+                  },
+                  {
+                    '@type': 'ListItem',
+                    position: 3,
+                    name: website.name || website.domain,
+                    item: canonical,
+                  },
+                ],
+              }
+            ]
           }),
         }}
       />
-      {website.website_faqs && website.website_faqs.length > 0 && (
+      {/* FAQ Schema */}
+      {faqs.length > 0 && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'FAQPage',
-              mainEntity: website.website_faqs.sort((a: any, b: any) => a.display_order - b.display_order).map((faq: any) => ({
+              mainEntity: faqs.map((faq: any) => ({
                 '@type': 'Question',
                 name: faq.question,
                 acceptedAnswer: {
@@ -224,6 +257,16 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
           {/* 3. Main Content Column (Bottom on mobile, Bottom-Left on desktop) */}
           <div className="lg:col-span-2 space-y-8 order-3">
+            <QuickOverview website={website} />
+            <PublishingOpportunity website={website} />
+            
+            {(website.updated_at || website.last_verified_at) && (
+              <div className="text-sm text-slate-500 italic">
+                Listing information last updated: {new Date(website.updated_at || website.last_verified_at!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            )}
+
+            {/* Metrics are partially in Quick Overview, but MetricGrid provides deeper context/tooltips */}
             <MetricGrid metrics={website.website_metrics} linkValidity={website.link_validity} />
 
             {/* About Section */}
@@ -257,7 +300,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
             <AcceptedContent website={website} />
             
-            <FAQAccordion faqs={website.website_faqs} />
+            <FAQAccordion faqs={faqs} />
 
             <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-sm text-blue-800 mt-8">
               <strong className="font-bold flex items-center gap-2 mb-2">

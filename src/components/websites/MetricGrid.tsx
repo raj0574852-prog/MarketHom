@@ -89,7 +89,8 @@ export default function MetricGrid({ metrics, linkValidity }: { metrics: any[], 
             ?
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
               <p className="font-bold mb-1">{info.label}</p>
-              <p>{info.description}</p>
+              <p className="mb-2">{info.description}</p>
+              <p className="text-[10px] text-slate-300">The EducationHom listing currently reports this as a third-party estimate. Metrics may change over time.</p>
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
             </div>
           </div>
