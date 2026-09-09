@@ -14,10 +14,11 @@ export function generatePublisherFAQs(website: WebsiteListing): WebsiteFAQ[] {
     });
   };
 
-  if (website.content_placement_price) {
+  const displayPrice = website.content_placement_selling_price || website.price;
+  if (displayPrice) {
     addFaq(
       `What is the starting price to publish a guest post on ${website.domain}?`,
-      `The starting price for a content placement on ${website.domain} is $${website.content_placement_price} USD through the EducationHom marketplace. Prices may vary depending on the specific publication requirements.`
+      `The starting price for a content placement on ${website.domain} is $${displayPrice} USD through the EducationHom marketplace. Prices may vary depending on the specific publication requirements.`
     );
   }
 

@@ -8,6 +8,7 @@ export default function QuickOverview({ website }: { website: WebsiteListing }) 
   const traffic = website.website_metrics?.find((m: any) => m.metric_type === 'ORGANIC_TRAFFIC')?.value;
   
   const categoryName = website.category_id || 'General';
+  const displayPrice = website.content_placement_selling_price || website.price;
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
@@ -35,10 +36,10 @@ export default function QuickOverview({ website }: { website: WebsiteListing }) 
             <span className="text-slate-900 font-medium">{website.link_validity}</span>
           </div>
         )}
-        {website.content_placement_price && (
+        {displayPrice && (
           <div className="flex flex-col">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Starting Price</span>
-            <span className="text-slate-900 font-medium">${website.content_placement_price} USD</span>
+            <span className="text-slate-900 font-medium">${displayPrice} USD</span>
           </div>
         )}
         {da && (

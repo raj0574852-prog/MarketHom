@@ -78,8 +78,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   let description = website.seo_description || website.short_description;
   if (!description) {
     description = `Publishing opportunity on ${website.domain} in the ${categoryName} category.`;
-    if (website.content_placement_price) {
-      description += ` Listing includes $${website.content_placement_price} pricing`;
+    const displayPrice = website.content_placement_selling_price || website.price;
+    if (displayPrice) {
+      description += ` Listing includes $${displayPrice} pricing`;
     }
     const hasMetrics = website.website_metrics && website.website_metrics.length > 0;
     if (hasMetrics) {
