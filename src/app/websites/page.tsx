@@ -41,10 +41,10 @@ export default async function WebsitesIndexPage({
   const limit = 20;
   const offset = (page - 1) * limit;
   
-  // Use the new View that includes metrics as columns
+  // Use Limit + 1 pagination strategy for scalability
   let query = supabase
     .from('website_listings')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price', { count: 'exact' })
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price')
     .eq('status', 'published')
     .eq('is_listed', true);
 
@@ -52,9 +52,12 @@ export default async function WebsitesIndexPage({
   if (category) query = query.eq('category_id', category);
   if (country) query = query.eq('country', country);
 
-  let { data: websites, error, count } = await query
+  let { data: websitesRaw, error } = await query
     .order('featured', { ascending: false })
-    .range(offset, offset + limit - 1);
+    .range(offset, offset + limit); // Request limit + 1
+
+  const hasNextPage = websitesRaw && websitesRaw.length > limit;
+  let websites = websitesRaw ? websitesRaw.slice(0, limit) : [];
 
   // Fallback mock data for preview if DB connection fails or view missing
   if (error || !websites) {
@@ -73,11 +76,8 @@ export default async function WebsitesIndexPage({
         content_placement_selling_price: null
       }
     ];
-    count = 1;
   }
-  
-  const totalItems = count || 0;
-  const totalPages = Math.ceil(totalItems / limit);
+
 
   const view = typeof params.view === 'string' && params.view === 'list' ? 'list' : 'grid';
   
@@ -210,7 +210,10 @@ export default async function WebsitesIndexPage({
         )}
         
         {websites && websites.length > 0 && (
-          <Pagination currentPage={page} totalPages={totalPages} totalItems={totalItems} />
+          <Pagination 
+            currentPage={page} 
+            hasNextPage={hasNextPage || false}
+          />
         )}
       </div>
     </div>

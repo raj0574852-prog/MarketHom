@@ -10,13 +10,17 @@ export default function AdminWebsitesPage() {
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
-  const fetchWebsites = async () => {
+  const fetchWebsites = async (currentPage = page, query = searchQuery) => {
     try {
-      const res = await fetch('/api/websites');
+      setLoading(true);
+      const res = await fetch(`/api/websites?page=${currentPage}&limit=50&q=${encodeURIComponent(query)}`);
       if (res.ok) {
-        const data = await res.json();
-        setWebsites(data);
+        const result = await res.json();
+        setWebsites(result.data || []);
+        setHasNextPage(result.hasNextPage || false);
       }
     } catch (error) {
       console.error('Error fetching websites:', error);
@@ -25,9 +29,18 @@ export default function AdminWebsitesPage() {
     }
   };
 
+  // Use a debounce for search
   useEffect(() => {
-    fetchWebsites();
-  }, []);
+    const timer = setTimeout(() => {
+      setPage(1);
+      fetchWebsites(1, searchQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchWebsites(page, searchQuery);
+  }, [page]);
 
   const handleSync = async () => {
     setIsSyncing(true);
@@ -88,10 +101,8 @@ export default function AdminWebsitesPage() {
     }
   };
 
-  const filteredWebsites = websites.filter(w => 
-    (w.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (w.domain || '').toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Client-side filtering is removed, we use server-side search instead
+  const filteredWebsites = websites;
 
   return (
     <div className="p-8 pt-32 text-white min-h-screen">
@@ -245,6 +256,30 @@ export default function AdminWebsitesPage() {
                   )}
                 </tbody>
               </table>
+
+              {filteredWebsites.length > 0 && (
+                <div className="p-6 flex items-center justify-between border-t border-slate-800 bg-slate-950/50">
+                  <div className="text-sm text-slate-400">
+                    Page <span className="font-medium text-white">{page}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={page <= 1 || loading}
+                      className="px-4 py-2 border border-slate-700 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm transition-colors"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={() => setPage(p => p + 1)}
+                      disabled={!hasNextPage || loading}
+                      className="px-4 py-2 border border-slate-700 rounded-lg bg-slate-900 text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

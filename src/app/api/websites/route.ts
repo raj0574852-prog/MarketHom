@@ -12,16 +12,29 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const supabase = getServiceSupabase();
 
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 1000);
+    const q = searchParams.get('q') || '';
+    
+    const offset = (page - 1) * limit;
+
     let query = supabase.from('website_listings').select('*').order('created_at', { ascending: false });
 
-    const { data, error } = await query;
+    if (q) {
+      query = query.or(`domain.ilike.%${q}%,name.ilike.%${q}%`);
+    }
+
+    const { data, error } = await query.range(offset, offset + limit); // Request limit + 1
 
     if (error) {
       console.error('Error fetching websites:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(data);
+    const hasNextPage = data && data.length > limit;
+    const websites = data ? data.slice(0, limit) : [];
+
+    return NextResponse.json({ data: websites, hasNextPage });
   } catch (err) {
     console.error('Unexpected error in GET /api/websites:', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

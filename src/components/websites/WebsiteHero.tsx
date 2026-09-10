@@ -10,7 +10,12 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8">
       <div className="flex flex-col md:flex-row gap-6 items-start">
         {website.logo_url ? (
-          <img src={website.logo_url} alt={`${website.name} logo`} className="w-24 h-24 rounded-xl border border-slate-100 object-cover shadow-sm bg-white" />
+          <>
+            <img src={website.logo_url} alt={`${website.name} logo`} className="w-24 h-24 rounded-xl border border-slate-100 object-contain shadow-sm bg-white" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); e.currentTarget.nextElementSibling?.classList.add('flex'); }} loading="lazy" decoding="async" />
+            <div className="hidden w-24 h-24 rounded-xl bg-slate-100 border border-slate-200 items-center justify-center text-slate-400 font-bold text-2xl shadow-sm">
+              {website.name.charAt(0)}
+            </div>
+          </>
         ) : (
           <div className="w-24 h-24 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl shadow-sm">
             {website.name.charAt(0)}

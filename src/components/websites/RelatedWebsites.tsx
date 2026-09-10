@@ -26,7 +26,12 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
           <Link key={site.id} href={`/websites/${site.slug}`} className="group block bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-[hsl(217,91%,54%)]">
             <div className="p-5 flex flex-col items-center text-center">
               {site.logo_url ? (
-                <img src={site.logo_url} alt={site.name} className="w-16 h-16 rounded-lg object-cover bg-slate-50 mb-4 shadow-sm" />
+                <>
+                  <img src={site.logo_url} alt={`${site.name} logo`} className="w-16 h-16 rounded-lg object-contain bg-slate-50 mb-4 shadow-sm" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); e.currentTarget.nextElementSibling?.classList.add('flex'); }} loading="lazy" decoding="async" />
+                  <div className="hidden w-16 h-16 rounded-lg bg-slate-100 items-center justify-center text-slate-400 font-bold text-xl mb-4 shadow-sm">
+                    {site.name.charAt(0)}
+                  </div>
+                </>
               ) : (
                 <div className="w-16 h-16 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xl mb-4 shadow-sm">
                   {site.name.charAt(0)}

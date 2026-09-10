@@ -166,7 +166,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               last_source_change_at: existing.source_hash !== row.source_hash ? new Date().toISOString() : undefined,
               is_in_google_sheet: true,
               is_listed: newIsListed,
-              ...(row.featured !== undefined ? { featured: row.featured } : {})
+              ...(row.featured !== undefined ? { featured: row.featured } : {}),
+              ...(row.logo_url !== undefined ? { logo_url: row.logo_url } : {})
               // NOTE: We absolutely do NOT overwrite `status` or `name` here, protecting admin fields and keeping pages live!
             });
             
@@ -215,7 +216,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             is_in_google_sheet: true,
             is_listed: row.is_listed !== false,
             status: settings.auto_publish_new_sites ? 'published' : 'draft',
-            featured: row.featured || false
+            featured: row.featured || false,
+            ...(row.logo_url !== undefined ? { logo_url: row.logo_url } : {})
           });
 
           metricsToUpsert.push(

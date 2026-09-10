@@ -36,6 +36,7 @@ export interface WebsiteRow {
   adult_link_insert_price?: number;
   total_deals?: number;
   sample_link?: string;
+  logo_url?: string;
   [key: string]: any; // Allow capturing other fields
 }
 
@@ -72,6 +73,7 @@ export function mapHeaders(header: string): string {
   if (h.includes('link type')) return 'link_validity';
   if (h === 'listed' || h === 'is listed' || h === 'is_listed') return 'is_listed';
   if (h === 'featured' || h === 'is featured' || h === 'is_featured') return 'featured';
+  if (h === 'logo' || h === 'logo url' || h === 'logo_url') return 'logo_url';
   
   return h.replace(/[^a-z0-9_]/g, '_');
 }
