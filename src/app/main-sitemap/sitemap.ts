@@ -5,6 +5,8 @@ import { CANONICAL_SITE_URL } from '@/lib/constants';
 
 const CHUNK_SIZE = 5000;
 
+export const dynamic = 'force-dynamic';
+
 export async function generateSitemaps() {
   const supabase = getServiceSupabase();
   
@@ -25,13 +27,18 @@ export async function generateSitemaps() {
   return Array.from({ length: totalChunks || 1 }, (_, i) => ({ id: i }));
 }
 
-export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap({ id }: { id: number | string }): Promise<MetadataRoute.Sitemap> {
   const baseUrl = CANONICAL_SITE_URL;
   
+  const chunkId = Number(id);
+  if (!Number.isFinite(chunkId) || chunkId < 0) {
+    return [];
+  }
+
   // Chunk 0 gets static routes and blog posts
   const routes: MetadataRoute.Sitemap = [];
   
-  if (id === 0) {
+  if (chunkId === 0) {
     const staticRoutes = [
       '', '/about', '/contact', '/pricing', '/services',
       '/services/seo', '/services/ai-seo', '/services/ppc',
@@ -56,7 +63,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
 
   // Fetch the specific chunk of websites
   const supabase = getServiceSupabase();
-  const start = id * CHUNK_SIZE;
+  const start = chunkId * CHUNK_SIZE;
   const end = start + CHUNK_SIZE - 1;
 
   const { data: websites } = await supabase
