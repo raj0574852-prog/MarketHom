@@ -115,7 +115,7 @@ export default async function WebsitesIndexPage({
                   <div className="p-6 flex-1 flex flex-col relative w-full">
                     <div className="flex items-start justify-between mb-5">
                       {site.logo_url ? (
-                        <img src={site.logo_url} alt={site.name} className="w-14 h-14 rounded-2xl object-cover bg-slate-50 border border-slate-100 shadow-sm" />
+                        <img src={site.logo_url} alt={site.name} className="w-14 h-14 rounded-2xl object-contain bg-slate-50 border border-slate-100 shadow-sm" />
                       ) : (
                         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-2xl border border-slate-200 shadow-inner">
                           {site.name.charAt(0)}
@@ -159,7 +159,7 @@ export default async function WebsitesIndexPage({
                   <>
                     <div className="shrink-0 flex items-center justify-center">
                       {site.logo_url ? (
-                        <img src={site.logo_url} alt={site.name} className="w-20 h-20 rounded-2xl object-cover bg-slate-50 border border-slate-100 shadow-sm" />
+                        <img src={site.logo_url} alt={site.name} className="w-20 h-20 rounded-2xl object-contain bg-slate-50 border border-slate-100 shadow-sm" />
                       ) : (
                         <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-3xl border border-slate-200 shadow-inner">
                           {site.name.charAt(0)}
