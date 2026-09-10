@@ -73,26 +73,64 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const categoryName = website.category_id || 'General';
-  const title = website.seo_title || `Publish Guest Post on ${website.domain} | Pricing & Publishing Details`;
   
-  let description = website.seo_description || website.short_description;
+  let title = website.seo_title;
+  if (!title) {
+    title = `Publish Guest Post on ${website.domain}`;
+    // Add verified metric/attribute if available to differentiate
+    const hasDA = website.website_metrics?.find((m: any) => m.metric_type === 'DA');
+    if (hasDA && hasDA.value) {
+      title += ` (DA ${hasDA.value})`;
+    } else if (categoryName && categoryName !== 'General') {
+      title += ` | ${categoryName}`;
+    } else {
+      title += ` | Pricing & Publishing Details`;
+    }
+  }
+  
+  // 1. Genuine publisher/editorial description
+  // 2. Concise data-driven fallback
+  let description = website.seo_description || website.editorial_description || website.short_description;
   if (!description) {
-    description = `Publishing opportunity on ${website.domain} in the ${categoryName} category.`;
+    const parts = [];
+    parts.push(`Explore publishing opportunities on ${website.domain} in the ${categoryName} category.`);
+    
     const displayPrice = website.content_placement_selling_price || website.price;
     if (displayPrice) {
-      description += ` Listing includes $${displayPrice} pricing`;
+      parts.push(`Pricing starts at $${displayPrice}.`);
     }
-    const hasMetrics = website.website_metrics && website.website_metrics.length > 0;
-    if (hasMetrics) {
-      description += ` and SEO metrics`;
+    
+    const features = [];
+    if (website.turnaround_time) {
+      features.push(`${website.turnaround_time}-day turnaround`);
     }
-    description += `.`;
+    if (website.max_dofollow_links) {
+      features.push(`up to ${website.max_dofollow_links} dofollow links`);
+    }
+    if (features.length > 0) {
+      parts.push(`Includes ${features.join(' and ')}.`);
+    }
+
+    if (website.accepted_niches && website.accepted_niches.length > 0) {
+      const niches = website.accepted_niches.slice(0, 2).join(' and ');
+      parts.push(`Accepted niches include ${niches}.`);
+    }
+    
+    description = parts.join(' ');
   }
   
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
 
   // Evaluate indexability dynamically
   const { indexable } = evaluatePublisherIndexability(website);
+
+  const openGraphImages = [];
+  if (website.logo_url && website.logo_url.startsWith('http')) {
+    openGraphImages.push({
+      url: website.logo_url,
+      alt: `${website.name} logo`,
+    });
+  }
 
   return {
     title,
@@ -109,11 +147,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       url: canonical,
       type: 'article', // Or 'website'
+      ...(openGraphImages.length > 0 && { images: openGraphImages })
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      ...(openGraphImages.length > 0 && { images: openGraphImages.map(img => img.url) })
     }
   };
 }

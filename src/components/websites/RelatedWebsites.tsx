@@ -5,15 +5,41 @@ import { getServiceSupabase } from '@/lib/supabaseClient';
 export default async function RelatedWebsites({ categoryId, currentId }: { categoryId: string, currentId: string }) {
   const supabase = getServiceSupabase();
   
-  const { data: related, error } = await supabase
+  // Query up to 4 publishers with ID > currentId
+  const { data: nextRelated } = await supabase
     .from('website_listings')
     .select('id, slug, name, domain, category_id, price, currency, logo_url, content_placement_price, content_placement_selling_price')
     .eq('status', 'published')
     .eq('category_id', categoryId)
-    .neq('id', currentId)
+    .gt('id', currentId)
+    .order('id', { ascending: true })
     .limit(4);
 
-  if (error || !related || related.length === 0) {
+  // Query up to 4 publishers with ID < currentId
+  const { data: prevRelated } = await supabase
+    .from('website_listings')
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, content_placement_price, content_placement_selling_price')
+    .eq('status', 'published')
+    .eq('category_id', categoryId)
+    .lt('id', currentId)
+    .order('id', { ascending: false })
+    .limit(4);
+
+  const nextList = nextRelated || [];
+  const prevList = prevRelated || [];
+  
+  let related: typeof nextList = [];
+  
+  // Distribute equally (2 from each side) or fill from the other side if bounded
+  if (nextList.length >= 2 && prevList.length >= 2) {
+    related = [...nextList.slice(0, 2), ...prevList.slice(0, 2)];
+  } else if (nextList.length < 2) {
+    related = [...nextList, ...prevList.slice(0, 4 - nextList.length)];
+  } else {
+    related = [...nextList.slice(0, 4 - prevList.length), ...prevList];
+  }
+
+  if (related.length === 0) {
     return null;
   }
 
