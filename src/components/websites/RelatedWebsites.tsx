@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { getServiceSupabase } from '@/lib/supabaseClient';
+import RelatedPublisherLogo from './RelatedPublisherLogo';
 
 export default async function RelatedWebsites({ categoryId, currentId }: { categoryId: string, currentId: string }) {
   const supabase = getServiceSupabase();
@@ -51,18 +52,7 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
         {related.map(site => (
           <Link key={site.id} href={`/websites/${site.slug}`} className="group block bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-[hsl(217,91%,54%)]">
             <div className="p-5 flex flex-col items-center text-center">
-              {site.logo_url ? (
-                <>
-                  <img src={site.logo_url} alt={`${site.name || site.domain} logo`} className="w-16 h-16 rounded-lg object-contain bg-slate-50 mb-4 shadow-sm" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); e.currentTarget.nextElementSibling?.classList.add('flex'); }} loading="lazy" decoding="async" />
-                  <div className="hidden w-16 h-16 rounded-lg bg-slate-100 items-center justify-center text-slate-400 font-bold text-xl mb-4 shadow-sm uppercase">
-                    {(site.name || site.domain).charAt(0)}
-                  </div>
-                </>
-              ) : (
-                <div className="w-16 h-16 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xl mb-4 shadow-sm uppercase">
-                  {(site.name || site.domain).charAt(0)}
-                </div>
-              )}
+              <RelatedPublisherLogo logoUrl={site.logo_url} name={site.name || site.domain} />
               <h3 className="font-bold text-slate-900 group-hover:text-[hsl(217,91%,54%)] transition-colors line-clamp-1">{site.name || site.domain}</h3>
               <p className="text-sm text-slate-500 mb-4">{site.domain}</p>
               <div className="w-full pt-4 border-t border-slate-100 flex justify-between items-center">
