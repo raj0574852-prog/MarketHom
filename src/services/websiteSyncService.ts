@@ -244,14 +244,21 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       }
 
       // 7. Perform Bulk Upserts
+      const UPSERT_CHUNK = 200;
       if (newSitesToInsert.length > 0) {
-        const { error: insertError } = await supabase.from('website_listings').insert(newSitesToInsert);
-        if (insertError) throw new Error(`Insert failed: ${insertError.message}`);
+        for (let i = 0; i < newSitesToInsert.length; i += UPSERT_CHUNK) {
+          const chunk = newSitesToInsert.slice(i, i + UPSERT_CHUNK);
+          const { error: insertError } = await supabase.from('website_listings').insert(chunk);
+          if (insertError) throw new Error(`Insert failed: ${insertError.message}`);
+        }
       }
 
       if (sitesToUpdate.length > 0) {
-        const { error: updateError } = await supabase.from('website_listings').upsert(sitesToUpdate, { onConflict: 'id' });
-        if (updateError) throw new Error(`Update failed: ${updateError.message}`);
+        for (let i = 0; i < sitesToUpdate.length; i += UPSERT_CHUNK) {
+          const chunk = sitesToUpdate.slice(i, i + UPSERT_CHUNK);
+          const { error: updateError } = await supabase.from('website_listings').upsert(chunk, { onConflict: 'id' });
+          if (updateError) throw new Error(`Update failed: ${updateError.message}`);
+        }
       }
       
       // Upsert metrics
@@ -288,12 +295,15 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             }
 
             if (domainsToRemoveFromSheet.length > 0) {
-               const { error: archiveError } = await supabase
-                .from('website_listings')
-                .update({ is_in_google_sheet: false, is_listed: false }) // IMPORTANT: Do NOT touch status. Page remains live!
-                .in('id', domainsToRemoveFromSheet);
-                
-               if (archiveError) throw new Error(`Removal failed: ${archiveError.message}`);
+               for (let i = 0; i < domainsToRemoveFromSheet.length; i += UPSERT_CHUNK) {
+                 const chunk = domainsToRemoveFromSheet.slice(i, i + UPSERT_CHUNK);
+                 const { error: archiveError } = await supabase
+                  .from('website_listings')
+                  .update({ is_in_google_sheet: false, is_listed: false }) // IMPORTANT: Do NOT touch status. Page remains live!
+                  .in('id', chunk);
+                  
+                 if (archiveError) throw new Error(`Removal failed: ${archiveError.message}`);
+               }
                stats.archived = domainsToRemoveFromSheet.length;
             }
         }
