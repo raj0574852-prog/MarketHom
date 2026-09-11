@@ -169,13 +169,9 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               ...(row.featured !== undefined ? { featured: row.featured } : {}),
               ...(row.logo_url && row.logo_url.trim() !== '' 
                 ? { 
-                    logo_url: row.logo_url.trim(),
-                    logo_source: 'sheet',
-                    logo_discovery_status: 'success'
+                    logo_url: row.logo_url.trim()
                   } 
-                : (!existing.logo_url 
-                    ? { logo_discovery_status: 'pending' } 
-                    : {})
+                : {}
               )
               // NOTE: We absolutely do NOT overwrite `status` or `name` here, protecting admin fields and keeping pages live!
             });
@@ -228,11 +224,9 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             featured: row.featured || false,
             ...(row.logo_url && row.logo_url.trim() !== '' 
               ? { 
-                  logo_url: row.logo_url.trim(),
-                  logo_source: 'sheet',
-                  logo_discovery_status: 'success'
+                  logo_url: row.logo_url.trim()
                 } 
-              : { logo_discovery_status: 'pending' }
+              : {}
             )
           });
 
