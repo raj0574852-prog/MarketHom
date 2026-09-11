@@ -41,10 +41,16 @@ export default async function WebsitesIndexPage({
   const limit = 20;
   const offset = (page - 1) * limit;
   
-  // Use Limit + 1 pagination strategy for scalability
+  // Fetch total sites for the search placeholder
+  const { count: totalSitesCount } = await supabase
+    .from('website_listings')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'published')
+    .eq('is_listed', true);
+  
   let query = supabase
     .from('website_listings')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price')
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price', { count: 'exact' })
     .eq('status', 'published')
     .eq('is_listed', true);
 
@@ -52,12 +58,12 @@ export default async function WebsitesIndexPage({
   if (category) query = query.eq('category_id', category);
   if (country) query = query.eq('country', country);
 
-  let { data: websitesRaw, error } = await query
+  let { data: websitesRaw, error, count: filteredCount } = await query
     .order('featured', { ascending: false })
-    .range(offset, offset + limit); // Request limit + 1
+    .range(offset, offset + limit - 1);
 
-  const hasNextPage = websitesRaw && websitesRaw.length > limit;
-  let websites = websitesRaw ? websitesRaw.slice(0, limit) : [];
+  let websites = websitesRaw || [];
+  const totalPages = Math.ceil((filteredCount || 0) / limit);
 
   // Fallback mock data for preview if DB connection fails or view missing
   if (error || !websites) {
@@ -97,7 +103,7 @@ export default async function WebsitesIndexPage({
       </div>
       
       <div className="px-4 sm:px-6 lg:px-8">
-        <SearchFilter />
+        <SearchFilter totalSites={totalSitesCount || 0} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
@@ -212,7 +218,7 @@ export default async function WebsitesIndexPage({
         {websites && websites.length > 0 && (
           <Pagination 
             currentPage={page} 
-            hasNextPage={hasNextPage || false}
+            totalPages={totalPages}
           />
         )}
       </div>
