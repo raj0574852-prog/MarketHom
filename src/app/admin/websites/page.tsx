@@ -9,16 +9,17 @@ export default function AdminWebsitesPage() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
 
-  const fetchWebsites = async (currentPage = page, query = searchQuery) => {
+  const fetchWebsites = async (currentPage = page, query = searchQuery, status = statusFilter) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/websites?page=${currentPage}&limit=500&q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/websites?page=${currentPage}&limit=500&q=${encodeURIComponent(query)}&status=${encodeURIComponent(status)}`);
       if (res.ok) {
         const result = await res.json();
         setWebsites(result.data || []);
@@ -35,13 +36,13 @@ export default function AdminWebsitesPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setPage(1);
-      fetchWebsites(1, searchQuery);
+      fetchWebsites(1, searchQuery, statusFilter);
     }, 400);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, statusFilter]);
 
   useEffect(() => {
-    fetchWebsites(page, searchQuery);
+    fetchWebsites(page, searchQuery, statusFilter);
   }, [page]);
 
   const handleSync = async () => {
@@ -196,18 +197,30 @@ export default function AdminWebsitesPage() {
               </div>
             </div>
           )}
-          <div className="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
-            <div className="relative w-full max-w-md">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              <input 
-                type="text" 
-                placeholder="Search by domain or name..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
-              />
+          <div className="p-4 border-b border-slate-800 bg-slate-950 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex w-full sm:w-auto gap-3">
+              <div className="relative w-full sm:w-64">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <input 
+                  type="text" 
+                  placeholder="Search by domain or name..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
+              >
+                <option value="all">All Status</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
+              </select>
             </div>
-            <div className="text-sm text-slate-400 font-medium">
+            <div className="text-sm text-slate-400 font-medium whitespace-nowrap">
               Showing {filteredWebsites.length} {filteredWebsites.length === 1 ? 'website' : 'websites'}
             </div>
           </div>
