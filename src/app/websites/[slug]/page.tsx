@@ -128,7 +128,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (website.logo_url && website.logo_url.startsWith('http')) {
     openGraphImages.push({
       url: website.logo_url,
-      alt: `${website.name} logo`,
+      alt: `${website.name || website.domain} logo`,
     });
   }
 
@@ -239,7 +239,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
           <span>/</span>
           <Link href="/websites" className="hover:text-blue-600 transition-colors">Marketplace</Link>
           <span>/</span>
-          <span className="text-slate-900 font-medium">{website.name}</span>
+          <span className="text-slate-900 font-medium">{website.name || website.domain}</span>
         </div>
       </div>
 
@@ -257,7 +257,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             
             {/* Sidebar Benefits Card */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h3 className="font-bold text-slate-900 mb-4">Why Choose {website.name}?</h3>
+              <h3 className="font-bold text-slate-900 mb-4">Why Choose {website.name || website.domain}?</h3>
               <ul className="space-y-3">
                 {website.category_id && (
                   <li className="flex gap-3 text-slate-600 text-sm">
@@ -313,7 +313,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             {/* About Section - Conditionally rendered only if unique text exists */}
             {(website.long_description || website.editorial_description || website.audience_description) && (
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">About {website.name}</h2>
+                <h2 className="text-2xl font-bold text-slate-900 mb-6">About {website.name || website.domain}</h2>
                 <div className="prose prose-slate max-w-none">
                   {website.long_description && (
                     <p className="whitespace-pre-wrap text-slate-700 leading-relaxed text-lg">

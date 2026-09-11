@@ -10,10 +10,12 @@ interface PublisherLogoProps {
 export default function PublisherLogo({ logoUrl, name }: PublisherLogoProps) {
   const [error, setError] = useState(false);
 
+  const displayName = name || 'W';
+
   if (!logoUrl || error) {
     return (
-      <div className="w-24 h-24 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl shadow-sm">
-        {name.charAt(0)}
+      <div className="w-24 h-24 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl shadow-sm uppercase">
+        {displayName.charAt(0)}
       </div>
     );
   }

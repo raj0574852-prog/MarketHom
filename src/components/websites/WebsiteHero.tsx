@@ -10,7 +10,7 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8">
       <div className="flex flex-col md:flex-row gap-6 items-start">
-        <PublisherLogo logoUrl={website.logo_url} name={website.name} />
+        <PublisherLogo logoUrl={website.logo_url} name={website.name || website.domain} />
         
         <div className="flex-1 space-y-3">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">

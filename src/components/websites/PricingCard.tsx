@@ -6,7 +6,7 @@ export default function PricingCard({ website }: { website: WebsiteListing }) {
   const whatsappNumber = "918824896910";
   // Use canonical domain for sharing link
   const pageUrl = `${CANONICAL_SITE_URL}/websites/${website.slug}`;
-  const whatsappMessage = encodeURIComponent(`I want to purchase the placement on ${website.name}. Here is the link: ${pageUrl}`);
+  const whatsappMessage = encodeURIComponent(`I want to purchase the placement on ${website.name || website.domain}. Here is the link: ${pageUrl}`);
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
   return (

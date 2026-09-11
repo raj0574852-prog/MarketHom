@@ -26,7 +26,7 @@ export function generatePublisherFAQs(website: WebsiteListing): WebsiteFAQ[] {
   if (website.rejected_niches && website.rejected_niches.length > 0) {
     addFaq(
       `Are there any restricted niches for guest posting on ${website.domain}?`,
-      `Yes, ${website.name} explicitly rejects content related to: ${website.rejected_niches.join(', ')}.`
+      `Yes, ${website.name || website.domain} explicitly rejects content related to: ${website.rejected_niches.join(', ')}.`
     );
   }
 
@@ -34,7 +34,7 @@ export function generatePublisherFAQs(website: WebsiteListing): WebsiteFAQ[] {
   if (website.accepted_niches && website.accepted_niches.length > 0 && !website.accepted_niches.includes('General Niches')) {
     addFaq(
       `What specific topics are accepted on ${website.domain}?`,
-      `${website.name} focuses on content in the following areas: ${website.accepted_niches.join(', ')}.`
+      `${website.name || website.domain} focuses on content in the following areas: ${website.accepted_niches.join(', ')}.`
     );
   }
 
