@@ -10,13 +10,15 @@ export default function AdminWebsitesPage() {
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
 
   const fetchWebsites = async (currentPage = page, query = searchQuery) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/websites?page=${currentPage}&limit=50&q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/websites?page=${currentPage}&limit=500&q=${encodeURIComponent(query)}`);
       if (res.ok) {
         const result = await res.json();
         setWebsites(result.data || []);
@@ -101,6 +103,29 @@ export default function AdminWebsitesPage() {
     }
   };
 
+  const handleBulkStatusChange = async (newStatus: string) => {
+    if (selectedIds.length === 0) return;
+    setIsBulkUpdating(true);
+    try {
+      const res = await fetch('/api/websites/bulk-status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedIds, status: newStatus })
+      });
+      if (res.ok) {
+        setWebsites(websites.map(w => selectedIds.includes(w.id) ? { ...w, status: newStatus } : w));
+        setSelectedIds([]);
+      } else {
+        alert('Failed to update status for selected websites');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error updating status for selected websites');
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
   // Client-side filtering is removed, we use server-side search instead
   const filteredWebsites = websites;
 
@@ -141,6 +166,36 @@ export default function AdminWebsitesPage() {
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          {selectedIds.length > 0 && (
+            <div className="p-4 border-b border-blue-500/30 bg-blue-500/10 flex justify-between items-center transition-all">
+              <div className="text-sm font-medium text-blue-400">
+                {selectedIds.length} {selectedIds.length === 1 ? 'website' : 'websites'} selected
+              </div>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => handleBulkStatusChange('published')}
+                  disabled={isBulkUpdating}
+                  className="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-lg transition-colors border border-emerald-500/20 disabled:opacity-50"
+                >
+                  Publish Selected
+                </button>
+                <button 
+                  onClick={() => handleBulkStatusChange('draft')}
+                  disabled={isBulkUpdating}
+                  className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-xs font-semibold rounded-lg transition-colors border border-amber-500/20 disabled:opacity-50"
+                >
+                  Draft Selected
+                </button>
+                <button 
+                  onClick={() => handleBulkStatusChange('archived')}
+                  disabled={isBulkUpdating}
+                  className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 text-xs font-semibold rounded-lg transition-colors border border-rose-500/20 disabled:opacity-50"
+                >
+                  Archive Selected
+                </button>
+              </div>
+            </div>
+          )}
           <div className="p-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
             <div className="relative w-full max-w-md">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -166,6 +221,17 @@ export default function AdminWebsitesPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-slate-800 bg-slate-950/50 text-slate-400 text-sm">
+                    <th className="p-5 w-12">
+                      <input 
+                        type="checkbox"
+                        className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-blue-500/50 focus:ring-offset-slate-950 cursor-pointer"
+                        checked={filteredWebsites.length > 0 && selectedIds.length === filteredWebsites.length}
+                        onChange={(e) => {
+                          if (e.target.checked) setSelectedIds(filteredWebsites.map(w => w.id));
+                          else setSelectedIds([]);
+                        }}
+                      />
+                    </th>
                     <th className="p-5 font-semibold">Name</th>
                     <th className="p-5 font-semibold">Domain</th>
                     <th className="p-5 font-semibold">Category</th>
@@ -176,7 +242,18 @@ export default function AdminWebsitesPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/50 text-sm">
                   {filteredWebsites.map((website) => (
-                    <tr key={website.id} className="hover:bg-slate-800/30 transition-colors group">
+                    <tr key={website.id} className={`hover:bg-slate-800/30 transition-colors group ${selectedIds.includes(website.id) ? 'bg-blue-500/5' : ''}`}>
+                      <td className="p-5">
+                        <input 
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-500 focus:ring-blue-500/50 focus:ring-offset-slate-900 cursor-pointer"
+                          checked={selectedIds.includes(website.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) setSelectedIds([...selectedIds, website.id]);
+                            else setSelectedIds(selectedIds.filter(id => id !== website.id));
+                          }}
+                        />
+                      </td>
                       <td className="p-5 font-medium text-white">{website.name}</td>
                       <td className="p-5 text-slate-400 flex items-center gap-2">
                         <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
@@ -236,7 +313,7 @@ export default function AdminWebsitesPage() {
                   ))}
                   {filteredWebsites.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="p-16">
+                      <td colSpan={7} className="p-16">
                         <div className="flex flex-col items-center justify-center text-center">
                           <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mb-4 border border-slate-700/50">
                             <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>

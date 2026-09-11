@@ -103,7 +103,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       // 5. Fetch all existing websites to compare
       const { data: existingSites, error: fetchError } = await supabase
         .from('website_listings')
-        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url, content_placement_selling_price');
+        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url, content_placement_selling_price, logo_url');
 
       if (fetchError) throw fetchError;
 
@@ -167,7 +167,16 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               is_in_google_sheet: true,
               is_listed: newIsListed,
               ...(row.featured !== undefined ? { featured: row.featured } : {}),
-              ...(row.logo_url !== undefined ? { logo_url: row.logo_url } : {})
+              ...(row.logo_url && row.logo_url.trim() !== '' 
+                ? { 
+                    logo_url: row.logo_url.trim(),
+                    logo_source: 'sheet',
+                    logo_discovery_status: 'success'
+                  } 
+                : (!existing.logo_url 
+                    ? { logo_discovery_status: 'pending' } 
+                    : {})
+              )
               // NOTE: We absolutely do NOT overwrite `status` or `name` here, protecting admin fields and keeping pages live!
             });
             
@@ -217,7 +226,14 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             is_listed: row.is_listed !== false,
             status: settings.auto_publish_new_sites ? 'published' : 'draft',
             featured: row.featured || false,
-            ...(row.logo_url !== undefined ? { logo_url: row.logo_url } : {})
+            ...(row.logo_url && row.logo_url.trim() !== '' 
+              ? { 
+                  logo_url: row.logo_url.trim(),
+                  logo_source: 'sheet',
+                  logo_discovery_status: 'success'
+                } 
+              : { logo_discovery_status: 'pending' }
+            )
           });
 
           metricsToUpsert.push(

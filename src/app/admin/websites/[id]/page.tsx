@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PublisherLogo from '@/components/websites/PublisherLogo';
 
 export default function AdminWebsiteEditor({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -232,7 +233,15 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
                     <div><label className="block text-sm text-slate-400 mb-1">Slug</label><input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.slug || ''} onChange={e => handleChange('slug', e.target.value)} /></div>
                     <div><label className="block text-sm text-slate-400 mb-1">Domain</label><input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.domain || ''} onChange={e => handleChange('domain', e.target.value)} /></div>
                     <div><label className="block text-sm text-slate-400 mb-1">Website URL</label><input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.website_url || ''} onChange={e => handleChange('website_url', e.target.value)} /></div>
-                    <div><label className="block text-sm text-slate-400 mb-1">Logo URL</label><input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.logo_url || ''} onChange={e => handleChange('logo_url', e.target.value)} /></div>
+                    <div>
+                      <label className="block text-sm text-slate-400 mb-1">Logo URL</label>
+                      <div className="flex items-center gap-4">
+                        <div className="transform scale-75 origin-left">
+                          <PublisherLogo logoUrl={website.logo_url} name={website.name || website.domain} />
+                        </div>
+                        <input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.logo_url || ''} onChange={e => handleChange('logo_url', e.target.value)} />
+                      </div>
+                    </div>
                     <div><label className="block text-sm text-slate-400 mb-1">Category</label><input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.category_id || ''} onChange={e => handleChange('category_id', e.target.value)} /></div>
                     <div><label className="block text-sm text-slate-400 mb-1">Price (Numeric)</label><input type="number" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.price || ''} onChange={e => handleChange('price', e.target.value)} /></div>
                     <div>
