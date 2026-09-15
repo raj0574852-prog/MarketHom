@@ -50,7 +50,9 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
           
           {website.short_description && (
             <p className="text-slate-600 text-lg leading-relaxed max-w-3xl mt-2">
-              {website.short_description}
+              {website.price && website.content_placement_selling_price
+                ? website.short_description.split(`$${website.price}`).join(`$${website.content_placement_selling_price}`)
+                : website.short_description}
             </p>
           )}
         </div>

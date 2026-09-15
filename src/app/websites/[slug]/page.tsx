@@ -118,6 +118,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     
     description = parts.join(' ');
   }
+
+  // Ensure any hardcoded base prices in the description are replaced with the correct selling price
+  if (description && website.price && website.content_placement_selling_price) {
+    const basePriceStr = `$${website.price}`;
+    const sellPriceStr = `$${website.content_placement_selling_price}`;
+    description = description.split(basePriceStr).join(sellPriceStr);
+  }
+  
   
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
 
@@ -183,7 +191,13 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
                 '@id': canonical,
                 'url': canonical,
                 'name': website.seo_title || `Publish Guest Post on ${website.domain}`,
-                'description': website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`,
+                'description': (() => {
+                  let desc = website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`;
+                  if (website.price && website.content_placement_selling_price) {
+                    desc = desc.split(`$${website.price}`).join(`$${website.content_placement_selling_price}`);
+                  }
+                  return desc;
+                })(),
               },
               {
                 '@type': 'BreadcrumbList',

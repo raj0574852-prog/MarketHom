@@ -139,7 +139,9 @@ export default async function WebsitesIndexPage({
                     </div>
                     
                     <p className="text-sm text-slate-600 line-clamp-2 mb-6 flex-1 leading-relaxed">
-                      {site.short_description || `Premium publishing opportunity on ${site.domain}. Secure high-quality backlinks.`}
+                      {(site.short_description && site.price && site.content_placement_selling_price) 
+                        ? site.short_description.split(`$${site.price}`).join(`$${site.content_placement_selling_price}`) 
+                        : (site.short_description || `Premium publishing opportunity on ${site.domain}. Secure high-quality backlinks.`)}
                     </p>
                     
                     <div className="border-t border-slate-100 pt-5 flex items-center justify-between mt-auto">
@@ -187,7 +189,9 @@ export default async function WebsitesIndexPage({
                       </div>
                       
                       <p className="text-sm text-slate-600 line-clamp-1 leading-relaxed hidden sm:block">
-                        {site.short_description || `Premium publishing opportunity on ${site.domain}. Secure high-quality backlinks.`}
+                        {(site.short_description && site.price && site.content_placement_selling_price)
+                          ? site.short_description.split(`$${site.price}`).join(`$${site.content_placement_selling_price}`)
+                          : (site.short_description || `Premium publishing opportunity on ${site.domain}. Secure high-quality backlinks.`)}
                       </p>
                     </div>
                     
