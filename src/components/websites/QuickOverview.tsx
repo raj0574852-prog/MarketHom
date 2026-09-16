@@ -8,7 +8,7 @@ export default function QuickOverview({ website }: { website: WebsiteListing }) 
   const traffic = website.website_metrics?.find((m: any) => m.metric_type === 'ORGANIC_TRAFFIC')?.value;
   
   const categoryName = website.category_id || 'General';
-  const displayPrice = website.content_placement_selling_price || website.price;
+  const displayPrice = website.content_placement_selling_price;
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">

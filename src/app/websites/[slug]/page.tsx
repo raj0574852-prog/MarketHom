@@ -89,7 +89,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const parts = [];
     parts.push(`Explore publishing opportunities on ${website.domain} in the ${categoryName} category.`);
     
-    const displayPrice = website.content_placement_selling_price || website.price;
+    const displayPrice = website.content_placement_selling_price;
     if (displayPrice) {
       parts.push(`Pricing starts at $${displayPrice}.`);
     }

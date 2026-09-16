@@ -146,11 +146,11 @@ export default async function WebsitesIndexPage({
                     
                     <div className="border-t border-slate-100 pt-5 flex items-center justify-between mt-auto">
                       <div>
-                        {(site.content_placement_selling_price || site.price) ? (
+                        {(site.content_placement_selling_price) ? (
                           <>
                             <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
                             <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price}
+                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price}
                             </div>
                           </>
                         ) : (
@@ -197,11 +197,11 @@ export default async function WebsitesIndexPage({
                     
                     <div className="sm:border-l border-slate-100 sm:pl-6 flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0">
                       <div className="text-left sm:text-right">
-                        {(site.content_placement_selling_price || site.price) ? (
+                        {(site.content_placement_selling_price) ? (
                           <>
                             <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
                             <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price}
+                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price}
                             </div>
                           </>
                         ) : (
