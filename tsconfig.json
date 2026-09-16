@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["src/lib/pricing/__tests__/**/*", "node_modules"]
+  "exclude": ["src/lib/pricing/__tests__/**/*", "node_modules", "find_slugs.ts"]
 }

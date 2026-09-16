@@ -15,6 +15,7 @@ import PublishingGuidelines from '@/components/websites/PublishingGuidelines';
 import AcceptedContent from '@/components/websites/AcceptedContent';
 import RelatedWebsites from '@/components/websites/RelatedWebsites';
 import FAQAccordion from '@/components/websites/FAQAccordion';
+import PublisherOverview from '@/components/websites/PublisherOverview';
 import { generatePublisherFAQs } from '@/components/websites/faqGenerator';
 
 export const revalidate = 60;
@@ -77,16 +78,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   let title = website.seo_title;
   if (!title) {
-    title = `Publish Guest Post on ${website.domain}`;
-    // Add verified metric/attribute if available to differentiate
-    const hasDA = website.website_metrics?.find((m: any) => m.metric_type === 'DA');
-    if (hasDA && hasDA.value) {
-      title += ` (DA ${hasDA.value})`;
-    } else if (categoryName && categoryName !== 'General') {
-      title += ` | ${categoryName}`;
-    } else {
-      title += ` | Pricing & Publishing Details`;
-    }
+    const displayName = website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain;
+    title = `${displayName} — Publisher Information & Content Placement`;
   }
   
   // 1. Genuine publisher/editorial description
@@ -191,7 +184,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
                 '@type': 'WebPage',
                 '@id': canonical,
                 'url': canonical,
-                'name': website.seo_title || `Publish Guest Post on ${website.domain}`,
+                'name': website.seo_title || `${website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain} — Publisher Information & Content Placement`,
                 'description': (() => {
                   let desc = website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`;
                   if (website.price && website.content_placement_selling_price) {
@@ -326,33 +319,8 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             {/* Metrics are partially in Quick Overview, but MetricGrid provides deeper context/tooltips */}
             <MetricGrid metrics={website.website_metrics} linkValidity={website.link_validity} />
 
-            {/* About Section - Conditionally rendered only if unique text exists */}
-            {(website.long_description || website.editorial_description || website.audience_description) && (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">About {website.name || website.domain}</h2>
-                <div className="prose prose-slate max-w-none">
-                  {website.long_description && (
-                    <p className="whitespace-pre-wrap text-slate-700 leading-relaxed text-lg">
-                      {website.long_description}
-                    </p>
-                  )}
-                  
-                  {website.editorial_description && (
-                    <div className="mt-8">
-                      <h3 className="text-xl font-bold text-slate-900 mb-4">Editorial Focus</h3>
-                      <p className="whitespace-pre-wrap text-slate-700 leading-relaxed">{website.editorial_description}</p>
-                    </div>
-                  )}
-                  
-                  {website.audience_description && (
-                    <div className="mt-8">
-                      <h3 className="text-xl font-bold text-slate-900 mb-4">Target Audience</h3>
-                      <p className="whitespace-pre-wrap text-slate-700 leading-relaxed">{website.audience_description}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+            {/* About Section - Uses PublisherOverview component */}
+            <PublisherOverview website={website} />
 
             {/* Guidelines & Policies */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">

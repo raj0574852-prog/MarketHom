@@ -9,7 +9,7 @@ export default function AcceptedContent({ website }: { website: WebsiteListing }
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
-      <h2 className="text-2xl font-bold text-slate-900 mb-6">Accepted Content Niches</h2>
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">Accepted Niches & Content Rules</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {accepted.length > 0 && (

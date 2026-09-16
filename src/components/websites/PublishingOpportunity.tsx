@@ -2,23 +2,46 @@ import React from 'react';
 import { WebsiteListing } from './types';
 
 export default function PublishingOpportunity({ website }: { website: WebsiteListing }) {
-  const categoryName = website.category_id || 'General';
+  const rows = [];
   
+  if (website.publication_type) {
+    rows.push({ label: 'Placement type', value: website.publication_type });
+  }
+  
+  if (website.link_validity) {
+    rows.push({ label: 'Link policy', value: website.link_validity });
+  }
+  
+  if (website.max_dofollow_links) {
+    rows.push({ label: 'Maximum DoFollow links', value: website.max_dofollow_links });
+  }
+  
+  if (website.turnaround_time) {
+    rows.push({ label: 'Turnaround time', value: website.turnaround_time });
+  }
+
+  if (rows.length === 0) return null;
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8">
       <h2 className="text-2xl font-bold text-slate-900 mb-4">Publishing Opportunity</h2>
-      <div className="prose prose-slate max-w-none">
-        <p className="text-slate-700 leading-relaxed">
-          Through the EducationHom marketplace, you can secure a {website.publication_type ? website.publication_type.toLowerCase() : 'content placement'} on <strong>{website.domain}</strong>. 
-          This listing is categorized under the <strong>{categoryName}</strong> sector.
-        </p>
-        <p className="text-slate-700 leading-relaxed mt-4">
-          According to verified listing data, this opportunity {website.link_validity ? `provides a ${website.link_validity.toLowerCase()} link` : 'allows link placement'}{website.max_dofollow_links ? ` with up to ${website.max_dofollow_links} dofollow links permitted per post` : ''}.
-          {website.turnaround_time && ` The typical turnaround time for publication is estimated at ${website.turnaround_time}.`}
-        </p>
-        <p className="text-slate-700 leading-relaxed mt-4 text-sm text-slate-500">
-          <em>Please note: EducationHom acts as a marketplace facilitator. This listing does not imply a direct editorial affiliation with the publisher. Search engine rankings and traffic metrics are estimates and are not guaranteed.</em>
-        </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b border-slate-200">
+              <th className="py-3 px-4 font-semibold text-slate-700 bg-slate-50 w-1/3 rounded-tl-lg">Attribute</th>
+              <th className="py-3 px-4 font-semibold text-slate-700 bg-slate-50 rounded-tr-lg">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50">
+                <td className="py-3 px-4 text-slate-600 font-medium">{row.label}</td>
+                <td className="py-3 px-4 text-slate-900">{row.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -27,7 +27,9 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
-            Publish Guest Post on {website.domain}
+            {website.name && website.name.toLowerCase() !== website.domain.toLowerCase() 
+              ? website.name
+              : website.domain}
           </h1>
           
           <div className="flex flex-col gap-3 mt-2">
