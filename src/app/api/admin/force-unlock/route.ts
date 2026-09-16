@@ -8,7 +8,7 @@ export async function GET() {
   const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from('website_sync_logs')
-    .update({ status: 'failed', error_message: 'Force cleared lock via endpoint' })
+    .update({ status: 'failed', error_summary: 'Force cleared lock via endpoint' })
     .eq('status', 'running')
     .select();
     
