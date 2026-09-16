@@ -97,6 +97,7 @@ export default function ServicesSection() {
                 <span className="text-xs font-bold text-[hsl(215,20%,50%)] uppercase tracking-wider">{service.category}</span>
                 <Link
                   href="/contact"
+                  title="Get Free Audit"
                   className="flex items-center gap-2 text-xs font-bold text-[hsl(217,91%,65%)] hover:gap-3 transition-all"
                 >
                   Get Audit →
@@ -108,7 +109,7 @@ export default function ServicesSection() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-12">
-          <Link href="/services" className="btn-outline">
+          <Link href="/services" title="View All SEO Services" className="btn-outline">
             <span>View All Services</span>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

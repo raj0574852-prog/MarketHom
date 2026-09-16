@@ -25,16 +25,17 @@ export default async function BlogPreview() {
               <span className="gradient-text">Knowledge</span>
             </h2>
           </div>
-          <Link href="/blog" className="btn-outline whitespace-nowrap">
-            View All Articles →
+          <Link href="/blog" title="View All Blog Posts" className="btn-outline whitespace-nowrap">
+            <span>View All Articles</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <Link
-              key={post.slug}
+              key={post.id}
               href={`/blog/${post.slug}`}
+              title={post.title}
               className="glass-card overflow-hidden group"
             >
               {/* Image placeholder with gradient */}

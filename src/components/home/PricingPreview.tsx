@@ -118,6 +118,7 @@ export default function PricingPreview() {
 
               <Link
                 href="/contact"
+                title="Get Custom Quote"
                 className={plan.popular ? 'btn-primary w-full justify-center' : 'btn-outline w-full justify-center'}
               >
                 <span>{plan.cta} →</span>
@@ -128,7 +129,7 @@ export default function PricingPreview() {
 
         <div className="text-center mt-10">
           <p className="text-[hsl(215,20%,55%)] text-sm mb-4">Need a custom plan? We build tailored packages for enterprises.</p>
-          <Link href="/pricing" className="text-[hsl(217,91%,65%)] font-semibold hover:text-white transition-colors text-sm">
+          <Link href="/pricing" title="See Full Pricing Details" className="text-[hsl(217,91%,65%)] font-semibold hover:text-white transition-colors text-sm">
             See Full Pricing Details →
           </Link>
         </div>

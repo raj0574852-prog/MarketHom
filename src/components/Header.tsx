@@ -52,7 +52,7 @@ export default function Header() {
       <nav className="container-custom">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" title="MarketHom Agency Home" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
               M
             </div>
@@ -93,6 +93,7 @@ export default function Header() {
                           <Link
                             key={child.href}
                             href={child.href}
+                            title={child.label}
                             className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[hsl(217,91%,54%)]/10 transition-all duration-200 group/item"
                           >
                             <span className="text-lg">{child.icon}</span>
@@ -107,6 +108,7 @@ export default function Header() {
                 ) : (
                   <Link
                     href={link.href}
+                    title={link.label}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname === link.href
                         ? 'text-[hsl(217,91%,75%)] bg-[hsl(217,91%,54%)]/10'
                         : 'text-[hsl(215,20%,70%)] hover:text-white hover:bg-white/5'
@@ -121,7 +123,7 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/contact" className="btn-primary text-sm px-6 py-3">
+            <Link href="/contact" title="Get Free SEO Audit" className="btn-primary text-sm px-6 py-3">
               <span>Get Free Audit</span>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -152,6 +154,7 @@ export default function Header() {
             <div key={link.href}>
               <Link
                 href={link.href}
+                title={link.label}
                 className={`block py-3 text-base font-medium border-b border-[hsl(215,25%,22%)]/30 transition-colors ${pathname === link.href
                     ? 'text-[hsl(217,91%,75%)]'
                     : 'text-[hsl(215,20%,70%)] hover:text-white'
@@ -165,6 +168,7 @@ export default function Header() {
                     <Link
                       key={child.href}
                       href={child.href}
+                      title={child.label}
                       className="flex items-center gap-2 py-2 text-sm text-[hsl(215,20%,60%)] hover:text-white transition-colors"
                     >
                       <span>{child.icon}</span>
@@ -175,7 +179,7 @@ export default function Header() {
               )}
             </div>
           ))}
-          <Link href="/contact" className="btn-primary w-full justify-center mt-4 text-sm">
+          <Link href="/contact" title="Get Free SEO Audit" className="btn-primary w-full justify-center mt-4 text-sm">
             <span>Get Free Audit</span>
           </Link>
         </div>

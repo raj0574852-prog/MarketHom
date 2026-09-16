@@ -31,6 +31,7 @@ export default function CTASection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/contact"
+              title="Get Your Free SEO Audit"
               className="inline-flex items-center gap-2 bg-white text-[hsl(217,91%,40%)] px-8 py-4 rounded-full font-bold text-base hover:bg-white/90 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
             >
               Get Your Free SEO Audit
@@ -40,6 +41,7 @@ export default function CTASection() {
             </Link>
             <Link
               href="/pricing"
+              title="View Pricing Plans"
               className="inline-flex items-center gap-2 bg-white/15 text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-white/25 border border-white/30 transition-all duration-300"
             >
               View Pricing Plans

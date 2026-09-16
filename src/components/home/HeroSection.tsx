@@ -65,13 +65,13 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up opacity-0 delay-400">
-            <Link href="/contact" className="btn-primary text-base px-8 py-4 shadow-2xl shadow-[hsl(217,91%,54%)]/30">
+            <Link href="/contact" title="Get Your Free SEO Audit" className="btn-primary text-base px-8 py-4 shadow-2xl shadow-[hsl(217,91%,54%)]/30">
               <span>Get Your Free Audit</span>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
-            <Link href="/case-studies" className="btn-outline text-base px-8 py-4">
+            <Link href="/case-studies" title="See Our SEO Case Studies" className="btn-outline text-base px-8 py-4">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

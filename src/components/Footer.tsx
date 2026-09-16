@@ -47,7 +47,7 @@ export default function Footer() {
               <h3 className="text-2xl font-bold mb-1">Get a Free SEO Audit</h3>
               <p className="text-[hsl(215,20%,65%)]">Discover exactly why your competitors are outranking you.</p>
             </div>
-            <Link href="/contact" className="btn-primary whitespace-nowrap">
+            <Link href="/contact" title="Claim Free SEO Audit" className="btn-primary whitespace-nowrap">
               <span>Claim Free Audit →</span>
             </Link>
           </div>
@@ -59,7 +59,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-5">
+            <Link href="/" title="MarketHom Agency Home" className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] flex items-center justify-center text-white font-bold text-lg">
                 M
               </div>
@@ -77,6 +77,7 @@ export default function Footer() {
                 <a
                   key={s.label}
                   href={s.href}
+                  title={s.label}
                   aria-label={s.label}
                   className="w-9 h-9 rounded-lg bg-[hsl(215,25%,18%)] flex items-center justify-center text-[hsl(215,20%,60%)] hover:bg-[hsl(217,91%,54%)] hover:text-white transition-all duration-200"
                 >
@@ -94,6 +95,7 @@ export default function Footer() {
                 <li key={s.href}>
                   <Link
                     href={s.href}
+                    title={s.label}
                     className="text-sm text-[hsl(215,20%,60%)] hover:text-[hsl(217,91%,75%)] transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-[hsl(217,91%,54%)] group-hover:w-2 transition-all duration-200" />
@@ -112,6 +114,7 @@ export default function Footer() {
                 <li key={c.href}>
                   <Link
                     href={c.href}
+                    title={c.label}
                     className="text-sm text-[hsl(215,20%,60%)] hover:text-[hsl(217,91%,75%)] transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1 h-1 rounded-full bg-[hsl(217,91%,54%)] group-hover:w-2 transition-all duration-200" />
@@ -134,7 +137,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-xs text-[hsl(215,20%,50%)] mb-0.5">Email</div>
-                  <a href="mailto:hello@markethom.agency" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
+                  <a href="mailto:hello@markethom.agency" title="Email Us" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
                     hello@markethom.agency
                   </a>
                 </div>
@@ -147,7 +150,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-xs text-[hsl(215,20%,50%)] mb-0.5">Phone</div>
-                  <a href="tel:+1-800-MARKETHOM" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
+                  <a href="tel:+1-800-MARKETHOM" title="Call Us" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
                     +1 (800) MARKET-HOM
                   </a>
                 </div>
@@ -178,7 +181,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-6">
               {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-                <Link key={item} href="#" className="text-xs text-[hsl(215,20%,50%)] hover:text-[hsl(217,91%,75%)] transition-colors">
+                <Link key={item} href="#" title={item} className="text-xs text-[hsl(215,20%,50%)] hover:text-[hsl(217,91%,75%)] transition-colors">
                   {item}
                 </Link>
               ))}
