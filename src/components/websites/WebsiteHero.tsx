@@ -12,7 +12,7 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
       <div className="flex flex-col md:flex-row gap-6 items-start">
         <PublisherLogo logoUrl={website.logo_url} name={website.name || website.domain} />
         
-        <div className="flex-1 space-y-3">
+        <div className="flex-1 min-w-0 space-y-3">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
             <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md">{website.category_id}</span>
             {website.verification_status === 'verified' && verifiedDate && (
@@ -26,7 +26,7 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
             )}
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+          <h1 className="text-2xl md:text-3xl xl:text-4xl font-bold text-slate-900 leading-tight truncate">
             Publish Guest Post on {website.name && website.name.toLowerCase() !== website.domain.toLowerCase() 
               ? website.name
               : website.domain}
