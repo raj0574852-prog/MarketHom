@@ -53,13 +53,13 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
           <Link key={site.id} href={`/websites/${site.slug}`} className="group block bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-[hsl(217,91%,54%)]">
             <div className="p-5 flex flex-col items-center text-center">
               <RelatedPublisherLogo logoUrl={site.logo_url} name={site.name || site.domain} />
-              <h3 className="font-bold text-slate-900 group-hover:text-[hsl(217,91%,54%)] transition-colors line-clamp-1">{site.name || site.domain}</h3>
-              <p className="text-sm text-slate-500 mb-4">{site.domain}</p>
+              <h3 className="w-full font-bold text-slate-900 group-hover:text-[hsl(217,91%,54%)] transition-colors truncate px-1">{site.name || site.domain}</h3>
+              <p className="w-full text-sm text-slate-500 mb-4 truncate px-1">{site.domain}</p>
               <div className="w-full pt-4 border-t border-slate-100 flex justify-between items-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{site.category_id}</span>
-                {(site.content_placement_selling_price || site.price) ? (
+                {site.content_placement_selling_price ? (
                   <span className="font-bold text-slate-900">
-                    {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price || site.price}
+                    {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price}
                   </span>
                 ) : (
                   <span className="font-bold text-[hsl(217,91%,54%)]">Buy Now</span>
