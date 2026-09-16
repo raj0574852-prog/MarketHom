@@ -26,6 +26,10 @@ export const metadata: Metadata = {
     'web development agency',
     'online marketing agency',
   ],
+  publisher: 'MarketHom Agency',
+  alternates: {
+    canonical: CANONICAL_SITE_URL,
+  },
 };
 
 export default function HomePage() {
