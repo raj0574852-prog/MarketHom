@@ -5,7 +5,7 @@ import { getPublishedPosts } from '@/lib/blog/posts';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 import { CANONICAL_SITE_URL } from '@/lib/constants';
 
-const CHUNK_SIZE = 5000;
+const CHUNK_SIZE = 1000;
 
 export async function GET(request: Request, context: any) {
   const baseUrl = CANONICAL_SITE_URL;
