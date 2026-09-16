@@ -6,6 +6,7 @@ import { getServiceSupabase } from '@/lib/supabaseClient';
 
 // Components
 import WebsiteHero from '@/components/websites/WebsiteHero';
+import QuickAnswer from '@/components/websites/QuickAnswer';
 import QuickOverview from '@/components/websites/QuickOverview';
 import PublishingOpportunity from '@/components/websites/PublishingOpportunity';
 import PricingCard from '@/components/websites/PricingCard';
@@ -312,6 +313,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
           {/* 3. Main Content Column (Bottom on mobile, Bottom-Left on desktop) */}
           <div className="lg:col-span-2 space-y-8 order-3">
+            <QuickAnswer website={website} />
             <QuickOverview website={website} />
             <PublishingOpportunity website={website} />
             
