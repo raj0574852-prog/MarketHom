@@ -27,7 +27,7 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
-            {website.name && website.name.toLowerCase() !== website.domain.toLowerCase() 
+            Publish Guest Post on {website.name && website.name.toLowerCase() !== website.domain.toLowerCase() 
               ? website.name
               : website.domain}
           </h1>
