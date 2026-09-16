@@ -100,14 +100,31 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       
       const isDatasetConfirmedComplete = isComplete && !hasDuplicates;
 
-      // 5. Fetch all existing websites to compare
-      const { data: existingSites, error: fetchError } = await supabase
-        .from('website_listings')
-        .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url, content_placement_selling_price, logo_url');
+      // 5. Fetch all existing websites to compare (paginated to bypass 1000 limit)
+      let allExistingSites: any[] = [];
+      let fetchOffset = 0;
+      const fetchLimit = 1000;
+      let hasMoreSites = true;
 
-      if (fetchError) throw fetchError;
+      while (hasMoreSites) {
+        const { data: pageSites, error: fetchError } = await supabase
+          .from('website_listings')
+          .select('id, domain, source_hash, is_in_google_sheet, is_listed, status, slug, name, website_url, content_placement_selling_price, logo_url')
+          .range(fetchOffset, fetchOffset + fetchLimit - 1);
 
-      const existingMap = new Map(existingSites?.map((s) => [s.domain, s]) || []);
+        if (fetchError) throw fetchError;
+        
+        if (pageSites && pageSites.length > 0) {
+          allExistingSites = [...allExistingSites, ...pageSites];
+          fetchOffset += fetchLimit;
+        }
+        
+        if (!pageSites || pageSites.length < fetchLimit) {
+          hasMoreSites = false;
+        }
+      }
+
+      const existingMap = new Map(allExistingSites.map((s) => [s.domain, s]));
       const processedDomains = new Set<string>();
       
       const newSitesToInsert: any[] = [];
