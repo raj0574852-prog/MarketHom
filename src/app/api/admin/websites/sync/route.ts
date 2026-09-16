@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { runWebsiteSync } from '@/services/websiteSyncService';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 
+export const maxDuration = 300; // 5 minutes max duration for Vercel
+
+
 export async function POST(req: Request) {
   try {
     // In a real app, verify the admin session here
