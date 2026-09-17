@@ -16,6 +16,7 @@ import AcceptedContent from '@/components/websites/AcceptedContent';
 import RelatedWebsites from '@/components/websites/RelatedWebsites';
 import FAQAccordion from '@/components/websites/FAQAccordion';
 import PublisherOverview from '@/components/websites/PublisherOverview';
+import HowItWorks from '@/components/websites/HowItWorks';
 import { generatePublisherFAQs } from '@/components/websites/faqGenerator';
 
 export const revalidate = 60;
@@ -79,7 +80,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   let title = website.seo_title;
   if (!title) {
     const displayName = website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain;
-    title = `${displayName} — Publisher Information & Content Placement`;
+    title = `${displayName} Guest Post & SEO Placement | EducationHom`;
   }
   
   // 1. Genuine publisher/editorial description
@@ -215,7 +216,21 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
                     item: canonical,
                   },
                 ],
-              }
+              },
+              ...(website.content_placement_selling_price ? [{
+                '@type': 'Product',
+                'name': `Content Placement on ${website.name || website.domain}`,
+                'description': website.short_description || `Premium publishing opportunity on ${website.domain}. Secure high-quality backlinks.`,
+                'image': website.logo_url ? [website.logo_url] : undefined,
+                'offers': {
+                  '@type': 'Offer',
+                  'url': canonical,
+                  'priceCurrency': website.currency || 'USD',
+                  'price': website.content_placement_selling_price,
+                  'availability': 'https://schema.org/InStock',
+                  'itemCondition': 'https://schema.org/NewCondition'
+                }
+              }] : [])
             ]
           }),
         }}
@@ -260,12 +275,12 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {/* 2. Sidebar Column (Middle on mobile, Right on desktop) */}
-          <div className="lg:col-span-1 lg:row-span-2 space-y-6 order-2">
+          <div className="lg:col-span-1 lg:row-span-2 space-y-6 order-2 lg:sticky lg:top-24 self-start">
             <PricingCard website={website} />
             
             {/* Sidebar Benefits Card */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h3 className="font-bold text-slate-900 mb-4">Why Choose {website.name || website.domain}?</h3>
+              <h2 className="text-lg font-bold text-slate-900 mb-4">Why Choose {website.name || website.domain}?</h2>
               <ul className="space-y-3">
                 {website.category_id && (
                   <li className="flex gap-3 text-slate-600 text-sm">
@@ -296,7 +311,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
             {/* Need Help Card */}
             <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm p-6 text-white">
-              <h3 className="font-bold mb-2">Need Help?</h3>
+              <h2 className="text-lg font-bold mb-2">Need Help?</h2>
               <p className="text-slate-400 text-sm mb-4">Not sure if this website is the right fit for your brand? Our SEO experts can help you build the perfect placement strategy.</p>
               <Link href="/contact" className="text-[hsl(217,91%,54%)] font-semibold text-sm hover:text-white transition-colors">
                 Contact Strategy Team &rarr;
@@ -321,6 +336,8 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
             {/* About Section - Uses PublisherOverview component */}
             <PublisherOverview website={website} />
+
+            <HowItWorks />
 
             {/* Guidelines & Policies */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
