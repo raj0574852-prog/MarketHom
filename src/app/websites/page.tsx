@@ -117,7 +117,7 @@ export default async function WebsitesIndexPage({
             <div className="mb-6 text-sm text-slate-500 font-medium">
               Showing {offset + 1}–{Math.min(offset + limit, filteredCount || 0)} of {filteredCount || 0} {filteredCount === 1 ? 'website' : 'websites'}
             </div>
-            <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
+            <div className={view === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6" : "flex flex-col gap-4"}>
               {websites.map(site => (
               <Link key={site.id} href={`/websites/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
                 {view === 'grid' ? (
@@ -131,15 +131,15 @@ export default async function WebsitesIndexPage({
                           {site.name.charAt(0)}
                         </div>
                       )}
-                      <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full uppercase tracking-wider">
+                      <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full uppercase tracking-wider truncate max-w-[50%] inline-block text-right">
                         {site.category_id}
                       </span>
                     </div>
                     
                     <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:text-[hsl(217,91%,54%)] transition-colors line-clamp-1">{site.name}</h3>
-                    <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-5">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                      {site.domain}
+                    <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-5 w-full">
+                      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                      <span className="truncate">{site.domain}</span>
                     </div>
                     
                     <p className="text-sm text-slate-600 line-clamp-2 mb-6 flex-1 leading-relaxed">
@@ -182,14 +182,14 @@ export default async function WebsitesIndexPage({
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-1">
                         <h3 className="text-xl font-bold text-slate-900 group-hover:text-[hsl(217,91%,54%)] transition-colors truncate">{site.name}</h3>
-                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded-full uppercase tracking-wider shrink-0">
+                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded-full uppercase tracking-wider shrink-0 truncate max-w-[120px]">
                           {site.category_id}
                         </span>
                       </div>
                       
-                      <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                        {site.domain}
+                      <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-2 w-full">
+                        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                        <span className="truncate">{site.domain}</span>
                       </div>
                       
                       <p className="text-sm text-slate-600 line-clamp-1 leading-relaxed hidden sm:block">
