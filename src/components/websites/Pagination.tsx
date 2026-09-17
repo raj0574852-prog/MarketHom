@@ -39,35 +39,80 @@ export default function Pagination({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mt-12 gap-4">
-      <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-center">
-        {currentPage <= 1 ? (
-          <span className={disabledClass}>Previous</span>
-        ) : (
-          <Link href={getPageUrl(currentPage - 1)} className={btnClass}>
-            Previous
-          </Link>
-        )}
+    <div className="flex flex-col items-center justify-center mt-12 gap-4 w-full">
+      <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-center w-full">
         
-        <div className="flex gap-1 sm:gap-2">
-          {pages.map((p) => (
-            <Link 
-              key={p} 
-              href={getPageUrl(p)}
-              className={p === currentPage ? activeClass : btnClass}
-            >
-              {p}
+        {/* Mobile View: Compact Pagination */}
+        <div className="flex sm:hidden items-center justify-between w-full">
+          {currentPage <= 1 ? (
+            <span className={disabledClass} aria-disabled="true">Previous</span>
+          ) : (
+            <Link href={getPageUrl(currentPage - 1)} scroll={false} onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })} className={btnClass} aria-label="Previous page">
+              Previous
             </Link>
-          ))}
+          )}
+          
+          <span className="text-sm font-medium text-slate-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          
+          {currentPage >= totalPages ? (
+            <span className={disabledClass} aria-disabled="true">Next</span>
+          ) : (
+            <Link href={getPageUrl(currentPage + 1)} scroll={false} onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })} className={btnClass} aria-label="Next page">
+              Next
+            </Link>
+          )}
         </div>
-        
-        {currentPage >= totalPages ? (
-          <span className={disabledClass}>Next</span>
-        ) : (
-          <Link href={getPageUrl(currentPage + 1)} className={btnClass}>
-            Next
-          </Link>
-        )}
+
+        {/* Desktop View: Detailed Pagination */}
+        <div className="hidden sm:flex items-center gap-2">
+          {currentPage <= 1 ? (
+            <span className={disabledClass} aria-disabled="true">Previous</span>
+          ) : (
+            <Link href={getPageUrl(currentPage - 1)} scroll={false} onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })} className={btnClass} aria-label="Previous page">
+              Previous
+            </Link>
+          )}
+          
+          <div className="flex gap-1">
+            {startPage > 1 && (
+              <>
+                <Link href={getPageUrl(1)} scroll={false} onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })} className={btnClass} aria-label="Go to page 1">1</Link>
+                {startPage > 2 && <span className="px-2 py-2 text-slate-400">...</span>}
+              </>
+            )}
+
+            {pages.map((p) => (
+              <Link 
+                key={p} 
+                href={getPageUrl(p)}
+                scroll={false} 
+                onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })}
+                className={p === currentPage ? activeClass : btnClass}
+                aria-current={p === currentPage ? "page" : undefined}
+                aria-label={`Go to page ${p}`}
+              >
+                {p}
+              </Link>
+            ))}
+
+            {endPage < totalPages && (
+              <>
+                {endPage < totalPages - 1 && <span className="px-2 py-2 text-slate-400">...</span>}
+                <Link href={getPageUrl(totalPages)} scroll={false} onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })} className={btnClass} aria-label={`Go to page ${totalPages}`}>{totalPages}</Link>
+              </>
+            )}
+          </div>
+          
+          {currentPage >= totalPages ? (
+            <span className={disabledClass} aria-disabled="true">Next</span>
+          ) : (
+            <Link href={getPageUrl(currentPage + 1)} scroll={false} onClick={() => document.getElementById('marketplace-results')?.scrollIntoView({ behavior: 'smooth' })} className={btnClass} aria-label="Next page">
+              Next
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ export default async function WebsitesIndexPage({
   const country = typeof params.country === 'string' ? params.country : '';
 
   const page = typeof params.page === 'string' ? parseInt(params.page, 10) : 1;
-  const limit = 20;
+  const limit = 10;
   const offset = (page - 1) * limit;
   
   // Fetch total sites for the search placeholder
@@ -106,15 +106,19 @@ export default async function WebsitesIndexPage({
         <SearchFilter totalSites={totalSitesCount || 0} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" id="marketplace-results">
         {!websites || websites.length === 0 ? (
           <div className="text-center py-24 bg-white rounded-3xl border border-slate-200 shadow-sm">
             <h2 className="text-2xl font-bold text-slate-900 mb-2">No Listings Found</h2>
             <p className="text-slate-500">Try adjusting your search or category filters.</p>
           </div>
         ) : (
-          <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
-            {websites.map(site => (
+          <>
+            <div className="mb-6 text-sm text-slate-500 font-medium">
+              Showing {offset + 1}–{Math.min(offset + limit, filteredCount || 0)} of {filteredCount || 0} {filteredCount === 1 ? 'website' : 'websites'}
+            </div>
+            <div className={view === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
+              {websites.map(site => (
               <Link key={site.id} href={`/websites/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
                 {view === 'grid' ? (
                   // GRID VIEW
@@ -216,7 +220,8 @@ export default async function WebsitesIndexPage({
                 )}
               </Link>
             ))}
-          </div>
+            </div>
+          </>
         )}
         
         {websites && websites.length > 0 && (
