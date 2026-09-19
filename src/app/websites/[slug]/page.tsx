@@ -8,11 +8,8 @@ import { getServiceSupabase } from '@/lib/supabaseClient';
 import WebsiteHero from '@/components/websites/WebsiteHero';
 import QuickAnswer from '@/components/websites/QuickAnswer';
 import QuickOverview from '@/components/websites/QuickOverview';
-import PublishingOpportunity from '@/components/websites/PublishingOpportunity';
 import PricingCard from '@/components/websites/PricingCard';
 import MetricGrid from '@/components/websites/MetricGrid';
-import PublishingGuidelines from '@/components/websites/PublishingGuidelines';
-import AcceptedContent from '@/components/websites/AcceptedContent';
 import RelatedWebsites from '@/components/websites/RelatedWebsites';
 import FAQAccordion from '@/components/websites/FAQAccordion';
 import PublisherOverview from '@/components/websites/PublisherOverview';
@@ -323,7 +320,6 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
           <div className="lg:col-span-2 space-y-8 order-3">
             <QuickAnswer website={website} />
             <QuickOverview website={website} />
-            <PublishingOpportunity website={website} />
             
             {(website.updated_at || website.last_verified_at) && (
               <div className="text-sm text-slate-500 italic">
@@ -338,13 +334,6 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             <PublisherOverview website={website} />
 
             <HowItWorks />
-
-            {/* Guidelines & Policies */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
-              <PublishingGuidelines website={website} />
-            </div>
-
-            <AcceptedContent website={website} />
             
             <FAQAccordion faqs={faqs} />
 
