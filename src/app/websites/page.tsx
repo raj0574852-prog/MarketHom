@@ -123,14 +123,7 @@ export default async function WebsitesIndexPage({
                 {view === 'grid' ? (
                   // GRID VIEW
                   <div className="p-6 flex-1 flex flex-col relative w-full">
-                    <div className="flex items-start justify-between mb-5">
-                      {site.logo_url ? (
-                        <img src={site.logo_url} alt={site.name} className="w-14 h-14 rounded-2xl object-contain bg-slate-50 border border-slate-100 shadow-sm" />
-                      ) : (
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-2xl border border-slate-200 shadow-inner">
-                          {site.name.charAt(0)}
-                        </div>
-                      )}
+                    <div className="flex items-start justify-end mb-5">
                       <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full uppercase tracking-wider truncate max-w-[50%] inline-block text-right">
                         {site.category_id}
                       </span>
@@ -169,15 +162,6 @@ export default async function WebsitesIndexPage({
                 ) : (
                   // LIST VIEW
                   <>
-                    <div className="shrink-0 flex items-center justify-center">
-                      {site.logo_url ? (
-                        <img src={site.logo_url} alt={site.name} className="w-20 h-20 rounded-2xl object-contain bg-slate-50 border border-slate-100 shadow-sm" />
-                      ) : (
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-3xl border border-slate-200 shadow-inner">
-                          {site.name.charAt(0)}
-                        </div>
-                      )}
-                    </div>
                     
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-1">
