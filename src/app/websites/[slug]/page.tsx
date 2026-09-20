@@ -180,7 +180,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             '@graph': [
               {
                 '@type': 'WebPage',
-                '@id': canonical,
+                '@id': `${canonical}#webpage`,
                 'url': canonical,
                 'name': website.seo_title || `${website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain} — Publisher Information & Content Placement`,
                 'description': (() => {
@@ -215,17 +215,23 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
                 ],
               },
               ...(website.content_placement_selling_price ? [{
-                '@type': 'Product',
+                '@type': 'Service',
+                '@id': `${canonical}#service`,
                 'name': `Content Placement on ${website.name || website.domain}`,
+                'serviceType': 'Guest Post and Content Placement',
                 'description': website.short_description || `Premium publishing opportunity on ${website.domain}. Secure high-quality backlinks.`,
-                'image': website.logo_url ? [website.logo_url] : undefined,
+                'url': canonical,
+                'provider': {
+                  '@type': 'Organization',
+                  'name': 'EducationHom',
+                  'url': CANONICAL_SITE_URL
+                },
                 'offers': {
                   '@type': 'Offer',
                   'url': canonical,
                   'priceCurrency': website.currency || 'USD',
                   'price': website.content_placement_selling_price,
-                  'availability': 'https://schema.org/InStock',
-                  'itemCondition': 'https://schema.org/NewCondition'
+                  'availability': 'https://schema.org/InStock'
                 }
               }] : [])
             ]

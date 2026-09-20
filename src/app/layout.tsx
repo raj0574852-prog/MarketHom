@@ -69,9 +69,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code',
-  },
 };
 
 const jsonLdOrganization = {
@@ -93,14 +90,7 @@ const jsonLdOrganization = {
     'Pay-Per-Click Advertising (PPC)',
     'High DA Guest Posting',
     'Web Development'
-  ],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: '+1-800-555-0199',
-    contactType: 'customer service',
-    areaServed: 'Worldwide',
-    availableLanguage: 'English'
-  }
+  ]
 };
 
 const jsonLdWebSite = {
