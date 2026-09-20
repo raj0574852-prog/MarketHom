@@ -1,0 +1,1 @@
+const https = require("https"); https.get("https://www.educationhom.com/websites?q=reuters.com&t=" + Date.now(), (res) => { let data = ""; res.on("data", (c) => data += c); res.on("end", () => { console.log(data); }); });

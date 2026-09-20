@@ -41,9 +41,9 @@ export default function HomePage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Organization',
-            name: 'MarketHom Agency',
+            name: 'EducationHom',
             url: CANONICAL_SITE_URL,
-            logo: `${CANONICAL_SITE_URL}/logo.png`,
+            logo: `${CANONICAL_SITE_URL}/images/educationhom-logo.webp`,
             description:
               'Premium digital marketing agency specializing in SEO, AI SEO, PPC, SMM, Link Building and Web Development.',
             contactPoint: {

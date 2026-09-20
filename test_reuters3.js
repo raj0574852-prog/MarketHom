@@ -1,0 +1,1 @@
+const https = require("https"); https.get("https://www.educationhom.com/websites?q=reuters.com&t=" + Date.now(), (res) => { let data = ""; res.on("data", (c) => data += c); res.on("end", () => { const priceMatch = data.match(/Starting At<\/span><div[^>]+>\$([\d,]+)/i); if (priceMatch) { console.log("PRICE: " + priceMatch[1]); } }); });

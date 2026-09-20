@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const navLinks = [
@@ -52,14 +53,16 @@ export default function Header() {
       <nav className="container-custom">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" title="MarketHom Agency Home" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
-              M
-            </div>
-            <div>
-              <span className="text-xl font-bold text-white">Market</span>
-              <span className="text-xl font-bold gradient-text">Hom</span>
-              <div className="text-[10px] text-[hsl(215,20%,70%)] tracking-widest uppercase -mt-1">Agency</div>
+          <Link href="/" title="EducationHom Home" className="flex items-center gap-3 group">
+            <div className="relative h-10 w-auto">
+              <Image 
+                src="/images/educationhom-logo.webp"
+                alt="EducationHom"
+                width={200}
+                height={50}
+                className="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                priority
+              />
             </div>
           </Link>
 

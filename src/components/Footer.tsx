@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const services = [
   { label: 'SEO Services', href: '/services/seo' },
@@ -59,13 +60,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" title="MarketHom Agency Home" className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] flex items-center justify-center text-white font-bold text-lg">
-                M
-              </div>
-              <div>
-                <span className="text-xl font-bold text-white">Market</span>
-                <span className="text-xl font-bold gradient-text">Hom</span>
+            <Link href="/" title="EducationHom Home" className="flex items-center gap-3 mb-5 group">
+              <div className="relative h-10 w-auto">
+                <Image 
+                  src="/images/educationhom-logo.webp"
+                  alt="EducationHom"
+                  width={200}
+                  height={50}
+                  className="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
             </Link>
             <p className="text-[hsl(215,20%,60%)] text-sm leading-relaxed mb-6">

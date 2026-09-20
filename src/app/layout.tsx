@@ -74,9 +74,9 @@ export const metadata: Metadata = {
 const jsonLdOrganization = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'MarketHom Agency',
+  name: 'EducationHom',
   url: CANONICAL_SITE_URL,
-  logo: `${CANONICAL_SITE_URL}/og-image.png`,
+  logo: `${CANONICAL_SITE_URL}/images/educationhom-logo.webp`,
   description: 'AI Content Intelligence, Google SEO, AEO, GEO, PPC, and Web Development Agency.',
   sameAs: [
     'https://twitter.com/markethomagency',
@@ -96,7 +96,7 @@ const jsonLdOrganization = {
 const jsonLdWebSite = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'MarketHom Agency',
+  name: 'EducationHom',
   url: CANONICAL_SITE_URL,
   potentialAction: {
     '@type': 'SearchAction',

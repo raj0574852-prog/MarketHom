@@ -1,0 +1,1 @@
+const https = require("https"); const urls = ["https://www.educationhom.com/websites/reuters.com", "https://www.educationhom.com/websites/bhaskar.com", "https://www.educationhom.com/websites/entrepreneur.com"]; urls.forEach(u => { https.get(u + "?t=" + Date.now(), (res) => { console.log(u + " : " + res.statusCode); }); });
