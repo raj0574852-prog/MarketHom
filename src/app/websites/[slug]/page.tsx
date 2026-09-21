@@ -87,10 +87,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const parts = [];
     parts.push(`Explore publishing opportunities on ${website.domain} in the ${categoryName} category.`);
     
-    const displayPrice = website.content_placement_selling_price;
-    if (displayPrice) {
-      parts.push(`Pricing starts at $${displayPrice}.`);
-    }
+    // Price is intentionally omitted from the meta description here 
+    // to prevent Google Search from showing the price twice (once in description, once in Rich Snippets)
+
     
     const features = [];
     if (website.turnaround_time) {
@@ -116,6 +115,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const basePriceStr = `$${website.price}`;
     const sellPriceStr = `$${website.content_placement_selling_price}`;
     description = description.split(basePriceStr).join(sellPriceStr);
+  }
+
+  // Strip pricing sentences from the meta description to avoid double-pricing in Google Search results
+  // (Google already shows the price via the structured data Offer schema)
+  if (description) {
+    description = description.replace(/currently available starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
+    description = description.replace(/available starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
+    description = description.replace(/starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
   }
   
   
