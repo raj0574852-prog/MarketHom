@@ -3,9 +3,7 @@ import { WebsiteListing } from './types';
 import PublisherLogo from './PublisherLogo';
 
 export default function WebsiteHero({ website }: { website: WebsiteListing }) {
-  const verifiedDate = website.last_verified_at 
-    ? new Date(website.last_verified_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    : null;
+  const isVerified = website.verification_status === 'verified' && website.last_verified_at;
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8">
@@ -14,10 +12,10 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
         <div className="flex-1 min-w-0 space-y-3">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
             <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md">{website.category_id}</span>
-            {website.verification_status === 'verified' && verifiedDate && (
+            {isVerified && (
               <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded-md flex items-center gap-1">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                Verified {verifiedDate}
+                Verified
               </span>
             )}
             {website.featured && (

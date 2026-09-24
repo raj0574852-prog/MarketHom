@@ -58,6 +58,10 @@ export const metadata: Metadata = {
       'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: [`${CANONICAL_SITE_URL}/og-image.png`],
   },
+  icons: {
+    icon: '/icon.png',
+    apple: '/icon.png',
+  },
   robots: {
     index: true,
     follow: true,

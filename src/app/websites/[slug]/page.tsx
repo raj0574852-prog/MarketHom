@@ -153,7 +153,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title,
       description,
       url: canonical,
-      type: 'article', // Or 'website'
+      type: 'website',
       ...(openGraphImages.length > 0 && { images: openGraphImages })
     },
     twitter: {
