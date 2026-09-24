@@ -84,30 +84,45 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // 2. Concise data-driven fallback
   let description = website.seo_description || website.editorial_description || website.short_description;
   if (!description) {
-    const parts = [];
-    parts.push(`Explore publishing opportunities on ${website.domain} in the ${categoryName} category.`);
-    
-    // Price is intentionally omitted from the meta description here 
-    // to prevent Google Search from showing the price twice (once in description, once in Rich Snippets)
-
-    
-    const features = [];
-    if (website.turnaround_time) {
-      features.push(`${website.turnaround_time}-day turnaround`);
+    const categories = [];
+    if (website.category_id && website.category_id !== 'General') {
+      categories.push(website.category_id);
     }
+    if (website.accepted_niches && website.accepted_niches.length > 0) {
+      const niches = website.accepted_niches.filter((n: string) => n !== 'General Niches' && n !== website.category_id);
+      categories.push(...niches);
+    }
+    
+    // De-duplicate and select top categories
+    const uniqueCategories = Array.from(new Set(categories));
+    let topicsString = '';
+    if (uniqueCategories.length > 0) {
+      const topTopics = uniqueCategories.slice(0, 3);
+      if (topTopics.length === 1) {
+        topicsString = `, covering ${topTopics[0]} topics,`;
+      } else if (topTopics.length === 2) {
+        topicsString = `, covering ${topTopics[0]} and ${topTopics[1]} topics,`;
+      } else {
+        topicsString = `, covering ${topTopics.slice(0, -1).join(', ')} and ${topTopics[topTopics.length - 1]} topics,`;
+      }
+    }
+
+    const intentText = website.publication_type && website.publication_type.includes('Guest Post')
+      ? 'guest post and SEO placement opportunities'
+      : 'publishing and SEO placement opportunities';
+
+    description = `Explore ${intentText} on ${website.domain}${topicsString} through EducationHom.`;
+
+    const features = [];
     if (website.max_dofollow_links) {
       features.push(`up to ${website.max_dofollow_links} dofollow links`);
     }
+    if (website.turnaround_time) {
+      features.push(`a ${website.turnaround_time}-day turnaround`);
+    }
     if (features.length > 0) {
-      parts.push(`Includes ${features.join(' and ')}.`);
+      description += ` Options include ${features.join(' and ')}.`;
     }
-
-    if (website.accepted_niches && website.accepted_niches.length > 0) {
-      const niches = website.accepted_niches.slice(0, 2).join(' and ');
-      parts.push(`Accepted niches include ${niches}.`);
-    }
-    
-    description = parts.join(' ');
   }
 
   // Ensure any hardcoded base prices in the description are replaced with the correct selling price
@@ -125,7 +140,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description = description.replace(/starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
   }
   
-  
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
 
   // Evaluate indexability dynamically
@@ -140,8 +154,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   return {
-    title,
+    title: {
+      absolute: title
+    },
     description,
+    keywords: [],
     alternates: {
       canonical
     },

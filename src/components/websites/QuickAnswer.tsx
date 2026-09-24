@@ -6,7 +6,28 @@ export default function QuickAnswer({ website }: { website: WebsiteListing }) {
 
   const { domain, name, category_id, content_placement_selling_price } = website;
   const displayName = name || domain;
-  const displayCategory = category_id && category_id !== 'General' ? category_id : 'various topics';
+  
+  const categories = [];
+  if (category_id && category_id !== 'General') {
+    categories.push(category_id);
+  }
+  if (website.accepted_niches && website.accepted_niches.length > 0) {
+    const niches = website.accepted_niches.filter((n: string) => n !== 'General Niches' && n !== category_id);
+    categories.push(...niches);
+  }
+  
+  const uniqueCategories = Array.from(new Set(categories));
+  let displayCategory = 'various topics';
+  if (uniqueCategories.length > 0) {
+    const topTopics = uniqueCategories.slice(0, 3);
+    if (topTopics.length === 1) {
+      displayCategory = topTopics[0];
+    } else if (topTopics.length === 2) {
+      displayCategory = `${topTopics[0]} and ${topTopics[1]}`;
+    } else {
+      displayCategory = `${topTopics.slice(0, -1).join(', ')} and ${topTopics[topTopics.length - 1]}`;
+    }
+  }
 
   // Constructing a factual, AEO-friendly quick answer
   return (
@@ -19,9 +40,9 @@ export default function QuickAnswer({ website }: { website: WebsiteListing }) {
       </h2>
       <div className="text-slate-700 leading-relaxed text-base">
         <strong>{displayName}</strong> is a publishing platform covering {displayCategory}. 
-        Its primary domain is {domain}.
+        EducationHom lists this publisher for guest posts and SEO content placements, with available publishing options shown below.
         {content_placement_selling_price ? (
-          <> Content placements and guest posts on {domain} are currently available starting at ${content_placement_selling_price} USD.</>
+          <> Placements are currently available starting at ${content_placement_selling_price} USD.</>
         ) : null}
       </div>
     </div>
