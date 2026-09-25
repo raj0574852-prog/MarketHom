@@ -65,7 +65,7 @@ export async function GET(request: Request, context: any) {
 
   const { data: websites, error } = await supabase
     .from('website_listings')
-    .select('slug, updated_at, created_at, last_verified_at, last_synced_at')
+    .select('slug, updated_at, created_at, last_verified_at, last_synced_at, status, is_listed, domain, editorial_description, short_description, category_id, accepted_niches, turnaround_time, max_dofollow_links, content_placement_selling_price, price, website_metrics')
     .eq('status', 'published')
     .not('slug', 'is', null)
     .order('id', { ascending: true })
@@ -75,11 +75,19 @@ export async function GET(request: Request, context: any) {
     console.error('Error fetching websites for sitemap chunk:', error);
   }
 
+  // Import dynamic indexability evaluator
+  const { evaluatePublisherIndexability } = await import('@/lib/seo/evaluatePublisherIndexability');
+
   if (websites) {
     for (const site of websites) {
-      // We intentionally do NOT output lastmod for publisher pages to prevent Google from treating 
-      // internal database sync timestamps as article publish/update dates in search snippets.
-      addUrl(`${baseUrl}/websites/${site.slug}`, undefined, 'weekly', 0.8);
+      const evaluation = evaluatePublisherIndexability(site);
+      
+      // Phase 15G: Only include pages that pass the quality gate
+      if (evaluation.sitemapEligible) {
+        // We intentionally do NOT output lastmod for publisher pages to prevent Google from treating 
+        // internal database sync timestamps as article publish/update dates in search snippets.
+        addUrl(`${baseUrl}/websites/${site.slug}`, undefined, 'weekly', 0.8);
+      }
     }
   }
 

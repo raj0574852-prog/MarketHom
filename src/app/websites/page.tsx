@@ -102,7 +102,31 @@ export default async function WebsitesIndexPage({
         </div>
       </div>
       
-      <div className="px-4 sm:px-6 lg:px-8">
+      {/* SEO Category Hubs - Static Internal Links for Crawlability */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div className="flex flex-wrap gap-2 justify-center">
+          {['Technology', 'Business', 'Finance', 'Crypto', 'Health', 'Travel', 'Real Estate', 'Gaming'].map(cat => {
+            const slug = cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-');
+            return (
+              <Link 
+                key={cat} 
+                href={`/websites/category/${slug}`}
+                className="px-4 py-2 bg-white text-sm font-medium text-slate-600 rounded-full border border-slate-200 shadow-sm hover:border-[hsl(217,91%,54%)] hover:text-[hsl(217,91%,54%)] transition-colors"
+              >
+                {cat}
+              </Link>
+            );
+          })}
+          <Link 
+            href="/websites/category"
+            className="px-4 py-2 bg-slate-100 text-sm font-medium text-slate-700 rounded-full border border-slate-200 hover:bg-slate-200 transition-colors"
+          >
+            View All Categories →
+          </Link>
+        </div>
+      </div>
+
+      <div className="px-4 sm:px-6 lg:px-8 mt-6">
         <SearchFilter totalSites={totalSitesCount || 0} />
       </div>
 

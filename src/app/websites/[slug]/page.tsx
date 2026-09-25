@@ -62,7 +62,7 @@ async function getListingData(slug: string) {
 }
 
 import { CANONICAL_SITE_URL } from '@/lib/constants';
-import { evaluatePublisherIndexability } from '@/lib/seo/qualityGate';
+import { evaluatePublisherIndexability } from '@/lib/seo/evaluatePublisherIndexability';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

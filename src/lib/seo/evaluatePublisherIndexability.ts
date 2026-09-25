@@ -111,19 +111,21 @@ export function evaluatePublisherIndexability(
   }
 
   // 3. Classification
-  // We do NOT use a blind rule yet for 'indexable'. 
-  // For Phase 15A-15B, we classify into buckets based on content differentiation.
-  // We will fine-tune these thresholds in Phase 15F based on real distribution.
+  // Based on cohort analysis, 32k pages lack rich editorial descriptions.
+  // The bare minimum for a valuable marketplace listing is having a specific niche/category + price (Score 25).
+  // Pages scoring < 25 (e.g., General category with no details) are mathematically duplicate/thin content.
   let classification: IndexabilityClassification;
-  let indexable = true; // Default true until Phase 15F overrides it, or we rely on classification
+  let indexable = true;
 
-  if (score >= 60) {
+  if (score >= 45) {
     classification = 'INDEX';
-  } else if (score >= 35) {
+    indexable = true;
+  } else if (score >= 25) {
     classification = 'IMPROVE';
+    indexable = true; // Still indexable, but flagged for content enhancement
   } else {
     classification = 'NOINDEX';
-    // indexable = false; // Intentionally left true or handled dynamically until correlation is done
+    indexable = false; // Protects crawl budget from 6,600+ zero-value "General" template pages
   }
 
   return {
@@ -132,6 +134,6 @@ export function evaluatePublisherIndexability(
     classification,
     reasons,
     missingSignals,
-    sitemapEligible: isTechnicallyEligible // Will be refined in 15G
+    sitemapEligible: indexable // Only indexable pages go in the sitemap
   };
 }
