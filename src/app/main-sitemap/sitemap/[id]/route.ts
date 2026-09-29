@@ -4,6 +4,7 @@ export const revalidate = 0;
 import { getPublishedPosts } from '@/lib/blog/posts';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 import { CANONICAL_SITE_URL } from '@/lib/constants';
+import { evaluatePublisherIndexability } from '@/lib/seo/evaluatePublisherIndexability';
 
 const CHUNK_SIZE = 1000;
 
@@ -74,9 +75,6 @@ export async function GET(request: Request, context: any) {
   if (error) {
     console.error('Error fetching websites for sitemap chunk:', error);
   }
-
-  // Import dynamic indexability evaluator
-  const { evaluatePublisherIndexability } = await import('@/lib/seo/evaluatePublisherIndexability');
 
   if (websites) {
     for (const site of websites) {
