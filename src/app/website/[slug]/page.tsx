@@ -64,6 +64,80 @@ async function getListingData(slug: string) {
 import { CANONICAL_SITE_URL } from '@/lib/constants';
 import { evaluatePublisherIndexability } from '@/lib/seo/evaluatePublisherIndexability';
 
+function isSafeText(text: string | null | undefined, maxLength: number): boolean {
+  if (!text || text.trim().length === 0) return false;
+  if (text.length > maxLength) return false;
+  
+  const lower = text.toLowerCase();
+  if (/\$[0-9.,]+/.test(lower)) return false;
+  if (/starting at/i.test(lower)) return false;
+  if (/from\s*\$/i.test(lower)) return false;
+  if (/\bn\/a\b/i.test(lower)) return false;
+
+  return true;
+}
+
+function resolvePublisherMetadata(website: any) {
+  const domain = website.domain;
+  const category = (website.category_id && website.category_id !== 'General') ? website.category_id : 'General';
+  
+  // 1. Title Validation & Fallback
+  let title = '';
+  if (isSafeText(website.seo_title, 80)) {
+    title = website.seo_title;
+  } else {
+    const idealTitle = `Buy Guest Post on ${domain} | EducationHom`;
+    if (idealTitle.length <= 60) {
+      title = idealTitle;
+    } else {
+      title = `${domain} Guest Post & SEO Placement | EducationHom`;
+    }
+  }
+
+  // 2. Description Validation & Fallback
+  let description = '';
+  if (isSafeText(website.seo_description, 250)) {
+    description = website.seo_description;
+  } else {
+    let metricsStr = '';
+    const metrics = website.website_metrics || website.metrics || {};
+    const da = metrics.da || metrics.domain_authority;
+    const dr = metrics.dr || metrics.domain_rating;
+    const traffic = metrics.traffic || metrics.semrush_traffic || metrics.organic_traffic;
+    
+    const parts = [];
+    if (da && String(da).toLowerCase() !== 'n/a' && Number(da) > 0) parts.push(`DA ${da}`);
+    if (dr && String(dr).toLowerCase() !== 'n/a' && Number(dr) > 0) parts.push(`DR ${dr}`);
+    if (traffic && String(traffic).toLowerCase() !== 'n/a' && traffic !== '0') parts.push(`organic traffic ${traffic}`);
+    
+    if (parts.length > 0) {
+      metricsStr = ` ${parts.join(', ')}.`;
+    }
+    
+    if (metricsStr) {
+      description = `Publish a guest post on ${domain}. Category: ${category}.${metricsStr} Explore placement details on EducationHom.`;
+    } else {
+      description = `Publish a guest post on ${domain}. Category: ${category}. Explore publishing guidelines, link options, and SEO placement details on EducationHom.`;
+    }
+  }
+
+  // 3. Keywords Generation (Deduplicated)
+  const baseKeywords = ['guest post', domain, 'content placement', 'SEO placement'];
+  if (category && category !== 'General') {
+    baseKeywords.push(category.toLowerCase());
+  }
+  if (website.accepted_niches && Array.isArray(website.accepted_niches)) {
+    website.accepted_niches.forEach((n: string) => {
+      if (n !== 'General Niches' && n !== category) {
+        baseKeywords.push(n.toLowerCase());
+      }
+    });
+  }
+  const keywords = Array.from(new Set(baseKeywords));
+
+  return { title, description, keywords };
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const website = await getListingData(slug);
@@ -72,69 +146,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return { title: 'Not Found' };
   }
 
-  const categoryName = website.category_id || 'General';
-  
-  let title = website.seo_title;
-  if (!title) {
-    const displayName = website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain;
-    title = `${displayName} Guest Post & SEO Placement | EducationHom`;
-  }
-  
-  // 1. Genuine publisher/editorial description
-  // 2. Concise data-driven fallback
-  let description = website.seo_description || website.editorial_description || website.short_description;
-  if (!description) {
-    const categories = [];
-    if (website.category_id && website.category_id !== 'General') {
-      categories.push(website.category_id);
-    }
-    if (website.accepted_niches && website.accepted_niches.length > 0) {
-      const niches = website.accepted_niches.filter((n: string) => n !== 'General Niches' && n !== website.category_id);
-      categories.push(...niches);
-    }
-    
-    // De-duplicate and select top categories
-    const uniqueCategories = Array.from(new Set(categories));
-    let topicsString = '';
-    if (uniqueCategories.length > 0) {
-      const topTopics = uniqueCategories.slice(0, 3);
-      if (topTopics.length === 1) {
-        topicsString = `, covering ${topTopics[0]} topics,`;
-      } else if (topTopics.length === 2) {
-        topicsString = `, covering ${topTopics[0]} and ${topTopics[1]} topics,`;
-      } else {
-        topicsString = `, covering ${topTopics.slice(0, -1).join(', ')} and ${topTopics[topTopics.length - 1]} topics,`;
-      }
-    }
-
-    const intentText = website.publication_type && website.publication_type.includes('Guest Post')
-      ? 'guest post and SEO placement opportunities'
-      : 'publishing and SEO placement opportunities';
-
-    description = `Explore ${intentText} on ${website.domain}${topicsString} through EducationHom.`;
-
-    const features = [];
-    if (website.max_dofollow_links) {
-      features.push(`up to ${website.max_dofollow_links} dofollow links`);
-    }
-    if (website.turnaround_time) {
-      features.push(`a ${website.turnaround_time}-day turnaround`);
-    }
-    if (features.length > 0) {
-      description += ` Options include ${features.join(' and ')}.`;
-    }
-  }
-
-  // Strip pricing sentences from the meta description to avoid double-pricing in Google Search results
-  // (Google already shows the price via the structured data Offer schema)
-  if (description) {
-    // Remove exact match starting at prices
-    description = description.replace(/(?:currently\s+)?(?:available\s+)?starting at \$[0-9.,]+(?:\s*USD)?\.?/ig, '').trim();
-    // Remove "from $50" or similar
-    description = description.replace(/from \$[0-9.,]+(?:\s*USD)?\.?/ig, '').trim();
-    // Broadly strip any remaining "$XYZ" text if it looks like a price (this is aggressive but safe for meta description)
-    description = description.replace(/\$[0-9.,]+/g, '').replace(/\s+/g, ' ').trim();
-  }
+  const { title, description, keywords } = resolvePublisherMetadata(website);
   
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/website/${website.slug}`;
 
@@ -154,7 +166,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       absolute: title
     },
     description,
-    keywords: [],
+    keywords: keywords.join(', '),
     alternates: {
       canonical
     },
@@ -190,9 +202,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/website/${website.slug}`;
   const publisherName = website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain;
   
-  // Safe fallback description for Schema
-  let safeSchemaDesc = website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`;
-  safeSchemaDesc = safeSchemaDesc.replace(/\$[0-9.,]+/g, '').replace(/\s+/g, ' ').trim();
+  const { title: finalTitle, description: finalDescription } = resolvePublisherMetadata(website);
 
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900 pb-24 pt-20">
@@ -214,8 +224,8 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
                 '@type': 'WebPage',
                 '@id': `${canonical}#webpage`,
                 'url': canonical,
-                'name': website.seo_title || `${publisherName} — Publisher Information & Content Placement`,
-                'description': safeSchemaDesc,
+                'name': finalTitle,
+                'description': finalDescription,
                 'publisher': {
                   '@id': `${CANONICAL_SITE_URL}/#organization`
                 }
