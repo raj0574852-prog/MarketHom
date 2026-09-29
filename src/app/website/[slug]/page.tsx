@@ -194,8 +194,6 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
   let safeSchemaDesc = website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`;
   safeSchemaDesc = safeSchemaDesc.replace(/\$[0-9.,]+/g, '').replace(/\s+/g, ' ').trim();
 
-  const isProductSchemaAppropriate = !!website.content_placement_selling_price;
-
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900 pb-24 pt-20">
       {/* JSON-LD Structured Data */}
@@ -245,29 +243,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
                     'item': canonical,
                   },
                 ],
-              },
-              ...(isProductSchemaAppropriate ? [{
-                '@type': 'Product',
-                '@id': `${canonical}#product`,
-                'name': `Content Placement on ${publisherName}`,
-                'description': safeSchemaDesc,
-                'url': canonical,
-                'image': `${CANONICAL_SITE_URL}/images/content-placement-service.png`, // Valid product image representing the digital service
-                'brand': {
-                  '@type': 'Brand',
-                  'name': 'EducationHom'
-                },
-                'offers': {
-                  '@type': 'Offer',
-                  'url': canonical,
-                  'priceCurrency': website.currency || 'USD',
-                  'price': website.content_placement_selling_price,
-                  'availability': 'https://schema.org/InStock',
-                  'seller': {
-                    '@id': `${CANONICAL_SITE_URL}/#organization`
-                  }
-                }
-              }] : [])
+              }
             ]
           }),
         }}
