@@ -143,7 +143,7 @@ export default async function WebsitesIndexPage({
             </div>
             <div className={view === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6" : "flex flex-col gap-4"}>
               {websites.map(site => (
-              <Link key={site.id} href={`/websites/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
+              <Link key={site.id} href={`/website/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
                 {view === 'grid' ? (
                   // GRID VIEW
                   <div className="p-6 flex-1 flex flex-col relative w-full">

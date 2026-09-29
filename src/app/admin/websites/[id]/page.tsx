@@ -162,7 +162,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
           </div>
           <div className="flex items-center gap-4">
             <Link 
-              href={`/websites/${website.slug}`} 
+              href={`/website/${website.slug}`} 
               target="_blank"
               className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-semibold transition-colors"
             >

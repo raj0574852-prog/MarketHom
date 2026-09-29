@@ -306,7 +306,7 @@ export default function AdminWebsitesPage() {
                       <td className="p-5 text-right flex items-center justify-end gap-2">
                         {website.status === 'published' && (
                           <Link 
-                            href={`/websites/${website.slug}`}
+                            href={`/website/${website.slug}`}
                             target="_blank"
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg font-medium transition-colors opacity-0 group-hover:opacity-100"
                           >

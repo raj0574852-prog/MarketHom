@@ -140,7 +140,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description = description.replace(/starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
   }
   
-  const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
+  const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/website/${website.slug}`;
 
   // Evaluate indexability dynamically
   const { indexable } = evaluatePublisherIndexability(website);
@@ -191,7 +191,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
   }
 
   const faqs = generatePublisherFAQs(website);
-  const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/websites/${website.slug}`;
+  const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/website/${website.slug}`;
 
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900 pb-24 pt-20">

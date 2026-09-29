@@ -50,7 +50,7 @@ export default async function RelatedWebsites({ categoryId, currentId }: { categ
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {related.map(site => (
-          <Link key={site.id} href={`/websites/${site.slug}`} className="bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer rounded-3xl flex-col">
+          <Link key={site.id} href={`/website/${site.slug}`} className="bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer rounded-3xl flex-col">
             <div className="p-6 flex-1 flex flex-col relative w-full">
               <div className="flex items-start justify-end mb-5">
                 <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full uppercase tracking-wider truncate max-w-[50%] inline-block text-right">

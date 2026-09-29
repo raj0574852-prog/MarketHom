@@ -110,7 +110,7 @@ export default async function CategoryHubPage({ params, searchParams }: Props) {
             {/* Using a grid to maximize internal links per page above the fold */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
               {websites.map(site => (
-                <Link key={site.id} href={`/websites/${site.slug}`} className="bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl p-5 flex flex-col group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer">
+                <Link key={site.id} href={`/website/${site.slug}`} className="bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl p-5 flex flex-col group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer">
                   <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-[hsl(217,91%,54%)] transition-colors line-clamp-1">{site.name}</h3>
                   <div className="text-xs text-slate-500 mb-3">{site.domain}</div>
                   

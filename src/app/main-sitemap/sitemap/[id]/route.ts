@@ -86,7 +86,7 @@ export async function GET(request: Request, context: any) {
       if (evaluation.sitemapEligible) {
         // We intentionally do NOT output lastmod for publisher pages to prevent Google from treating 
         // internal database sync timestamps as article publish/update dates in search snippets.
-        addUrl(`${baseUrl}/websites/${site.slug}`, undefined, 'weekly', 0.8);
+        addUrl(`${baseUrl}/website/${site.slug}`, undefined, 'weekly', 0.8);
       }
     }
   }
