@@ -237,7 +237,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
                       <label className="block text-sm text-slate-400 mb-1">Logo URL</label>
                       <div className="flex items-center gap-4">
                         <div className="transform scale-75 origin-left">
-                          <PublisherLogo logoUrl={website.logo_url} name={website.name || website.domain} />
+                          <PublisherLogo name={website.name || website.domain} domain={website.domain} />
                         </div>
                         <input type="text" className="w-full bg-slate-950 border border-slate-800 rounded p-2" value={website.logo_url || ''} onChange={e => handleChange('logo_url', e.target.value)} />
                       </div>

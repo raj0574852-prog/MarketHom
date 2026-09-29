@@ -125,19 +125,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
-  // Ensure any hardcoded base prices in the description are replaced with the correct selling price
-  if (description && website.price && website.content_placement_selling_price) {
-    const basePriceStr = `$${website.price}`;
-    const sellPriceStr = `$${website.content_placement_selling_price}`;
-    description = description.split(basePriceStr).join(sellPriceStr);
-  }
-
   // Strip pricing sentences from the meta description to avoid double-pricing in Google Search results
   // (Google already shows the price via the structured data Offer schema)
   if (description) {
-    description = description.replace(/currently available starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
-    description = description.replace(/available starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
-    description = description.replace(/starting at \$\d+(?:\.\d+)?(?: USD)?\.?/ig, '').trim();
+    // Remove exact match starting at prices
+    description = description.replace(/(?:currently\s+)?(?:available\s+)?starting at \$[0-9.,]+(?:\s*USD)?\.?/ig, '').trim();
+    // Remove "from $50" or similar
+    description = description.replace(/from \$[0-9.,]+(?:\s*USD)?\.?/ig, '').trim();
+    // Broadly strip any remaining "$XYZ" text if it looks like a price (this is aggressive but safe for meta description)
+    description = description.replace(/\$[0-9.,]+/g, '').replace(/\s+/g, ' ').trim();
   }
   
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/website/${website.slug}`;
@@ -192,10 +188,17 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
 
   const faqs = generatePublisherFAQs(website);
   const canonical = website.canonical_url || `${CANONICAL_SITE_URL}/website/${website.slug}`;
+  const publisherName = website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain;
+  
+  // Safe fallback description for Schema
+  let safeSchemaDesc = website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`;
+  safeSchemaDesc = safeSchemaDesc.replace(/\$[0-9.,]+/g, '').replace(/\s+/g, ' ').trim();
+
+  const isProductSchemaAppropriate = !!website.content_placement_selling_price;
 
   return (
     <div className="bg-slate-50 min-h-screen text-slate-900 pb-24 pt-20">
-      {/* WebPage & Breadcrumb Schema */}
+      {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -203,85 +206,73 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             '@context': 'https://schema.org',
             '@graph': [
               {
+                '@type': 'Organization',
+                '@id': `${CANONICAL_SITE_URL}/#organization`,
+                'name': 'EducationHom',
+                'url': CANONICAL_SITE_URL,
+                'logo': `${CANONICAL_SITE_URL}/logo.png`
+              },
+              {
                 '@type': 'WebPage',
                 '@id': `${canonical}#webpage`,
                 'url': canonical,
-                'name': website.seo_title || `${website.name && website.name.toLowerCase() !== website.domain.toLowerCase() ? website.name : website.domain} — Publisher Information & Content Placement`,
-                'description': (() => {
-                  let desc = website.seo_description || website.short_description || `Publishing opportunity on ${website.domain} in the ${website.category_id || 'General'} category.`;
-                  if (website.price && website.content_placement_selling_price) {
-                    desc = desc.split(`$${website.price}`).join(`$${website.content_placement_selling_price}`);
-                  }
-                  return desc;
-                })(),
+                'name': website.seo_title || `${publisherName} — Publisher Information & Content Placement`,
+                'description': safeSchemaDesc,
+                'publisher': {
+                  '@id': `${CANONICAL_SITE_URL}/#organization`
+                }
               },
               {
                 '@type': 'BreadcrumbList',
-                itemListElement: [
+                '@id': `${canonical}#breadcrumb`,
+                'itemListElement': [
                   {
                     '@type': 'ListItem',
-                    position: 1,
-                    name: 'Home',
-                    item: CANONICAL_SITE_URL,
+                    'position': 1,
+                    'name': 'Home',
+                    'item': CANONICAL_SITE_URL,
                   },
                   {
                     '@type': 'ListItem',
-                    position: 2,
-                    name: 'Marketplace',
-                    item: `${CANONICAL_SITE_URL}/websites`,
+                    'position': 2,
+                    'name': 'Marketplace',
+                    'item': `${CANONICAL_SITE_URL}/websites`,
                   },
                   {
                     '@type': 'ListItem',
-                    position: 3,
-                    name: website.name || website.domain,
-                    item: canonical,
+                    'position': 3,
+                    'name': publisherName,
+                    'item': canonical,
                   },
                 ],
               },
-              ...(website.content_placement_selling_price ? [{
-                '@type': 'Service',
-                '@id': `${canonical}#service`,
-                'name': `Content Placement on ${website.name || website.domain}`,
-                'serviceType': 'Guest Post and Content Placement',
-                'description': website.short_description || `Premium publishing opportunity on ${website.domain}. Secure high-quality backlinks.`,
+              ...(isProductSchemaAppropriate ? [{
+                '@type': 'Product',
+                '@id': `${canonical}#product`,
+                'name': `Content Placement on ${publisherName}`,
+                'description': safeSchemaDesc,
                 'url': canonical,
-                'provider': {
-                  '@type': 'Organization',
-                  'name': 'EducationHom',
-                  'url': CANONICAL_SITE_URL
+                'image': `${CANONICAL_SITE_URL}/images/content-placement-service.png`, // Valid product image representing the digital service
+                'brand': {
+                  '@type': 'Brand',
+                  'name': 'EducationHom'
                 },
                 'offers': {
                   '@type': 'Offer',
                   'url': canonical,
                   'priceCurrency': website.currency || 'USD',
                   'price': website.content_placement_selling_price,
-                  'availability': 'https://schema.org/InStock'
+                  'availability': 'https://schema.org/InStock',
+                  'seller': {
+                    '@id': `${CANONICAL_SITE_URL}/#organization`
+                  }
                 }
               }] : [])
             ]
           }),
         }}
       />
-      {/* FAQ Schema */}
-      {faqs.length > 0 && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'FAQPage',
-              mainEntity: faqs.map((faq: any) => ({
-                '@type': 'Question',
-                name: faq.question,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: faq.answer
-                }
-              }))
-            })
-          }}
-        />
-      )}
+      {/* FAQ Schema removed as requested */}
       {/* Breadcrumbs (Light theme version for this page) */}
       <div className="bg-white border-b border-slate-200 py-3 text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 text-slate-500">
@@ -289,7 +280,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
           <span>/</span>
           <Link href="/websites" className="hover:text-blue-600 transition-colors">Marketplace</Link>
           <span>/</span>
-          <span className="text-slate-900 font-medium">{website.name || website.domain}</span>
+          <span className="text-slate-900 font-medium">{publisherName}</span>
         </div>
       </div>
 
@@ -307,7 +298,7 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             
             {/* Sidebar Benefits Card */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-              <h2 className="text-lg font-bold text-slate-900 mb-4">Why Choose {website.name || website.domain}?</h2>
+              <h2 className="text-lg font-bold text-slate-900 mb-4">Why Choose {publisherName}?</h2>
               <ul className="space-y-3">
                 {website.category_id && (
                   <li className="flex gap-3 text-slate-600 text-sm">
@@ -375,7 +366,11 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
               All metrics are third-party estimates and may change over time. We recommend visiting the website and reviewing the publisher&apos;s latest guidelines before submitting your content.
             </div>
 
-            <RelatedWebsites categoryId={website.category_id} currentId={website.id} />
+            <RelatedWebsites 
+              categoryId={website.category_id} 
+              currentId={website.id} 
+              currentPrice={website.content_placement_selling_price}
+            />
           </div>
         </div>
       </div>

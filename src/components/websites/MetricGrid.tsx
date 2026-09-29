@@ -1,135 +1,93 @@
 import React from 'react';
 
-const metricInfo: Record<string, { label: string, description: string, what: string, how: string, limit: string }> = {
-  'DA': { 
-    label: 'Domain Authority (DA)', 
-    description: 'Moz metric predicting ranking potential.',
-    what: 'A score from 1-100 developed by Moz that predicts how likely a website is to rank in search engine result pages (SERPs).',
-    how: 'A higher DA generally means the site has a strong backlink profile and established trust.',
-    limit: 'DA is a third-party metric, not used by Google. A high DA does not guarantee rankings.'
-  },
-  'PA': { 
-    label: 'Page Authority (PA)', 
-    description: 'Moz metric predicting page ranking potential.',
-    what: 'A score from 1-100 developed by Moz that predicts how likely a specific page is to rank in search engine result pages (SERPs).',
-    how: 'A higher PA generally means the specific page has a strong backlink profile.',
-    limit: 'PA is a third-party metric, not used by Google. A high PA does not guarantee rankings.'
-  },
-  'DR': { 
-    label: 'Domain Rating (DR)', 
-    description: 'Ahrefs metric for backlink profile strength.',
-    what: 'A score from 0-100 developed by Ahrefs showing the strength of a website\'s backlink profile compared to others.',
-    how: 'Useful for quickly gauging the raw link power and authority of the referring domain.',
-    limit: 'DR only looks at links, ignoring content quality, traffic, and relevance. High DR does not mean Google trusts the site.'
-  },
+const metricInfo: Record<string, { label: string, description: string, provider: string }> = {
   'ORGANIC_TRAFFIC': { 
     label: 'Organic Traffic', 
-    description: 'Estimated monthly organic search visits.',
-    what: 'The estimated number of monthly visits the website receives from unpaid search engine results.',
-    how: 'Shows if the site actually gets real visitors and is visible in search engines.',
-    limit: 'These are third-party estimates and can sometimes vary wildly from actual Google Analytics data.'
-  },
-  'SEMRUSH_AUTHORITY': { 
-    label: 'Semrush Authority Score', 
-    description: 'Semrush metric for overall domain quality.',
-    what: 'A compound metric measuring a domain\'s overall quality and SEO performance.',
-    how: 'Evaluates link power, organic traffic, and spam factors into a single score.',
-    limit: 'Third-party metric that Google does not use.'
+    description: 'Estimated monthly organic search visits. Shows if the site actually gets real visitors and is visible in search engines.',
+    provider: 'Ahrefs / Semrush'
   },
   'SPAM_SCORE': { 
     label: 'Spam Score', 
-    description: 'Moz percentage of penalized features.',
-    what: 'The percentage of sites with similar features to this site that have been penalized or banned by Google.',
-    how: 'Helps identify potentially toxic or manipulative link sources.',
-    limit: 'A high Spam Score means Moz flagged it, not that Google has actually penalized the website.'
+    description: 'The percentage of sites with similar features to this site that have been penalized or banned by Google.',
+    provider: 'Moz'
   },
   'TOTAL_BACKLINKS': { 
     label: 'Total Backlinks', 
-    description: 'Total number of inbound links.',
-    what: 'The absolute total number of links pointing to this website from across the internet.',
-    how: 'Shows the sheer scale of the website\'s link building history.',
-    limit: 'Quantity does not equal quality. Many backlinks could be low-quality or spam.'
+    description: 'The absolute total number of links pointing to this website from across the internet.',
+    provider: 'Ahrefs / Moz'
   },
   'REFERRING_DOMAINS': { 
     label: 'Referring Domains', 
-    description: 'Number of unique linking websites.',
-    what: 'The number of unique websites (domains) that link to this site.',
-    how: 'Often a better indicator of authority than total backlinks, as it shows diverse support.',
-    limit: 'Still does not account for the quality or relevance of those referring domains.'
+    description: 'The number of unique websites (domains) that link to this site. Often a better indicator of authority than total backlinks.',
+    provider: 'Ahrefs / Moz'
   },
   'AHREFS_TRAFFIC': { 
     label: 'Ahrefs Traffic', 
-    description: 'Ahrefs estimate of monthly traffic.',
-    what: 'Ahrefs\' specific estimation of the domain\'s monthly organic search traffic.',
-    how: 'A widely trusted industry standard for estimating a site\'s organic visibility.',
-    limit: 'Estimates are based on keyword tracking and CTR models, not direct server logs.'
+    description: 'Ahrefs\' specific estimation of the domain\'s monthly organic search traffic.',
+    provider: 'Ahrefs'
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function MetricGrid({ metrics, linkValidity }: { metrics: any[], linkValidity?: string }) {
+export default function MetricGrid({ metrics, linkValidity }: { metrics?: any[], linkValidity?: string | null }) {
+  if (!metrics || metrics.length === 0) return null;
   
   const getMetricData = (type: string) => {
-    return metrics?.find(m => m.metric_type === type) || null;
+    return metrics.find(m => m.metric_type === type) || null;
   };
 
   const renderCard = (type: string) => {
     const data = getMetricData(type);
     const info = metricInfo[type];
+    
+    // We only render it if we have data for it OR if we explicitly want to show N/A
+    // But since the rule says "If a metric does not exist: omit it, or display N/A where appropriate"
+    // We'll only show the card if it has a value to keep the UI clean, unless it's a critical one.
     if (!info) return null;
 
     const value = data && data.value !== null ? data.value : 'N/A';
     const unit = data && data.unit ? data.unit : '';
 
     return (
-      <div key={type} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow relative group">
-        <h3 className="text-sm font-semibold text-slate-500 mb-2 flex items-center gap-1">
+      <div key={type} className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow relative group flex flex-col justify-between h-full">
+        <h3 className="text-sm font-semibold text-slate-500 mb-4 flex items-center justify-between">
           {info.label}
-          <div className="relative flex items-center justify-center w-4 h-4 rounded-full bg-slate-100 text-slate-400 text-[10px] font-bold cursor-help">
-            ?
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
+          <div className="relative flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 hover:bg-slate-200 cursor-help transition-colors">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div className="absolute bottom-full right-0 md:left-1/2 md:-translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none">
               <p className="font-bold mb-1">{info.label}</p>
-              <p className="mb-2">{info.description}</p>
-              <p className="text-[10px] text-slate-300">The EducationHom listing currently reports this as a third-party estimate. Metrics may change over time.</p>
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
+              <p className="mb-2 text-slate-300">{info.description}</p>
+              <div className="absolute -bottom-1 right-2 md:left-1/2 md:-translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
             </div>
           </div>
         </h3>
-        <p className="text-2xl font-bold text-slate-900">
-          {value}{value !== 'N/A' ? unit : ''}
-        </p>
+        
+        <div>
+          <p className="text-2xl font-bold text-slate-900 mb-1">
+            {value}{value !== 'N/A' && unit ? ` ${unit}` : ''}
+          </p>
+          <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+            By {info.provider}
+          </p>
+        </div>
       </div>
     );
   };
 
-  return (
-    <div className="space-y-12">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-6">SEO Metrics</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.keys(metricInfo).map(type => renderCard(type))}
-          
-          {linkValidity && (
-            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow relative group">
-              <h3 className="text-sm font-semibold text-slate-500 mb-2 flex items-center gap-1">
-                Link Type
-                <div className="relative flex items-center justify-center w-4 h-4 rounded-full bg-slate-100 text-slate-400 text-[10px] font-bold cursor-help">
-                  ?
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 pointer-events-none">
-                    <p className="font-bold mb-1">Link Type</p>
-                    <p>The type of backlink provided (e.g. DoFollow, NoFollow). DoFollow passes SEO link juice.</p>
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
-                  </div>
-                </div>
-              </h3>
-              <p className="text-2xl font-bold text-emerald-600">
-                {linkValidity}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+  const secondaryMetrics = Object.keys(metricInfo).filter(type => getMetricData(type));
 
+  if (secondaryMetrics.length === 0) return null;
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8">
+      <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Publisher Metrics
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {secondaryMetrics.map(type => renderCard(type))}
+      </div>
     </div>
   );
 }
