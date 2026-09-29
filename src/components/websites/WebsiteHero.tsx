@@ -4,9 +4,6 @@ import PublisherLogo from './PublisherLogo';
 
 export default function WebsiteHero({ website }: { website: WebsiteListing }) {
   const isVerified = website.verification_status === 'verified' && website.last_verified_at;
-  const displayName = website.name && website.name.toLowerCase() !== website.domain.toLowerCase() 
-    ? website.name 
-    : website.domain;
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8 flex flex-col gap-6">
@@ -32,7 +29,7 @@ export default function WebsiteHero({ website }: { website: WebsiteListing }) {
           </div>
           
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight">
-            Publish Guest Post on {displayName}
+            Publish Guest Post on {website.domain}
           </h1>
           
           <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-slate-600">
