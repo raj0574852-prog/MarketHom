@@ -115,17 +115,14 @@ export function evaluatePublisherIndexability(
   // The bare minimum for a valuable marketplace listing is having a specific niche/category + price (Score 25).
   // Pages scoring < 25 (e.g., General category with no details) are mathematically duplicate/thin content.
   let classification: IndexabilityClassification;
-  let indexable = true;
+  let indexable = true; // All technically eligible pages are now indexable
 
   if (score >= 45) {
     classification = 'INDEX';
-    indexable = true;
   } else if (score >= 25) {
     classification = 'IMPROVE';
-    indexable = true; // Still indexable, but flagged for content enhancement
   } else {
-    classification = 'NOINDEX';
-    indexable = false; // Protects crawl budget from 6,600+ zero-value "General" template pages
+    classification = 'NOINDEX'; // Preserved legacy classification string for analytics, but it DOES NOT trigger noindex tags anymore.
   }
 
   return {
