@@ -29,7 +29,7 @@ export default function QuickAnswer({ website }: { website: WebsiteListing }) {
     }
   }
 
-  // Constructing a factual, AEO-friendly quick answer exactly matching user prompt style
+  // Constructing a factual, AEO-friendly quick answer
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8" aria-label="Quick Answer">
       <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -40,8 +40,7 @@ export default function QuickAnswer({ website }: { website: WebsiteListing }) {
       </h2>
       <div className="text-slate-700 leading-relaxed text-lg">
         <strong>{domain}</strong> is a {displayCategory}-focused publishing opportunity available through EducationHom. 
-        Guest post placements {content_placement_selling_price ? `currently start at $${content_placement_selling_price}` : 'are available'} 
-        for this publisher. Publisher metrics and content requirements are provided below.
+        Guest post placements are available for this publisher. Publisher metrics and content requirements are provided below.
       </div>
     </div>
   );

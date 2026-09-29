@@ -33,35 +33,7 @@ export default function PublisherOverview({ website }: { website: WebsiteListing
     );
   }
 
-  // Concise factual fallback
-  const facts = [];
-  
-  if (website.category_id && website.category_id !== 'General') {
-    facts.push(<span key="cat">{website.domain} is listed in the <strong>{website.category_id}</strong> category.</span>);
-  } else {
-    facts.push(<span key="cat"><strong>{website.domain}</strong> is a listed publisher in our marketplace.</span>);
-  }
-
-  if (website.language && website.language.toLowerCase() !== 'not specified') {
-    facts.push(<span key="lang">The listed language is <strong>{website.language}</strong>.</span>);
-  }
-
-  if (website.location && website.location.toLowerCase() !== 'not specified' && website.location.toLowerCase() !== 'worldwide') {
-    facts.push(<span key="loc">The listed location is <strong>{website.location}</strong>.</span>);
-  }
-
-  return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8">
-      <h2 className="text-2xl font-bold text-slate-900 mb-4">Publisher Overview</h2>
-      <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed">
-        <p className="flex flex-wrap gap-1">
-          {facts.map((fact, i) => (
-            <React.Fragment key={i}>
-              {fact} {i < facts.length - 1 ? ' ' : ''}
-            </React.Fragment>
-          ))}
-        </p>
-      </div>
-    </div>
-  );
+  // If there is no verified editorial content, omit the generated overview entirely
+  // to avoid programmatic duplication and filler text.
+  return null;
 }

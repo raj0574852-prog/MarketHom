@@ -2,11 +2,6 @@ import React from 'react';
 import { WebsiteListing } from './types';
 
 export default function QuickOverview({ website }: { website: WebsiteListing }) {
-  const da = website.website_metrics?.find((m: any) => m.metric_type === 'DA')?.value;
-  const pa = website.website_metrics?.find((m: any) => m.metric_type === 'PA')?.value;
-  const dr = website.website_metrics?.find((m: any) => m.metric_type === 'DR')?.value;
-  const traffic = website.website_metrics?.find((m: any) => m.metric_type === 'ORGANIC_TRAFFIC')?.value;
-  
   const categoryName = website.category_id || 'General';
   const displayPrice = website.content_placement_selling_price;
 
@@ -36,34 +31,28 @@ export default function QuickOverview({ website }: { website: WebsiteListing }) 
             <span className="text-slate-900 font-medium">{website.link_validity}</span>
           </div>
         )}
+        {website.language && website.language.toLowerCase() !== 'not specified' && (
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Language</span>
+            <span className="text-slate-900 font-medium">{website.language}</span>
+          </div>
+        )}
+        {website.location && website.location.toLowerCase() !== 'not specified' && (
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</span>
+            <span className="text-slate-900 font-medium">{website.location}</span>
+          </div>
+        )}
+        {website.turnaround_time && (
+          <div className="flex flex-col">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Turnaround Time</span>
+            <span className="text-slate-900 font-medium">{website.turnaround_time} Days</span>
+          </div>
+        )}
         {displayPrice && (
           <div className="flex flex-col">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Starting Price</span>
-            <span className="text-slate-900 font-medium">${displayPrice} USD</span>
-          </div>
-        )}
-        {da && (
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Domain Authority (DA)</span>
-            <span className="text-slate-900 font-medium">{da}</span>
-          </div>
-        )}
-        {pa && (
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Page Authority (PA)</span>
-            <span className="text-slate-900 font-medium">{pa}</span>
-          </div>
-        )}
-        {dr && (
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Domain Rating (DR)</span>
-            <span className="text-slate-900 font-medium">{dr}</span>
-          </div>
-        )}
-        {traffic && (
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Organic Traffic</span>
-            <span className="text-slate-900 font-medium">{traffic.toLocaleString()}</span>
+            <span className="text-slate-900 font-medium">${displayPrice} {website.currency || 'USD'}</span>
           </div>
         )}
       </div>
