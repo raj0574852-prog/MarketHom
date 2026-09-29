@@ -66,7 +66,7 @@ export async function GET(request: Request, context: any) {
 
   const { data: websites, error } = await supabase
     .from('website_listings')
-    .select('slug, updated_at, created_at, last_verified_at, last_synced_at, status, is_listed, domain, editorial_description, short_description, category_id, accepted_niches, turnaround_time, max_dofollow_links, content_placement_selling_price, price, website_metrics')
+    .select('slug, updated_at, created_at, last_verified_at, last_synced_at, status, is_listed, domain, editorial_description, short_description, category_id, accepted_niches, turnaround_time, max_dofollow_links, content_placement_selling_price, price')
     .eq('status', 'published')
     .not('slug', 'is', null)
     .order('id', { ascending: true })
