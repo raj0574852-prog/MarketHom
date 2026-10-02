@@ -87,6 +87,10 @@ function computeHash(data: any): string {
       sortedData[key] = data[key];
     }
   }
+  
+  // Force a full re-sync to backfill metrics that were skipped because source_hash hadn't changed
+  sortedData['__sync_version'] = 2;
+  
   const str = JSON.stringify(sortedData);
   return crypto.createHash('sha256').update(str).digest('hex');
 }
