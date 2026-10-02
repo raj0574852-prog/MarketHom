@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const { data, error } = await supabase
     .from('website_metrics')
     .select('*, website_listings!inner(domain)')
-    .in('website_listings.domain', ['globenewswire.com', 'textilelearner.net']);
+    .in('website_listings.domain', ['techbullion.com', 'finance.yahoo.com']);
     
   return NextResponse.json({ data, error });
 }
