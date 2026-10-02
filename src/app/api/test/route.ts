@@ -26,7 +26,13 @@ export async function GET(req: Request) {
       metricsCount = countRes.count;
     }
 
-    return NextResponse.json({ site, metrics, metricsCount });
+    const { data: logs } = await supabase
+      .from('website_sync_logs')
+      .select('*')
+      .order('started_at', { ascending: false })
+      .limit(5);
+
+    return NextResponse.json({ site, metrics, metricsCount, logs });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
