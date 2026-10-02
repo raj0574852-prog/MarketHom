@@ -198,8 +198,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               { website_listing_id: existing.id, metric_type: 'DA', value: row.da },
               { website_listing_id: existing.id, metric_type: 'PA', value: row.pa },
               { website_listing_id: existing.id, metric_type: 'DR', value: row.dr },
-              { website_listing_id: existing.id, metric_type: 'SEMRUSH_AUTHORITY', value: row.semrush_traffic },
-              { website_listing_id: existing.id, metric_type: 'AHREFS_TRAFFIC', value: row.ahrefs_traffic },
+              { website_listing_id: existing.id, metric_type: 'SEMRUSH_AUTHORITY', value: row.authority_score },
+              { website_listing_id: existing.id, metric_type: 'TRAFFIC', value: row.traffic },
               { website_listing_id: existing.id, metric_type: 'SPAM_SCORE', value: row.spam_score }
             );
             
@@ -251,8 +251,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             { website_listing_id: newId, metric_type: 'DA', value: row.da },
             { website_listing_id: newId, metric_type: 'PA', value: row.pa },
             { website_listing_id: newId, metric_type: 'DR', value: row.dr },
-            { website_listing_id: newId, metric_type: 'SEMRUSH_AUTHORITY', value: row.semrush_traffic },
-            { website_listing_id: newId, metric_type: 'AHREFS_TRAFFIC', value: row.ahrefs_traffic },
+            { website_listing_id: newId, metric_type: 'SEMRUSH_AUTHORITY', value: row.authority_score },
+            { website_listing_id: newId, metric_type: 'TRAFFIC', value: row.traffic },
             { website_listing_id: newId, metric_type: 'SPAM_SCORE', value: row.spam_score }
           );
           
@@ -282,21 +282,25 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       if (metricsToUpsert.length > 0) {
         const listingIds = [...newSitesToInsert.map(s => s.id), ...sitesToUpdate.map(s => s.id)];
         
-        // Increase chunk size to 1000 to prevent Vercel 504 Gateway Timeout during massive backfill
-        const deleteChunkSize = 500;
+        // Use Promise.all and larger chunks (3000) to ensure massive bulk operations finish within Vercel's 504 limit
+        const deleteChunkSize = 3000;
+        const deletePromises = [];
         for (let i = 0; i < listingIds.length; i += deleteChunkSize) {
           const chunk = listingIds.slice(i, i + deleteChunkSize);
-          await supabase.from('website_metrics').delete().in('website_listing_id', chunk);
+          deletePromises.push(supabase.from('website_metrics').delete().in('website_listing_id', chunk));
         }
+        await Promise.all(deletePromises);
         
         const validMetrics = metricsToUpsert.filter(m => m.value !== undefined && m.value !== null && !Number.isNaN(m.value));
         
         if (validMetrics.length > 0) {
-          const insertChunkSize = 1000;
+          const insertChunkSize = 3000;
+          const insertPromises = [];
           for (let i = 0; i < validMetrics.length; i += insertChunkSize) {
              const chunk = validMetrics.slice(i, i + insertChunkSize);
-             await supabase.from('website_metrics').insert(chunk);
+             insertPromises.push(supabase.from('website_metrics').insert(chunk));
           }
+          await Promise.all(insertPromises);
         }
       }
 

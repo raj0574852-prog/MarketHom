@@ -10,8 +10,8 @@ export interface WebsiteRow {
   da?: number;
   pa?: number;
   dr?: number;
-  ahrefs_traffic?: number;
-  semrush_traffic?: number;
+  traffic?: number;
+  authority_score?: number;
   spam_score?: number;
   country?: string;
   language?: string;
@@ -48,8 +48,8 @@ export function mapHeaders(header: string): string {
   if (h === 'da' || h.includes('domain authority') || h.includes('da ') || h.startsWith('da(') || h === 'da (moz)') return 'da';
   if (h === 'pa' || h.includes('page authority') || h.includes('pa ') || h.startsWith('pa(') || h === 'pa (moz)') return 'pa';
   if (h === 'dr' || h.includes('domain rating') || h.includes('dr ') || h.startsWith('dr(') || h === 'dr (ahrefs)') return 'dr';
-  if (h === 'traffic' || h.includes('monthly traffic') || h.includes('organic traffic') || h.includes('ahrefs traffic')) return 'ahrefs_traffic';
-  if (h.includes('semrush score') || h.includes('semrush traffic') || h.includes('authority score')) return 'semrush_traffic';
+  if (h === 'traffic' || h.includes('monthly traffic') || h.includes('organic traffic') || h.includes('ahrefs traffic') || h.includes('semrush traffic')) return 'traffic';
+  if (h.includes('semrush score') || h.includes('authority score')) return 'authority_score';
   if (h.includes('spam score')) return 'spam_score';
   if (h === 'category' || h === 'niche') return 'category_id';
   if (h === 'country' || h === 'location') return 'country';
@@ -89,7 +89,7 @@ function computeHash(data: any): string {
   }
   
   // Force a full re-sync to backfill metrics that were skipped because source_hash hadn't changed
-  sortedData['__sync_version'] = 3;
+  sortedData['__sync_version'] = 4;
   
   const str = JSON.stringify(sortedData);
   return crypto.createHash('sha256').update(str).digest('hex');
@@ -149,17 +149,13 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
           const dr = row.dr ? parseInt(row.dr, 10) : undefined;
           
           // Traffic sometimes comes as "Semrush Traffic - 1,480"
-          let semrush = undefined;
-          if (row.semrush_traffic) {
-            const match = row.semrush_traffic.match(/[0-9,]+/);
-            if (match) semrush = parseInt(match[0].replace(/,/g, ''), 10);
+          let trafficValue = undefined;
+          if (row.traffic) {
+            const match = row.traffic.match(/[0-9,]+/);
+            if (match) trafficValue = parseInt(match[0].replace(/,/g, ''), 10);
           }
-
-          let ahrefs = undefined;
-          if (row.ahrefs_traffic) {
-            const match = row.ahrefs_traffic.match(/[0-9,]+/);
-            if (match) ahrefs = parseInt(match[0].replace(/,/g, ''), 10);
-          }
+          
+          const authorityScore = row.authority_score ? parseInt(row.authority_score, 10) : undefined;
           
           const parsePrice = (val: any) => {
             if (!val || String(val).toUpperCase() === 'N/A') return undefined;
@@ -188,8 +184,8 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
             domain: normalizedDomain,
             da: isNaN(da as number) ? undefined : da,
             dr: isNaN(dr as number) ? undefined : dr,
-            semrush_traffic: isNaN(semrush as number) ? undefined : semrush,
-            ahrefs_traffic: isNaN(ahrefs as number) ? undefined : ahrefs,
+            traffic: isNaN(trafficValue as number) ? undefined : trafficValue,
+            authority_score: isNaN(authorityScore as number) ? undefined : authorityScore,
             price: price,
             spam_score: isNaN(spamScore as number) ? undefined : spamScore,
             category_id: row.category_id || 'General',
