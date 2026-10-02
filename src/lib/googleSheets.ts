@@ -45,12 +45,12 @@ export function mapHeaders(header: string): string {
   const h = header.toLowerCase().trim();
   
   if (h === 'domain' || h === 'website' || h === 'website url' || h === 'url') return 'domain';
-  if (h === 'da' || h === 'domain authority') return 'da';
-  if (h === 'pa' || h === 'page authority') return 'pa';
-  if (h === 'dr' || h === 'domain rating') return 'dr';
-  if (h === 'traffic' || h === 'monthly traffic' || h === 'organic traffic' || h.includes('ahrefs traffic')) return 'ahrefs_traffic';
-  if (h === 'semrush score' || h.includes('semrush traffic')) return 'semrush_traffic';
-  if (h === 'spam score') return 'spam_score';
+  if (h === 'da' || h.includes('domain authority') || h.includes('da ') || h.startsWith('da(') || h === 'da (moz)') return 'da';
+  if (h === 'pa' || h.includes('page authority') || h.includes('pa ') || h.startsWith('pa(') || h === 'pa (moz)') return 'pa';
+  if (h === 'dr' || h.includes('domain rating') || h.includes('dr ') || h.startsWith('dr(') || h === 'dr (ahrefs)') return 'dr';
+  if (h === 'traffic' || h.includes('monthly traffic') || h.includes('organic traffic') || h.includes('ahrefs traffic')) return 'ahrefs_traffic';
+  if (h.includes('semrush score') || h.includes('semrush traffic') || h.includes('authority score')) return 'semrush_traffic';
+  if (h.includes('spam score')) return 'spam_score';
   if (h === 'category' || h === 'niche') return 'category_id';
   if (h === 'country' || h === 'location') return 'country';
   if (h === 'language') return 'language';
