@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 
-export async function GET(req: Request) {
-  const supabase = getServiceSupabase();
-  const { data, error } = await supabase
-    .from('website_metrics')
-    .select('*, website_listings(domain)')
-    .limit(10);
-    
-  return NextResponse.json({ data, error });
+export async function GET() {
+  return NextResponse.json({
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'Set' : 'Missing',
+    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Set' : 'Missing',
+  });
 }
