@@ -282,25 +282,23 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       if (metricsToUpsert.length > 0) {
         const listingIds = [...newSitesToInsert.map(s => s.id), ...sitesToUpdate.map(s => s.id)];
         
-        // Use Promise.all and larger chunks (3000) to ensure massive bulk operations finish within Vercel's 504 limit
+        // Use sequential execution with chunks of 3000 to prevent connection pool exhaustion and timeouts
         const deleteChunkSize = 3000;
-        const deletePromises = [];
         for (let i = 0; i < listingIds.length; i += deleteChunkSize) {
           const chunk = listingIds.slice(i, i + deleteChunkSize);
-          deletePromises.push(supabase.from('website_metrics').delete().in('website_listing_id', chunk));
+          const { error } = await supabase.from('website_metrics').delete().in('website_listing_id', chunk);
+          if (error) throw new Error(`Delete metrics failed: ${error.message}`);
         }
-        await Promise.all(deletePromises);
         
         const validMetrics = metricsToUpsert.filter(m => m.value !== undefined && m.value !== null && !Number.isNaN(m.value));
         
         if (validMetrics.length > 0) {
           const insertChunkSize = 3000;
-          const insertPromises = [];
           for (let i = 0; i < validMetrics.length; i += insertChunkSize) {
              const chunk = validMetrics.slice(i, i + insertChunkSize);
-             insertPromises.push(supabase.from('website_metrics').insert(chunk));
+             const { error } = await supabase.from('website_metrics').insert(chunk);
+             if (error) throw new Error(`Insert metrics failed: ${error.message}`);
           }
-          await Promise.all(insertPromises);
         }
       }
 
