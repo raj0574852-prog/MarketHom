@@ -199,7 +199,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
               { website_listing_id: existing.id, metric_type: 'PA', value: row.pa },
               { website_listing_id: existing.id, metric_type: 'DR', value: row.dr },
               { website_listing_id: existing.id, metric_type: 'SEMRUSH_AUTHORITY', value: row.authority_score },
-              { website_listing_id: existing.id, metric_type: 'TRAFFIC', value: row.traffic },
+              { website_listing_id: existing.id, metric_type: 'ORGANIC_TRAFFIC', value: row.traffic },
               { website_listing_id: existing.id, metric_type: 'SPAM_SCORE', value: row.spam_score }
             );
             
@@ -252,7 +252,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
             { website_listing_id: newId, metric_type: 'PA', value: row.pa },
             { website_listing_id: newId, metric_type: 'DR', value: row.dr },
             { website_listing_id: newId, metric_type: 'SEMRUSH_AUTHORITY', value: row.authority_score },
-            { website_listing_id: newId, metric_type: 'TRAFFIC', value: row.traffic },
+            { website_listing_id: newId, metric_type: 'ORGANIC_TRAFFIC', value: row.traffic },
             { website_listing_id: newId, metric_type: 'SPAM_SCORE', value: row.spam_score }
           );
           
