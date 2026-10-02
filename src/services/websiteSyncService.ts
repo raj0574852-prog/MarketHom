@@ -32,10 +32,10 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       .maybeSingle();
 
     if (runningSync) {
-      // If it's been running for over 1 hour, assume it failed and ignore lock
+      // If it's been running for over 5 minutes (Vercel maxDuration), assume it failed (timed out) and ignore lock
       const started = new Date(runningSync.started_at).getTime();
       const now = Date.now();
-      if (now - started < 3600000) {
+      if (now - started < 310000) { // 5 minutes + 10s grace
         return { success: false, message: 'A synchronization is already running.' };
       }
     }
@@ -282,17 +282,19 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       if (metricsToUpsert.length > 0) {
         const listingIds = [...newSitesToInsert.map(s => s.id), ...sitesToUpdate.map(s => s.id)];
         
-        const chunkSize = 100;
-        for (let i = 0; i < listingIds.length; i += chunkSize) {
-          const chunk = listingIds.slice(i, i + chunkSize);
+        // Increase chunk size to 1000 to prevent Vercel 504 Gateway Timeout during massive backfill
+        const deleteChunkSize = 500;
+        for (let i = 0; i < listingIds.length; i += deleteChunkSize) {
+          const chunk = listingIds.slice(i, i + deleteChunkSize);
           await supabase.from('website_metrics').delete().in('website_listing_id', chunk);
         }
         
         const validMetrics = metricsToUpsert.filter(m => m.value !== undefined && m.value !== null && !Number.isNaN(m.value));
         
         if (validMetrics.length > 0) {
-          for (let i = 0; i < validMetrics.length; i += chunkSize) {
-             const chunk = validMetrics.slice(i, i + chunkSize);
+          const insertChunkSize = 1000;
+          for (let i = 0; i < validMetrics.length; i += insertChunkSize) {
+             const chunk = validMetrics.slice(i, i + insertChunkSize);
              await supabase.from('website_metrics').insert(chunk);
           }
         }
