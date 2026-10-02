@@ -13,7 +13,7 @@ function easeOutQuart(x: number): number {
 }
 
 export function AnimatedCounter({ value, duration = 1500, children }: AnimatedCounterProps) {
-  const [currentValue, setCurrentValue] = useState<number | null | undefined>(null);
+  const [currentValue, setCurrentValue] = useState<number | null | undefined>(value);
   const elementRef = useRef<HTMLDivElement>(null);
   const animatedRef = useRef(false);
 
@@ -30,11 +30,8 @@ export function AnimatedCounter({ value, duration = 1500, children }: AnimatedCo
       return;
     }
 
-    // Set initial value to 0 if we haven't animated
-    if (!animatedRef.current) {
-      setCurrentValue(0);
-    } else {
-      // If we already animated and value changes, just jump to new value
+    // If we already animated and value changes, just jump to new value
+    if (animatedRef.current) {
       setCurrentValue(value);
       return;
     }
@@ -46,6 +43,7 @@ export function AnimatedCounter({ value, duration = 1500, children }: AnimatedCo
         const [entry] = entries;
         if (entry.isIntersecting && !animatedRef.current) {
           animatedRef.current = true;
+          setCurrentValue(0); // Instantly drop to 0 before starting animation
           
           let startTimestamp: number | null = null;
 
