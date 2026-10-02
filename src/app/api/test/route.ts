@@ -27,8 +27,18 @@ export async function GET(req: Request) {
         .eq('website_listing_id', site.id);
       metrics = res.data;
     }
+    
+    // Test a delete and insert
+    let deleteResult = null;
+    let insertResult = null;
+    if (site) {
+      deleteResult = await supabase.from('website_metrics').delete().eq('website_listing_id', site.id);
+      insertResult = await supabase.from('website_metrics').insert([
+        { website_listing_id: site.id, metric_type: 'DA', value: 99 }
+      ]);
+    }
 
-    return NextResponse.json({ settings, site, metrics });
+    return NextResponse.json({ settings, site, metrics, deleteResult, insertResult });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
