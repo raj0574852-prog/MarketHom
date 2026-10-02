@@ -281,23 +281,23 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       // Upsert metrics
       if (metricsToUpsert.length > 0) {
         const listingIds = [...newSitesToInsert.map(s => s.id), ...sitesToUpdate.map(s => s.id)];
-        
-        // Use sequential execution with chunks of 3000 to prevent connection pool exhaustion and timeouts
-        const deleteChunkSize = 3000;
+        // Use sequential execution with smaller chunks for DELETE to prevent 414 URI Too Long errors
+        // (Since .in() uses URL query params, 50 UUIDs is ~2KB URL, safe for 4KB limits)
+        const deleteChunkSize = 50;
         for (let i = 0; i < listingIds.length; i += deleteChunkSize) {
           const chunk = listingIds.slice(i, i + deleteChunkSize);
           const { error } = await supabase.from('website_metrics').delete().in('website_listing_id', chunk);
-          if (error) throw new Error(`Delete metrics failed: ${error.message}`);
+          if (error) throw new Error(`Delete metrics failed: ${error.message || JSON.stringify(error)}`);
         }
         
         const validMetrics = metricsToUpsert.filter(m => m.value !== undefined && m.value !== null && !Number.isNaN(m.value));
         
         if (validMetrics.length > 0) {
-          const insertChunkSize = 3000;
+          const insertChunkSize = 1000; // POST payload size limit
           for (let i = 0; i < validMetrics.length; i += insertChunkSize) {
              const chunk = validMetrics.slice(i, i + insertChunkSize);
              const { error } = await supabase.from('website_metrics').insert(chunk);
-             if (error) throw new Error(`Insert metrics failed: ${error.message}`);
+             if (error) throw new Error(`Insert metrics failed: ${error.message || JSON.stringify(error)}`);
           }
         }
       }
