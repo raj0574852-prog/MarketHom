@@ -41,6 +41,8 @@ export async function GET(request: Request, context: any) {
       '/services/seo', '/services/ai-seo', '/services/ppc',
       '/services/smm', '/services/link-building', '/services/guest-posting',
       '/services/web-development', '/blog', '/case-studies', '/websites',
+      '/resources', '/resources/privacy-policy', '/resources/terms-of-service',
+      '/resources/refund-policy', '/resources/cookie-policy',
     ];
 
     for (const route of staticRoutes) {

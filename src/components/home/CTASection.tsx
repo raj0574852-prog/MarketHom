@@ -25,7 +25,7 @@ export default function CTASection() {
           </h2>
 
           <p className="text-white/75 text-lg mb-10 leading-relaxed">
-            Join 500+ businesses that trust MarketHom Agency to drive traffic, generate leads, and grow revenue. Your free audit is just one click away.
+            Join 500+ businesses that trust EducationHom to drive traffic, generate leads, and grow revenue. Your free audit is just one click away.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

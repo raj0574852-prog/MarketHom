@@ -13,9 +13,9 @@ const BlogPreview = dynamic(() => import('@/components/home/BlogPreview'), { ssr
 const CTASection = dynamic(() => import('@/components/home/CTASection'), { ssr: true });
 
 export const metadata: Metadata = {
-  title: 'MarketHom Agency | #1 Digital Marketing Agency for Growth',
+  title: 'EducationHom | #1 Digital Marketing Agency for Growth',
   description:
-    'MarketHom Agency delivers measurable results through SEO, AI SEO, PPC, Social Media Marketing, Link Building & Web Development. Get your free audit today and start outranking your competition.',
+    'EducationHom delivers measurable results through SEO, AI SEO, PPC, Social Media Marketing, Link Building & Web Development. Get your free audit today and start outranking your competition.',
   keywords: [
     'digital marketing agency',
     'SEO agency',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     'web development agency',
     'online marketing agency',
   ],
-  publisher: 'MarketHom Agency',
+  publisher: 'EducationHom',
   alternates: {
     canonical: CANONICAL_SITE_URL,
   },
@@ -48,14 +48,14 @@ export default function HomePage() {
               'Premium digital marketing agency specializing in SEO, AI SEO, PPC, SMM, Link Building and Web Development.',
             contactPoint: {
               '@type': 'ContactPoint',
-              telephone: '+1-800-MARKETHOM',
+              telephone: '[CONTACT PHONE]',
               contactType: 'customer service',
               availableLanguage: 'English',
             },
             sameAs: [
               'https://twitter.com/markethom',
               'https://linkedin.com/company/markethom',
-              'https://facebook.com/markethom',
+              'https://www.facebook.com/profile.php?id=100069292151996',
             ],
           }),
         }}

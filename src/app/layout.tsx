@@ -15,11 +15,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_SITE_URL),
   title: {
-    default: 'MarketHom Agency | Premium Digital Marketing & AI SEO Agency',
-    template: '%s | MarketHom Agency',
+    default: 'EducationHom | Premium Digital Marketing & AI SEO Agency',
+    template: '%s | EducationHom',
   },
   description:
-    'MarketHom Agency is an AI-powered digital marketing agency specializing in Google SEO, AI Search Engine Optimization (AEO), GEO (Generative Engine Optimization), PPC, Link Building, and Web Development.',
+    'EducationHom is an AI-powered digital marketing agency specializing in Google SEO, AI Search Engine Optimization (AEO), GEO (Generative Engine Optimization), PPC, Link Building, and Web Development.',
   keywords: [
     'digital marketing agency',
     'SEO services',
@@ -30,32 +30,32 @@ export const metadata: Metadata = {
     'link building',
     'guest posting',
     'web development',
-    'MarketHom Agency',
+    'EducationHom',
   ],
-  authors: [{ name: 'MarketHom Agency' }],
-  creator: 'MarketHom Agency',
+  authors: [{ name: 'EducationHom' }],
+  creator: 'EducationHom',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: CANONICAL_SITE_URL,
-    siteName: 'MarketHom Agency',
-    title: 'MarketHom Agency | AI Content Intelligence & SEO Agency',
+    siteName: 'EducationHom',
+    title: 'EducationHom | AI Content Intelligence & SEO Agency',
     description:
-      'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
+      'Scale your business with EducationHom – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: [
       {
         url: `${CANONICAL_SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'MarketHom Agency',
+        alt: 'EducationHom',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MarketHom Agency | AI Content Intelligence & SEO Agency',
+    title: 'EducationHom | AI Content Intelligence & SEO Agency',
     description:
-      'Scale your business with MarketHom Agency – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
+      'Scale your business with EducationHom – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: [`${CANONICAL_SITE_URL}/og-image.png`],
   },
   icons: {

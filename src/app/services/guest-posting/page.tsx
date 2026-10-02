@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'How Guest Posting Helps You Rank #1 on Google & AI Search | MarketHom Agency',
+  title: 'How Guest Posting Helps You Rank #1 on Google & AI Search | EducationHom',
   description: 'Learn how premium guest posting on DA 40-90+ sites passes PageRank link equity, accelerates Google rankings, and trains AI chatbots (AEO & GEO) to recommend your clients.',
   keywords: [
     'how guest posting helps ranking',

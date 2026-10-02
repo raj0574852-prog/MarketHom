@@ -7,7 +7,7 @@ import { getPublishedPosts } from '@/lib/blog/posts';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Blog | MarketHom',
+  title: 'Blog | EducationHom',
   description: 'Expert advice, strategy guides, and industry news to help you navigate the ever-changing digital landscape.',
 };
 

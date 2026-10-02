@@ -7,15 +7,15 @@ const contactInfo = [
   {
     icon: '📧',
     label: 'Email Us',
-    value: 'hello@markethom.agency',
-    href: 'mailto:hello@markethom.agency',
+    value: 'hello@educationhom.com',
+    href: 'mailto:hello@educationhom.com',
     sub: 'We reply within 2 hours',
   },
   {
     icon: '📞',
     label: 'Call Us',
-    value: '+1 (800) MARKET-HOM',
-    href: 'tel:+1800MARKETHOM',
+    value: '+91 8824896910',
+    href: 'tel:+918824896910',
     sub: 'Mon–Fri, 9am–6pm EST',
   },
   {
@@ -260,7 +260,7 @@ export default function ContactPage() {
                         className="mt-0.5 w-4 h-4 rounded border-[hsl(215,25%,22%)] accent-[hsl(217,91%,54%)]"
                       />
                       <span className="text-xs text-[hsl(215,20%,55%)]">
-                        I agree to MarketHom Agency's Privacy Policy and consent to being contacted about my inquiry. We never spam or sell your data.
+                        I agree to EducationHom's Privacy Policy and consent to being contacted about my inquiry. We never spam or sell your data.
                       </span>
                     </label>
 

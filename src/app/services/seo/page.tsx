@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'Premium SEO Services | Rank #1 on Google | MarketHom Agency',
+  title: 'Premium SEO Services | Rank #1 on Google | EducationHom',
   description: 'Drive qualified traffic and dominate search results with our expert SEO services. Technical audits, keyword research, and white-hat link building.',
   keywords: ['SEO services', 'Search Engine Optimization', 'organic growth', 'technical SEO', 'keyword research', 'local SEO'],
 };
@@ -74,7 +74,7 @@ export default function SeoServicePage() {
             'description': 'Comprehensive SEO strategies to improve search engine rankings, drive traffic, and increase revenue.',
             'provider': {
               '@type': 'Organization',
-              'name': 'MarketHom Agency'
+              'name': 'EducationHom'
             },
             'areaServed': 'Worldwide',
             'hasOfferCatalog': {
@@ -164,7 +164,7 @@ export default function SeoServicePage() {
               <h2 className="text-3xl font-black mb-6">Why SEO is Non-Negotiable in 2025</h2>
               <div className="prose-dark space-y-4">
                 <p>Over 70% of clicks go to the first three organic results on Google. If you're not there, you're invisible. But SEO has changed. It's no longer just about keywords and backlinks—it's about <strong>User Experience</strong>, <strong>Core Web Vitals</strong>, and <strong>Topical Authority</strong>.</p>
-                <p>At MarketHom Agency, we stay at the cutting edge of algorithm updates. We don't just react to Google's changes; we anticipate them. Our white-hat strategies are designed to build long-term value that keeps you at the top for years, not just weeks.</p>
+                <p>At EducationHom, we stay at the cutting edge of algorithm updates. We don't just react to Google's changes; we anticipate them. Our white-hat strategies are designed to build long-term value that keeps you at the top for years, not just weeks.</p>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-4">
                   <li>Increase Domain Authority</li>
                   <li>Lower Customer Acquisition Cost</li>

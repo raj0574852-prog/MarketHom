@@ -21,7 +21,7 @@ export async function generateMetadata(
 
   if (!post) {
     return {
-      title: 'Article Not Found | MarketHom Agency',
+      title: 'Article Not Found | EducationHom',
       description: 'The requested article could not be located.'
     };
   }
@@ -30,7 +30,7 @@ export async function generateMetadata(
   const robots = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
   return {
-    title: post.metaTitle || `${post.title} | MarketHom Agency`,
+    title: post.metaTitle || `${post.title} | EducationHom`,
     description: post.metaDescription || post.excerpt,
     robots,
     alternates: post.canonicalUrl ? { canonical: post.canonicalUrl } : undefined,
@@ -38,7 +38,7 @@ export async function generateMetadata(
       title: post.metaTitle || post.title,
       description: post.metaDescription || post.excerpt || '',
       url: `${CANONICAL_SITE_URL}/blog/${post.slug}`,
-      siteName: 'MarketHom Agency',
+      siteName: 'EducationHom',
       images: post.featuredImage ? [post.featuredImage, ...previousImages] : previousImages,
       locale: 'en_US',
       type: 'article',
@@ -84,12 +84,12 @@ export default async function BlogPostPage({ params }: Props) {
     dateModified: new Date(post.date).toISOString(),
     author: {
       '@type': 'Person',
-      name: post.author || 'MarketHom Agency Expert',
+      name: post.author || 'EducationHom Expert',
       jobTitle: post.authorRole || 'Senior Strategist'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'MarketHom Agency',
+      name: 'EducationHom',
       logo: {
         '@type': 'ImageObject',
         url: 'https://www.educationhom.com/og-image.png'
@@ -99,7 +99,7 @@ export default async function BlogPostPage({ params }: Props) {
       '@type': 'WebPage',
       '@id': `https://www.educationhom.com/blog/${post.slug}`
     },
-    keywords: [post.category, 'MarketHom Agency', 'SEO', 'AI Content Intelligence']
+    keywords: [post.category, 'EducationHom', 'SEO', 'AI Content Intelligence']
   };
 
   return (

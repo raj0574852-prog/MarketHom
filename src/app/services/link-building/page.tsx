@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'White-Hat Link Building Services | Build Domain Authority | MarketHom Agency',
+  title: 'White-Hat Link Building Services | Build Domain Authority | EducationHom',
   description: 'Earn high-quality, high-authority backlinks with our manual outreach and digital PR services. Safe, effective, and results-driven link building.',
   keywords: ['link building', 'backlinks', 'digital PR', 'domain authority', 'guest posting', 'HARO'],
 };

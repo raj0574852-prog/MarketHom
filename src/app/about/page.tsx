@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'About MarketHom Agency | Our Story, Mission & Team',
+  title: 'About EducationHom | Our Story, Mission & Team',
   description:
-    'Learn about MarketHom Agency — a results-driven digital marketing agency with 15+ years of experience, 500+ clients served, and $120M+ revenue generated for our partners.',
+    'Learn about EducationHom — a results-driven digital marketing agency with 15+ years of experience, 500+ clients served, and $120M+ revenue generated for our partners.',
 };
 
 const team = [
@@ -46,7 +46,7 @@ export default function AboutPage() {
             <span className="gradient-text">We Build Empires.</span>
           </h1>
           <p className="text-[hsl(215,20%,60%)] text-xl max-w-3xl mx-auto leading-relaxed">
-            MarketHom Agency was built on a single belief: every business deserves access to world-class digital marketing that actually drives revenue. For 15+ years, we've been making that belief a reality.
+            EducationHom was built on a single belief: every business deserves access to world-class digital marketing that actually drives revenue. For 15+ years, we've been making that belief a reality.
           </p>
         </div>
       </section>
@@ -61,7 +61,7 @@ export default function AboutPage() {
                 Democratizing <span className="gradient-text">Elite Marketing</span>
               </h2>
               <p className="text-[hsl(215,20%,65%)] text-lg leading-relaxed mb-6">
-                For too long, top-tier digital marketing was reserved for Fortune 500 companies with massive budgets. We founded MarketHom Agency to change that. Whether you're a local business trying to get found on Google or a SaaS company scaling to Series B, you deserve the same sophisticated strategies as the biggest players in your industry.
+                For too long, top-tier digital marketing was reserved for Fortune 500 companies with massive budgets. We founded EducationHom to change that. Whether you're a local business trying to get found on Google or a SaaS company scaling to Series B, you deserve the same sophisticated strategies as the biggest players in your industry.
               </p>
               <p className="text-[hsl(215,20%,65%)] text-lg leading-relaxed mb-8">
                 Our team of 45+ specialists brings battle-tested expertise across SEO, PPC, social media, content, and web development — all under one roof, working in perfect sync toward your growth goals.
@@ -170,7 +170,7 @@ export default function AboutPage() {
         <div className="container-custom text-center">
           <h2 className="text-4xl font-black mb-4">Ready to <span className="gradient-text">Partner With Us?</span></h2>
           <p className="text-[hsl(215,20%,60%)] mb-8 max-w-xl mx-auto">
-            Join 500+ businesses that trust MarketHom Agency to drive their digital growth.
+            Join 500+ businesses that trust EducationHom to drive their digital growth.
           </p>
           <Link href="/contact" className="btn-primary">
             <span>Get Your Free Strategy Call</span>

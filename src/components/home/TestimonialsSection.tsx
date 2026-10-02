@@ -8,7 +8,7 @@ const testimonials = [
     title: 'CEO, StyleVault Fashion',
     avatar: 'SM',
     rating: 5,
-    text: 'MarketHom Agency transformed our online presence completely. In 8 months, our organic traffic went from 12,000 to over 53,000 monthly visitors. The team is incredibly strategic and results-focused. Worth every penny.',
+    text: 'EducationHom transformed our online presence completely. In 8 months, our organic traffic went from 12,000 to over 53,000 monthly visitors. The team is incredibly strategic and results-focused. Worth every penny.',
     result: '+342% Organic Traffic',
     color: 'hsl(270,80%,60%)',
   },
@@ -26,7 +26,7 @@ const testimonials = [
     title: 'Owner, PrimeCare Dental',
     avatar: 'AC',
     rating: 5,
-    text: 'We were invisible on Google. MarketHom got us to #1 on Google Maps within 4 months. Our phone is ringing off the hook. Patient bookings went up 422%. This team delivers real, measurable results.',
+    text: 'We were invisible on Google. EducationHom got us to #1 on Google Maps within 4 months. Our phone is ringing off the hook. Patient bookings went up 422%. This team delivers real, measurable results.',
     result: '#1 Google Maps',
     color: 'hsl(152,69%,46%)',
   },
@@ -44,7 +44,7 @@ const testimonials = [
     title: 'Co-Founder, GreenLeaf Organics',
     avatar: 'LP',
     rating: 5,
-    text: 'From website redesign to full SEO and social media management — MarketHom does it all seamlessly. Revenue from organic channels grew by 215% in the first year. The team is proactive, transparent, and genuinely invested.',
+    text: 'From website redesign to full SEO and social media management — EducationHom does it all seamlessly. Revenue from organic channels grew by 215% in the first year. The team is proactive, transparent, and genuinely invested.',
     result: '+215% Organic Revenue',
     color: 'hsl(340,80%,58%)',
   },
@@ -73,7 +73,7 @@ export default function TestimonialsSection() {
             <span className="gradient-text">Say About Us</span>
           </h2>
           <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            500+ businesses trust MarketHom Agency. Here&apos;s what they&apos;re saying.
+            500+ businesses trust EducationHom. Here&apos;s what they&apos;re saying.
           </p>
         </div>
 

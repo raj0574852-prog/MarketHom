@@ -33,7 +33,7 @@ export const INITIAL_POSTS: BlogPost[] = [
     icon: '🤖',
     featured: true,
     featuredImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop',
-    metaTitle: '10 AI SEO Strategies for 2025 | MarketHom Agency',
+    metaTitle: '10 AI SEO Strategies for 2025 | EducationHom',
     metaDescription: 'Discover the top 10 AI-powered SEO strategies for 2025. Learn how to optimize for SGE, ChatGPT, and semantic topical authority.',
     noIndex: false,
     noFollow: false,

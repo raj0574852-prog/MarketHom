@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'AI Content Intelligence Platform | SEO, AEO, GEO & LLM Optimization | MarketHom',
+  title: 'AI Content Intelligence Platform | SEO, AEO, GEO & LLM Optimization | EducationHom',
   description: 'Engineer high-converting content optimized for Google SEO, Answer Engines (AEO), Generative Engines (GEO), and LLM Chatbots. Written with deep expert authority.',
   keywords: [
     'AI Content Intelligence',
@@ -110,7 +110,7 @@ export default function AiSeoPage() {
                       🤖
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white">MarketHom AI Intelligence Engine</div>
+                      <div className="text-xs font-bold text-white">EducationHom AI Intelligence Engine</div>
                       <div className="text-[10px] text-emerald-400 font-mono">Status: 100% Multi-Engine Optimized</div>
                     </div>
                   </div>
@@ -205,9 +205,9 @@ export default function AiSeoPage() {
       <section className="section-padding bg-[hsl(222,47%,7%)] border-y border-[hsl(215,25%,22%)]/40" id="comparison">
         <div className="container-custom">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="badge mb-4">Why MarketHom</span>
+            <span className="badge mb-4">Why EducationHom</span>
             <h2 className="text-3xl md:text-5xl font-black mb-6 text-white">
-              Traditional AI Content vs. <span className="gradient-text">MarketHom Intelligence</span>
+              Traditional AI Content vs. <span className="gradient-text">EducationHom Intelligence</span>
             </h2>
             <p className="text-[hsl(215,20%,60%)] text-base">
               Why generic AI content gets ignored by Google and how our multi-engine platform wins rankings.
@@ -220,7 +220,7 @@ export default function AiSeoPage() {
                 <tr className="border-b border-[hsl(215,25%,22%)] text-xs font-bold uppercase tracking-wider text-[hsl(215,20%,50%)]">
                   <th className="pb-4 px-4">Feature / Capability</th>
                   <th className="pb-4 px-4 text-red-400">Generic AI Generators</th>
-                  <th className="pb-4 px-4 text-emerald-400 font-black">MarketHom Content Intelligence</th>
+                  <th className="pb-4 px-4 text-emerald-400 font-black">EducationHom Content Intelligence</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[hsl(215,25%,22%)]/40 text-sm">

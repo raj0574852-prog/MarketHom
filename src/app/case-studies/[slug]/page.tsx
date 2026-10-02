@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!cs) return { title: 'Case Study Not Found' };
 
   return {
-    title: `${cs.company} Success Story | MarketHom Agency`,
+    title: `${cs.company} Success Story | EducationHom`,
     description: cs.results,
   };
 }
@@ -92,7 +92,7 @@ export default async function CaseStudySinglePage({ params }: Props) {
                     <p className="text-[hsl(215,20%,65%)] leading-relaxed text-lg">{cs.challenge}</p>
                  </div>
                  <div className="glass-card p-10 border-[hsl(217,91%,54%)]/20">
-                    <h2 className="text-2xl font-bold mb-6 text-white">The MarketHom Solution</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-white">The EducationHom Solution</h2>
                     <p className="text-[hsl(215,20%,65%)] leading-relaxed text-lg">{cs.solution}</p>
                  </div>
               </div>

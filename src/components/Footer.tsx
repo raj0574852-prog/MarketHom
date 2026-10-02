@@ -19,6 +19,13 @@ const company = [
   { label: 'Contact Us', href: '/contact' },
 ];
 
+const resources = [
+  { label: 'Privacy Policy', href: '/resources/privacy-policy' },
+  { label: 'Terms of Service', href: '/resources/terms-of-service' },
+  { label: 'Refund Policy', href: '/resources/refund-policy' },
+  { label: 'Cookie Policy', href: '/resources/cookie-policy' },
+];
+
 const socials = [
   { label: 'Twitter / X', href: '#', icon: (
     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -26,7 +33,7 @@ const socials = [
   { label: 'LinkedIn', href: '#', icon: (
     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
   )},
-  { label: 'Facebook', href: '#', icon: (
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100069292151996', icon: (
     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
   )},
   { label: 'Instagram', href: '#', icon: (
@@ -57,7 +64,7 @@ export default function Footer() {
 
       {/* Main Footer */}
       <div className="container-custom py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" title="EducationHom Home" className="flex items-center gap-3 mb-5 group">
@@ -128,6 +135,25 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Resources */}
+          <div>
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">Resources</h4>
+            <ul className="space-y-3">
+              {resources.map((r) => (
+                <li key={r.href}>
+                  <Link
+                    href={r.href}
+                    title={r.label}
+                    className="text-sm text-[hsl(215,20%,60%)] hover:text-[hsl(217,91%,75%)] transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-[hsl(217,91%,54%)] group-hover:w-2 transition-all duration-200" />
+                    {r.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Contact */}
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">Contact Us</h4>
@@ -140,8 +166,8 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-xs text-[hsl(215,20%,50%)] mb-0.5">Email</div>
-                  <a href="mailto:hello@markethom.agency" title="Email Us" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
-                    hello@markethom.agency
+                  <a href="mailto:hello@educationhom.com" title="Email Us" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
+                    hello@educationhom.com
                   </a>
                 </div>
               </li>
@@ -153,8 +179,8 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-xs text-[hsl(215,20%,50%)] mb-0.5">Phone</div>
-                  <a href="tel:+1-800-MARKETHOM" title="Call Us" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
-                    +1 (800) MARKET-HOM
+                  <a href="tel:+91 8824896910" title="Call Us" className="text-sm text-[hsl(215,20%,70%)] hover:text-white transition-colors">
+                    +91 8824896910
                   </a>
                 </div>
               </li>
@@ -167,7 +193,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-xs text-[hsl(215,20%,50%)] mb-0.5">Location</div>
-                  <span className="text-sm text-[hsl(215,20%,70%)]">Remote-First · Global</span>
+                  <span className="text-sm text-[hsl(215,20%,70%)]">Sanganer, Jaipur, Rajasthan, India</span>
                 </div>
               </li>
             </ul>
@@ -180,12 +206,12 @@ export default function Footer() {
         <div className="container-custom py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-[hsl(215,20%,50%)]">
-              © {new Date().getFullYear()} MarketHom Agency. All rights reserved.
+              © {new Date().getFullYear()} EducationHom. All rights reserved.
             </p>
             <div className="flex gap-6">
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-                <Link key={item} href="#" title={item} className="text-xs text-[hsl(215,20%,50%)] hover:text-[hsl(217,91%,75%)] transition-colors">
-                  {item}
+              {resources.map((item) => (
+                <Link key={item.label} href={item.href} title={item.label} className="text-xs text-[hsl(215,20%,50%)] hover:text-[hsl(217,91%,75%)] transition-colors">
+                  {item.label}
                 </Link>
               ))}
             </div>

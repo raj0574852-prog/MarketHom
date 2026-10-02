@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'PPC Management Services | Maximize Your Ad ROI | MarketHom Agency',
+  title: 'PPC Management Services | Maximize Your Ad ROI | EducationHom',
   description: 'Drive immediate results with expert PPC management. We optimize Google Ads, Meta Ads, and LinkedIn campaigns for maximum conversions.',
   keywords: ['PPC management', 'Google Ads agency', 'Paid Search', 'Meta Ads', 'conversion rate optimization'],
 };

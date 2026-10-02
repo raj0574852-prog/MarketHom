@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'Next.js & React Web Development | High-Performance Sites | MarketHom Agency',
+  title: 'Next.js & React Web Development | High-Performance Sites | EducationHom',
   description: 'We build blazing-fast, SEO-optimized websites using Next.js and React. Sites that rank, load in milliseconds, and convert visitors into customers.',
   keywords: ['web development', 'Next.js developer', 'React development', 'headless CMS', 'Core Web Vitals', 'CRO'],
 };

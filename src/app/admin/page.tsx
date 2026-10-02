@@ -232,7 +232,7 @@ export default function AdminDashboardPage() {
         .replace(/(^-|-$)+/g, '');
       setFormSlug(generatedSlug);
       if (!formMetaTitle) {
-        setFormMetaTitle(`${val} | MarketHom`);
+        setFormMetaTitle(`${val} | EducationHom`);
       }
     }
   };
@@ -531,7 +531,7 @@ Include:
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[hsl(217,91%,54%)] to-[hsl(270,91%,65%)] flex items-center justify-center mx-auto mb-4 text-2xl font-black shadow-lg shadow-[hsl(217,91%,54%)]/30">
               M
             </div>
-            <h1 className="text-3xl font-black text-white mb-2">MarketHom Admin</h1>
+            <h1 className="text-3xl font-black text-white mb-2">EducationHom Admin</h1>
             <p className="text-xs text-[hsl(215,20%,60%)]">Control Panel & Content Management System</p>
           </div>
 

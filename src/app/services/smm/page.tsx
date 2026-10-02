@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'Social Media Marketing | Build Your Brand Community | MarketHom Agency',
+  title: 'Social Media Marketing | Build Your Brand Community | EducationHom',
   description: 'Scale your brand on social media with strategic content and community management. We handle Meta, LinkedIn, Instagram, and TikTok for high-growth brands.',
   keywords: ['SMM', 'Social Media Marketing', 'Instagram marketing', 'LinkedIn strategy', 'brand awareness'],
 };

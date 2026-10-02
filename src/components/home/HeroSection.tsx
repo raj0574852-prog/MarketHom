@@ -60,7 +60,7 @@ export default function HeroSection() {
 
           {/* Subheading */}
           <p className="text-lg md:text-xl text-[hsl(215,20%,65%)] max-w-3xl mx-auto mb-10 animate-fade-in-up opacity-0 delay-300 leading-relaxed">
-            MarketHom Agency is your growth partner — combining AI-powered SEO, precision PPC, and conversion-focused web development to put your brand on the map and keep it there.
+            EducationHom is your growth partner — combining AI-powered SEO, precision PPC, and conversion-focused web development to put your brand on the map and keep it there.
           </p>
 
           {/* CTA Buttons */}
@@ -103,7 +103,7 @@ export default function HeroSection() {
                 <div className="w-3 h-3 rounded-full bg-[hsl(39,100%,58%)]" />
                 <div className="w-3 h-3 rounded-full bg-[hsl(152,69%,46%)]" />
                 <div className="flex-1 mx-4 bg-[hsl(215,25%,18%)] rounded-full px-4 py-1.5 text-xs text-[hsl(215,20%,50%)]">
-                  markethom.agency/dashboard
+                  educationhom.com/dashboard
                 </div>
               </div>
               {/* Dashboard content */}

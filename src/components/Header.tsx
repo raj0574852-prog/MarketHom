@@ -22,6 +22,16 @@ const navLinks = [
   },
   { label: 'Pricing', href: '/pricing' },
   { label: 'About', href: '/about' },
+  {
+    label: 'Resources',
+    href: '/resources',
+    children: [
+      { label: 'Privacy Policy', href: '/resources/privacy-policy', icon: '🛡️' },
+      { label: 'Terms of Service', href: '/resources/terms-of-service', icon: '⚖️' },
+      { label: 'Refund Policy', href: '/resources/refund-policy', icon: '💸' },
+      { label: 'Cookie Policy', href: '/resources/cookie-policy', icon: '🍪' },
+    ],
+  },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ];

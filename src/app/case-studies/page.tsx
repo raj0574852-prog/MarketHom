@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CTASection from '@/components/home/CTASection';
 
 export const metadata: Metadata = {
-  title: 'Case Studies | Real Results for Real Businesses | MarketHom Agency',
+  title: 'Case Studies | Real Results for Real Businesses | EducationHom',
   description: 'Explore our portfolio of success stories. See how we helped e-commerce brands, SaaS companies, and local businesses scale with SEO, PPC, and AI.',
 };
 
