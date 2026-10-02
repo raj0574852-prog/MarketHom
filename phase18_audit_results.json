@@ -1,0 +1,19 @@
+{
+  "results": {
+    "total": 50,
+    "indexed": 42,
+    "noindex": 8,
+    "canonical_matches": 50,
+    "canonical_mismatches": 0,
+    "has_price_in_html": 50,
+    "has_price_in_jsonld": 50,
+    "has_product_schema": 50,
+    "has_organization_schema": 50,
+    "has_duplicate_overview": 0,
+    "tierA": 0,
+    "tierB": 42,
+    "tierC": 8,
+    "invalid_favicon": 0
+  },
+  "duplicateAnswers": {}
+}
