@@ -290,7 +290,9 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
           if (error) throw new Error(`Delete metrics failed: ${error.message || JSON.stringify(error)}`);
         }
         
-        const validMetrics = metricsToUpsert.filter(m => m.value !== undefined && m.value !== null && !Number.isNaN(m.value));
+        const validMetrics = metricsToUpsert
+          .map(m => ({ ...m, value: Number(m.value) }))
+          .filter(m => m.value !== undefined && m.value !== null && !Number.isNaN(m.value));
         
         if (validMetrics.length > 0) {
           const insertChunkSize = 1000; // POST payload size limit
