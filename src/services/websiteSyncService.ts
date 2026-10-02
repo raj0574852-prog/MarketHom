@@ -281,13 +281,20 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       // Upsert metrics
       if (metricsToUpsert.length > 0) {
         const listingIds = [...newSitesToInsert.map(s => s.id), ...sitesToUpdate.map(s => s.id)];
-        // Use sequential execution with smaller chunks for DELETE to prevent 414 URI Too Long errors
-        // (Since .in() uses URL query params, 50 UUIDs is ~2KB URL, safe for 4KB limits)
+        // Use Promise.all to run deletes in parallel (batches of 10 requests) to avoid Vercel 5 min timeout
         const deleteChunkSize = 50;
+        const deletePromises = [];
         for (let i = 0; i < listingIds.length; i += deleteChunkSize) {
           const chunk = listingIds.slice(i, i + deleteChunkSize);
-          const { error } = await supabase.from('website_metrics').delete().in('website_listing_id', chunk);
-          if (error) throw new Error(`Delete metrics failed: ${error.message || JSON.stringify(error)}`);
+          deletePromises.push(supabase.from('website_metrics').delete().in('website_listing_id', chunk));
+        }
+        
+        for (let i = 0; i < deletePromises.length; i += 10) {
+          const batch = deletePromises.slice(i, i + 10);
+          const results = await Promise.all(batch);
+          for (const res of results) {
+            if (res.error) throw new Error(`Delete metrics failed: ${res.error.message || JSON.stringify(res.error)}`);
+          }
         }
         
         const validMetrics = metricsToUpsert
