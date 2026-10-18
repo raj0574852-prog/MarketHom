@@ -45,7 +45,7 @@ export async function updateSession(request: NextRequest) {
   const isAdminApi = pathname.startsWith('/api/admin')
 
   if (isAdminPath || isAdminApi) {
-    const adminEmails = (process.env.ADMIN_EMAILS || 'raj057485251@gmail.com').split(',').map((e: string) => e.trim());
+    const adminEmails = (process.env.ADMIN_EMAILS || 'raj057485251@gmail.com,raj0574852@gmail.com').toLowerCase().split(',').map((e: string) => e.trim());
     const isAuthorized = user && user.email && adminEmails.includes(user.email);
 
     if (!isAuthorized) {
