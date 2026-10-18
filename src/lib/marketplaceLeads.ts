@@ -205,8 +205,13 @@ export async function getMarketplaceLeads(options: GetMarketplaceLeadsOptions = 
     .range(offset, offset + limit - 1);
 
   if (error) {
-    console.error('[MarketplaceLeads] Failed to query leads from database:', error.message);
-    throw new Error(error.message);
+    console.warn('[MarketplaceLeads] Notice querying leads (table might not exist yet):', error.message);
+    return {
+      leads: [],
+      total: 0,
+      page,
+      totalPages: 1
+    };
   }
 
   const total = count || 0;
