@@ -6,20 +6,20 @@ const BATCH_SIZE = 25;
 const CONCURRENCY = 5;
 
 // Helper to run promises with concurrency limit
-async function asyncPool<T>(
+async function asyncPool<T, Item>(
   concurrency: number, 
-  iterable: any[], 
-  iteratorFn: (item: any, iterable: any[]) => Promise<T>
+  iterable: Item[], 
+  iteratorFn: (item: Item, iterable: Item[]) => Promise<T>
 ) {
   const ret: Promise<T>[] = [];
-  const executing: Promise<any>[] = [];
+  const executing: Promise<unknown>[] = [];
   
   for (const item of iterable) {
     const p = Promise.resolve().then(() => iteratorFn(item, iterable));
     ret.push(p);
 
     if (concurrency <= iterable.length) {
-      const e: Promise<any> = p.then(() => executing.splice(executing.indexOf(e), 1));
+      const e: Promise<unknown> = p.then(() => executing.splice(executing.indexOf(e), 1));
       executing.push(e);
       if (executing.length >= concurrency) {
         await Promise.race(executing);
@@ -34,8 +34,8 @@ export async function GET(req: Request) {
     const authHeader = req.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
     
-    // Only enforce if CRON_SECRET is set
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    // Fail closed: reject if secret is missing or mismatched
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
     
@@ -55,8 +55,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, processed: 0, message: 'No pending logo discovery jobs' });
     }
 
+    interface LogoDiscoveryJob {
+      id: string;
+      domain: string;
+      logo_discovery_attempts?: number;
+    }
+
     // Process jobs
-    const processJob = async (job: any) => {
+    const processJob = async (job: LogoDiscoveryJob) => {
       try {
         const logoUrl = await discoverLogoUrl(job.domain);
 
@@ -86,8 +92,9 @@ export async function GET(req: Request) {
             
           return { id: job.id, domain: job.domain, success: false, reason: 'Not found or timeout' };
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Hard failure
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         await supabase
           .from('website_listings')
           .update({
@@ -97,11 +104,11 @@ export async function GET(req: Request) {
           })
           .eq('id', job.id);
           
-        return { id: job.id, domain: job.domain, success: false, reason: error.message };
+        return { id: job.id, domain: job.domain, success: false, reason: errorMessage };
       }
     };
 
-    const results = await asyncPool(CONCURRENCY, jobs, processJob);
+    const results = await asyncPool(CONCURRENCY, jobs as LogoDiscoveryJob[], processJob);
 
     const successCount = results.filter(r => r.success).length;
     
@@ -113,7 +120,7 @@ export async function GET(req: Request) {
       results
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logo Discovery Cron Error:', error);
     return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }

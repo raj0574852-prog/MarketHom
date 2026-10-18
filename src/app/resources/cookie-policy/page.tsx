@@ -50,7 +50,7 @@ export default function CookiePolicyPage() {
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">3. Managing Cookies</h2>
           <p>You have the right to decide whether to accept or reject cookies. You can exercise your cookie rights by setting or amending your web browser controls to accept or refuse cookies.</p>
           <ul className="list-disc pl-6 space-y-2 mb-8">
-            <li><strong>Browser Settings:</strong> Most web browsers allow you to control cookies through their settings preferences. You can typically find these settings in the "Options" or "Preferences" menu of your browser.</li>
+            <li><strong>Browser Settings:</strong> Most web browsers allow you to control cookies through their settings preferences. You can typically find these settings in the &quot;Options&quot; or &quot;Preferences&quot; menu of your browser.</li>
             <li><strong>Effects of Refusal:</strong> If you choose to reject essential cookies, you may still use our website, though your access to some functionality and areas of our website may be restricted or degraded.</li>
           </ul>
 
@@ -63,7 +63,7 @@ export default function CookiePolicyPage() {
           <p>If you have any questions about our use of cookies or other technologies, please contact us at:</p>
           <ul className="list-none space-y-2 mb-8 mt-4 p-6 glass rounded-xl">
             <li><strong>Email:</strong> <a href="mailto:Sophia@educationhom.com" className="text-[hsl(217,91%,75%)] hover:underline">[Sophia@educationhom.com]</a></li>
-            <li><strong>Phone:</strong> <a href="tel:+91 8824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+918824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
             <li><strong>Address:</strong> Sanganer, Jaipur, Rajasthan, India</li>
           </ul>
         </div>

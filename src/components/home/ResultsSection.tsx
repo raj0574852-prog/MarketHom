@@ -56,7 +56,7 @@ export default function ResultsSection() {
             <span className="gradient-text">Real Results.</span>
           </h2>
           <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            Don't take our word for it. Here's what we've achieved for businesses just like yours.
+            Don&apos;t take our word for it. Here&apos;s what we&apos;ve achieved for businesses just like yours.
           </p>
         </div>
 
@@ -124,6 +124,13 @@ export default function ResultsSection() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="mt-8 text-center">
+          <p className="text-[10px] text-[hsl(215,20%,40%)]">
+            * Case studies and results are for illustrative purposes. Individual results may vary based on industry, budget, and implementation timeline.
+          </p>
         </div>
       </div>
     </section>

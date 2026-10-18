@@ -142,6 +142,13 @@ export default function TestimonialsSection() {
             </button>
           ))}
         </div>
+        
+        {/* Disclaimer */}
+        <div className="mt-8 text-center">
+          <p className="text-[10px] text-[hsl(215,20%,40%)]">
+            * Testimonials and results are for illustrative purposes. Individual results may vary based on industry, budget, and implementation timeline.
+          </p>
+        </div>
       </div>
     </section>
   );

@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabaseServer';
 
 export async function POST() {
-  const response = NextResponse.json({ success: true });
-  
-  // Clear the cookie by setting maxAge to 0
-  response.cookies.set({
-    name: 'admin_session',
-    value: '',
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 0
-  });
-
-  return response;
+  try {
+    const supabase = await createClient();
+    
+    // signOut will automatically clear the cookies via the Supabase SSR setAll callback
+    await supabase.auth.signOut();
+    
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Logout error:', error);
+    return NextResponse.json({ success: false, error: 'Server error during logout' }, { status: 500 });
+  }
 }

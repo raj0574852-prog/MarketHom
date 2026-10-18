@@ -5,6 +5,27 @@ import PublisherLogo from './PublisherLogo';
 export function PublisherHero({ website }: { website: WebsiteListing }) {
   const isVerified = website.verification_status === 'verified' && website.last_verified_at;
 
+  // Determine Quality Tier
+  let tier = 'Standard';
+  let tierColor = 'bg-slate-100 text-slate-700 border-slate-200';
+  
+  if (website.website_metrics) {
+    let da = 0, dr = 0, traffic = 0;
+    for (const m of website.website_metrics) {
+      const t = m.metric_type?.toUpperCase();
+      if (t === 'DA' || t === 'DOMAIN_AUTHORITY') da = Number(m.value) || 0;
+      if (t === 'DR' || t === 'DOMAIN_RATING') dr = Number(m.value) || 0;
+      if (t === 'SEMRUSH_TRAFFIC' || t === 'ORGANIC_TRAFFIC' || t === 'TRAFFIC') traffic = Number(m.value) || 0;
+    }
+    if (da >= 60 || dr >= 60 || traffic >= 50000) {
+      tier = 'Elite';
+      tierColor = 'bg-[hsl(39,100%,58%)]/10 text-[hsl(39,100%,58%)] border-[hsl(39,100%,58%)]/30';
+    } else if (da >= 40 || dr >= 40 || traffic >= 10000) {
+      tier = 'Premium';
+      tierColor = 'bg-[hsl(217,91%,54%)]/10 text-[hsl(217,91%,54%)] border-[hsl(217,91%,54%)]/30';
+    }
+  }
+
   return (
     <div className="relative w-full rounded-t-2xl overflow-hidden bg-white shadow-sm border border-slate-200 mb-8">
       {/* Hero Background - Using a premium gradient instead of an external image dependency to ensure reliability across all categories */}
@@ -22,8 +43,11 @@ export function PublisherHero({ website }: { website: WebsiteListing }) {
           <PublisherLogo domain={website.domain} name={website.name} className="w-full h-full object-contain" />
         </div>
 
-        <div className="flex-1 pt-2 md:pt-16">
+        <div className="flex-1 pt-2 md:pt-16 min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border rounded-md ${tierColor}`}>
+              {tier}
+            </span>
             {website.link_validity === 'DoFollow' && (
               <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 border border-emerald-200 rounded-md">
                 DoFollow
@@ -50,8 +74,8 @@ export function PublisherHero({ website }: { website: WebsiteListing }) {
             )}
           </div>
           
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-2 leading-tight tracking-tight">
-            Publish Guest Post on <span className="text-blue-600">{website.domain}</span>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 mb-2 leading-tight tracking-tight min-w-0 break-words">
+            Publish Guest Post on <span className="text-blue-600 break-words">{website.domain}</span>
           </h1>
           
           <div className="flex items-center gap-4 mb-4">
@@ -64,7 +88,7 @@ export function PublisherHero({ website }: { website: WebsiteListing }) {
           </div>
 
           {website.short_description && (
-            <p className="text-slate-600 text-[15px] md:text-base leading-relaxed max-w-3xl mt-2">
+            <p className="text-slate-600 text-[15px] md:text-base leading-relaxed max-w-3xl mt-2 min-w-0 break-words">
               {website.price && website.content_placement_selling_price
                 ? website.short_description.split(`$${website.price}`).join(`$${website.content_placement_selling_price}`)
                 : website.short_description}

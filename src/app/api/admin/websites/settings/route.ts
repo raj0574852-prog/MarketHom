@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseClient';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(req: Request) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const supabase = getServiceSupabase();
   const { data: settings } = await supabase
     .from('website_sync_settings')
@@ -14,6 +19,10 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    if (!(await isAdminAuthenticated())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = getServiceSupabase();
     const body = await req.json();
     
@@ -56,7 +65,7 @@ export async function POST(req: Request) {
       if (error) throw error;
       return NextResponse.json(data);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Settings Update Error:', error);
     return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }

@@ -1,5 +1,5 @@
 import { getServiceSupabase } from '../lib/supabaseClient';
-import { fetchGoogleSheet, WebsiteRow } from '../lib/googleSheets';
+import { fetchGoogleSheet } from '../lib/googleSheets';
 import { revalidatePath } from 'next/cache';
 import { calculateContentPlacementSellingPrice } from '../lib/pricing/contentPlacement';
 import crypto from 'crypto';
@@ -67,7 +67,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
 
     const logId = logRecord.id;
 
-    let stats = {
+    const stats = {
       total: 0,
       created: 0,
       updated: 0,
@@ -100,8 +100,21 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       
       const isDatasetConfirmedComplete = isComplete && !hasDuplicates;
 
-      // 5. Fetch all existing websites to compare (paginated to bypass 1000 limit)
-      let allExistingSites: any[] = [];
+      interface ExistingSiteSummary {
+        id: string;
+        domain: string;
+        source_hash?: string | null;
+        is_in_google_sheet?: boolean | null;
+        is_listed?: boolean | null;
+        status?: string | null;
+        slug?: string | null;
+        name?: string | null;
+        website_url?: string | null;
+        content_placement_selling_price?: number | null;
+        logo_url?: string | null;
+      }
+
+      let allExistingSites: ExistingSiteSummary[] = [];
       let fetchOffset = 0;
       const fetchLimit = 1000;
       let hasMoreSites = true;
@@ -115,7 +128,7 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
         if (fetchError) throw fetchError;
         
         if (pageSites && pageSites.length > 0) {
-          allExistingSites = [...allExistingSites, ...pageSites];
+          allExistingSites = [...allExistingSites, ...(pageSites as unknown as ExistingSiteSummary[])];
           fetchOffset += fetchLimit;
         }
         
@@ -124,12 +137,14 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
         }
       }
 
-      const existingMap = new Map(allExistingSites.map((s) => [s.domain, s]));
+      const existingMap = new Map<string, ExistingSiteSummary>(
+        allExistingSites.map((s) => [s.domain, s])
+      );
       const processedDomains = new Set<string>();
       
-      const newSitesToInsert: any[] = [];
-      const sitesToUpdate: any[] = [];
-      const metricsToUpsert: any[] = []; // Collect metrics for separate insertion
+      const newSitesToInsert: Record<string, unknown>[] = [];
+      const sitesToUpdate: Record<string, unknown>[] = [];
+      const metricsToUpsert: Record<string, unknown>[] = []; // Collect metrics for separate insertion
 
       // 6. Process Rows
       for (let i = 0; i < rows.length; i++) {
@@ -372,8 +387,8 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
 
       return { success: true, message: 'Synchronization completed successfully.', logId, stats };
 
-    } catch (processError: any) {
-      errorSummary = processError.message;
+    } catch (processError: unknown) {
+      errorSummary = processError instanceof Error ? processError.message : String(processError);
       stats.errors = 1;
       
       // Fail Log
@@ -392,8 +407,9 @@ export async function runWebsiteSync(syncType: 'manual' | 'automatic'): Promise<
       return { success: false, message: `Sync failed: ${errorSummary}`, logId, stats };
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Fatal sync error:', error);
-    return { success: false, message: `Fatal error: ${error.message}` };
+    const message = error instanceof Error ? error.message : String(error);
+    return { success: false, message: `Fatal error: ${message}` };
   }
 }

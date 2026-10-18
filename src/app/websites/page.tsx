@@ -50,7 +50,7 @@ export default async function WebsitesIndexPage({
   
   let query = supabase
     .from('website_listings')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price', { count: 'exact' })
+    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price, website_metrics(metric_type, value, unit)', { count: 'exact' })
     .eq('status', 'published')
     .eq('is_listed', true);
 
@@ -58,7 +58,7 @@ export default async function WebsitesIndexPage({
   if (category) query = query.eq('category_id', category);
   if (country) query = query.eq('country', country);
 
-  let { data: websitesRaw, error, count: filteredCount } = await query
+  const { data: websitesRaw, error, count: filteredCount } = await query
     .order('featured', { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -79,7 +79,8 @@ export default async function WebsitesIndexPage({
         logo_url: null,
         short_description: 'Premium publishing opportunity on channillo.com.',
         content_placement_price: null,
-        content_placement_selling_price: null
+        content_placement_selling_price: null,
+        website_metrics: []
       }
     ];
   }
@@ -142,12 +143,65 @@ export default async function WebsitesIndexPage({
               Showing {offset + 1}–{Math.min(offset + limit, filteredCount || 0)} of {filteredCount || 0} {filteredCount === 1 ? 'website' : 'websites'}
             </div>
             <div className={view === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6" : "flex flex-col gap-4"}>
-              {websites.map(site => (
+              {websites.map(site => {
+                // Generate better description
+                let betterDesc = site.short_description || '';
+                
+                // Extract metrics
+                let da = null;
+                let dr = null;
+                let traffic = null;
+                if (site.website_metrics && Array.isArray(site.website_metrics)) {
+                  for (const m of site.website_metrics) {
+                    const t = m.metric_type?.toUpperCase();
+                    if (t === 'DA' || t === 'DOMAIN_AUTHORITY') da = m.value;
+                    if (t === 'DR' || t === 'DOMAIN_RATING') dr = m.value;
+                    if (t === 'SEMRUSH_TRAFFIC' || t === 'ORGANIC_TRAFFIC' || t === 'TRAFFIC') traffic = m.value;
+                  }
+                }
+
+                // Determine Quality Tier
+                let tier = 'Standard';
+                let tierColor = 'bg-slate-100 text-slate-700';
+                
+                const daVal = Number(da) || 0;
+                const drVal = Number(dr) || 0;
+                const trafficVal = Number(traffic) || 0;
+
+                if (daVal >= 60 || drVal >= 60 || trafficVal >= 50000) {
+                  tier = 'Elite';
+                  tierColor = 'bg-[hsl(39,100%,58%)] text-white';
+                } else if (daVal >= 40 || drVal >= 40 || trafficVal >= 10000) {
+                  tier = 'Premium';
+                  tierColor = 'bg-[hsl(217,91%,54%)] text-white';
+                }
+
+                if (!betterDesc || betterDesc.includes('Premium publishing opportunity on')) {
+                  const parts = [];
+                  if (da) parts.push(`DA ${da}`);
+                  if (dr) parts.push(`DR ${dr}`);
+                  if (traffic) parts.push(`traffic of ${traffic}`);
+                  
+                  if (parts.length > 0) {
+                    betterDesc = `Publish on ${site.domain} in the ${site.category_id || 'General'} category with ${parts.join(', ')}. Secure high-quality backlinks.`;
+                  } else {
+                    betterDesc = `Publishing opportunity on ${site.domain} (${site.category_id || 'General'}). Reach a targeted audience.`;
+                  }
+                }
+                
+                if (site.price && site.content_placement_selling_price) {
+                  betterDesc = betterDesc.split(`$${site.price}`).join(`$${site.content_placement_selling_price}`);
+                }
+
+                return (
               <Link key={site.id} href={`/website/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
                 {view === 'grid' ? (
                   // GRID VIEW
                   <div className="p-6 flex-1 flex flex-col relative w-full">
-                    <div className="flex items-start justify-end mb-5">
+                    <div className="flex items-start justify-between mb-5 w-full">
+                      <span className={`text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shrink-0 ${tierColor}`}>
+                        {tier}
+                      </span>
                       <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full uppercase tracking-wider truncate max-w-[50%] inline-block text-right">
                         {site.category_id}
                       </span>
@@ -159,10 +213,23 @@ export default async function WebsitesIndexPage({
                       <span className="truncate">{site.domain}</span>
                     </div>
                     
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {da && (
+                        <span className="text-[10px] font-bold bg-[hsl(222,47%,7%)] text-white px-2 py-1 rounded">DA {da}</span>
+                      )}
+                      {dr && (
+                        <span className="text-[10px] font-bold bg-[hsl(217,91%,54%)] text-white px-2 py-1 rounded">DR {dr}</span>
+                      )}
+                      {traffic && (
+                        <span className="text-[10px] font-bold bg-[hsl(152,69%,46%)] text-white px-2 py-1 rounded flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                          {Number(traffic).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                    
                     <p className="text-sm text-slate-600 line-clamp-2 mb-6 flex-1 leading-relaxed">
-                      {(site.short_description && site.price && site.content_placement_selling_price) 
-                        ? site.short_description.split(`$${site.price}`).join(`$${site.content_placement_selling_price}`) 
-                        : (site.short_description || `Premium publishing opportunity on ${site.domain}. Secure high-quality backlinks.`)}
+                      {betterDesc}
                     </p>
                     
                     <div className="border-t border-slate-100 pt-5 flex items-center justify-between mt-auto">
@@ -189,6 +256,9 @@ export default async function WebsitesIndexPage({
                     
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <div className="flex items-center gap-3 mb-1">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 ${tierColor}`}>
+                          {tier}
+                        </span>
                         <h3 className="text-xl font-bold text-slate-900 group-hover:text-[hsl(217,91%,54%)] transition-colors truncate">{site.name}</h3>
                         <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded-full uppercase tracking-wider shrink-0 truncate max-w-[120px]">
                           {site.category_id}
@@ -200,10 +270,23 @@ export default async function WebsitesIndexPage({
                         <span className="truncate">{site.domain}</span>
                       </div>
                       
+                      <div className="flex flex-wrap gap-2 mb-2 w-full">
+                        {da && (
+                          <span className="text-[10px] font-bold bg-[hsl(222,47%,7%)] text-white px-2 py-1 rounded">DA {da}</span>
+                        )}
+                        {dr && (
+                          <span className="text-[10px] font-bold bg-[hsl(217,91%,54%)] text-white px-2 py-1 rounded">DR {dr}</span>
+                        )}
+                        {traffic && (
+                          <span className="text-[10px] font-bold bg-[hsl(152,69%,46%)] text-white px-2 py-1 rounded flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            {Number(traffic).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                      
                       <p className="text-sm text-slate-600 line-clamp-1 leading-relaxed hidden sm:block">
-                        {(site.short_description && site.price && site.content_placement_selling_price)
-                          ? site.short_description.split(`$${site.price}`).join(`$${site.content_placement_selling_price}`)
-                          : (site.short_description || `Premium publishing opportunity on ${site.domain}. Secure high-quality backlinks.`)}
+                        {betterDesc}
                       </p>
                     </div>
                     
@@ -227,7 +310,7 @@ export default async function WebsitesIndexPage({
                   </>
                 )}
               </Link>
-            ))}
+              )})}
             </div>
           </>
         )}

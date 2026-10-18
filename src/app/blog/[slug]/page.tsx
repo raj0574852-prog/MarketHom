@@ -5,6 +5,7 @@ import CTASection from '@/components/home/CTASection';
 import { getPublishedPostBySlug } from '@/lib/blog/posts';
 import { Metadata, ResolvingMetadata } from 'next';
 import { CANONICAL_SITE_URL } from '@/lib/constants';
+import DOMPurify from 'isomorphic-dompurify';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +66,7 @@ export default async function BlogPostPage({ params }: Props) {
         <span className="text-6xl mb-4">🔍</span>
         <h1 className="text-4xl font-bold mb-4 text-white">Article Not Found</h1>
         <p className="text-[hsl(215,20%,60%)] mb-8 max-w-md">
-          The requested article "<span className="text-white">{slug}</span>" could not be located. It may have been renamed or removed.
+          The requested article &quot;<span className="text-white">{slug}</span>&quot; could not be located. It may have been renamed or removed.
         </p>
         <Link href="/blog" className="btn-primary">Back to Blog</Link>
       </div>
@@ -88,25 +89,19 @@ export default async function BlogPostPage({ params }: Props) {
       jobTitle: post.authorRole || 'Senior Strategist'
     },
     publisher: {
-      '@type': 'Organization',
-      name: 'EducationHom',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://www.educationhom.com/og-image.png'
-      }
+      '@id': 'https://www.educationhom.com/#organization'
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://www.educationhom.com/blog/${post.slug}`
     },
-    keywords: [post.category, 'EducationHom', 'SEO', 'AI Content Intelligence']
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle).replace(/</g, '\\u003c') }}
       />
 
       <article className="pt-32 pb-20 relative overflow-hidden bg-[hsl(222,47%,7%)]">
@@ -156,7 +151,7 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
             )}
 
-            <div className="prose-dark max-w-none space-y-6" dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div className="prose-dark max-w-none space-y-6" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
             
             <div className="mt-16 p-8 glass-card border-[hsl(217,91%,54%)]/20 flex flex-col md:flex-row items-center gap-8">
                <div className="flex-1">

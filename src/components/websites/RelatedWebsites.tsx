@@ -67,7 +67,7 @@ export default async function RelatedWebsites({
         {related.map(site => {
           // Extract metrics safely
           const metrics = site.website_metrics || [];
-          const getMetric = (type: string) => metrics.find((m: any) => m.metric_type === type)?.value ?? 'N/A';
+          const getMetric = (type: string) => metrics.find((m: { metric_type: string; value: string | number }) => m.metric_type === type)?.value ?? 'N/A';
           const da = getMetric('DA');
           const dr = getMetric('DR');
           let traffic = getMetric('ORGANIC_TRAFFIC');

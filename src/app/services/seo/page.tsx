@@ -6,39 +6,39 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'Premium SEO Services | Rank #1 on Google | EducationHom',
   description: 'Drive qualified traffic and dominate search results with our expert SEO services. Technical audits, keyword research, and white-hat link building.',
-  keywords: ['SEO services', 'Search Engine Optimization', 'organic growth', 'technical SEO', 'keyword research', 'local SEO'],
+
 };
 
 const seoFeatures = [
   {
     title: 'Technical SEO Audits',
     desc: 'We go deep into your site\'s architecture to fix crawl errors, improve site speed, and ensure Google can index your pages perfectly.',
-    icon: '⚙️'
+    icon: 'âš™ï¸'
   },
   {
     title: 'Precision Keyword Research',
     desc: 'We don\'t just look for high volume. We find high-intent keywords that actually lead to conversions and revenue.',
-    icon: '🎯'
+    icon: 'ðŸŽ¯'
   },
   {
     title: 'On-Page Optimization',
     desc: 'Content is king, but structure is queen. We optimize your titles, headings, and copy for both users and algorithms.',
-    icon: '📝'
+    icon: 'ðŸ“'
   },
   {
     title: 'High-Authority Link Building',
     desc: 'Earn high-quality, white-hat backlinks that build domain authority and push your rankings to the first page.',
-    icon: '🔗'
+    icon: 'ðŸ”—'
   },
   {
     title: 'Local SEO Domination',
     desc: 'Own your city. We optimize your Google Business Profile and local citations to capture "near me" searches.',
-    icon: '📍'
+    icon: 'ðŸ“'
   },
   {
     title: 'Data-Driven Content Strategy',
     desc: 'We create content that answers user intent, builds topical authority, and ranks for hundreds of long-tail keywords.',
-    icon: '📊'
+    icon: 'ðŸ“Š'
   }
 ];
 
@@ -73,8 +73,7 @@ export default function SeoServicePage() {
             'name': 'Search Engine Optimization (SEO) Services',
             'description': 'Comprehensive SEO strategies to improve search engine rankings, drive traffic, and increase revenue.',
             'provider': {
-              '@type': 'Organization',
-              'name': 'EducationHom'
+              '@id': 'https://www.educationhom.com/#organization'
             },
             'areaServed': 'Worldwide',
             'hasOfferCatalog': {
@@ -112,7 +111,7 @@ export default function SeoServicePage() {
                 Dominate the <span className="gradient-text">Search Results.</span>
               </h1>
               <p className="text-[hsl(215,20%,65%)] text-xl mb-8 leading-relaxed">
-                Ranking on Google isn't about gaming the system—it's about becoming the most relevant, authoritative answer to your customers' questions. Our SEO experts build high-performance growth engines that scale with your business.
+                Ranking on Google isn&apos;t about gaming the systemâ€”it&apos;s about becoming the most relevant, authoritative answer to your customers&apos; questions. Our SEO experts build high-performance growth engines that scale with your business.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="btn-primary">Get Your Free Audit</Link>
@@ -121,7 +120,7 @@ export default function SeoServicePage() {
             </div>
             <div className="relative">
               <div className="glass-card p-4 aspect-video flex flex-col justify-center items-center text-center">
-                 <div className="text-6xl mb-4 animate-float">🚀</div>
+                 <div className="text-6xl mb-4 animate-float">ðŸš€</div>
                  <div className="stat-number text-5xl mb-2">94%</div>
                  <p className="text-[hsl(215,20%,50%)]">Average Increase in Organic Traffic for Our Clients</p>
               </div>
@@ -161,10 +160,10 @@ export default function SeoServicePage() {
             </div>
             
             <div className="max-w-2xl">
-              <h2 className="text-3xl font-black mb-6">Why SEO is Non-Negotiable in 2025</h2>
+              <h2 className="text-3xl font-black mb-6">Why SEO is Non-Negotiable in 2026</h2>
               <div className="prose-dark space-y-4">
-                <p>Over 70% of clicks go to the first three organic results on Google. If you're not there, you're invisible. But SEO has changed. It's no longer just about keywords and backlinks—it's about <strong>User Experience</strong>, <strong>Core Web Vitals</strong>, and <strong>Topical Authority</strong>.</p>
-                <p>At EducationHom, we stay at the cutting edge of algorithm updates. We don't just react to Google's changes; we anticipate them. Our white-hat strategies are designed to build long-term value that keeps you at the top for years, not just weeks.</p>
+                <p>Over 70% of clicks go to the first three organic results on Google. If you&apos;re not there, you&apos;re invisible. But SEO has changed. It&apos;s no longer just about keywords and backlinksâ€”it&apos;s about <strong>User Experience</strong>, <strong>Core Web Vitals</strong>, and <strong>Topical Authority</strong>.</p>
+                <p>At EducationHom, we stay at the cutting edge of algorithm updates. We don&apos;t just react to Google&apos;s changes; we anticipate them. Our white-hat strategies are designed to build long-term value that keeps you at the top for years, not just weeks.</p>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-4">
                   <li>Increase Domain Authority</li>
                   <li>Lower Customer Acquisition Cost</li>

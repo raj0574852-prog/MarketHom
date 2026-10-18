@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import PublisherLogo from '@/components/websites/PublisherLogo';
+import type { WebsiteListing, MetricItem, WebsiteFAQ } from '@/components/websites/types';
 
 export default function AdminWebsiteEditor({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [website, setWebsite] = useState<any>(null);
-  const [metrics, setMetrics] = useState<any[]>([]);
-  const [faqs, setFaqs] = useState<any[]>([]);
+  const [website, setWebsite] = useState<WebsiteListing | null>(null);
+  const [metrics, setMetrics] = useState<MetricItem[]>([]);
+  const [faqs, setFaqs] = useState<WebsiteFAQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
@@ -33,11 +32,14 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
     fetchData();
   }, [params.id]);
 
-  const handleChange = (field: string, value: any) => {
-    setWebsite({ ...website, [field]: value });
+  const handleChange = (field: string, value: unknown) => {
+    if (website) {
+      setWebsite({ ...website, [field]: value });
+    }
   };
 
   const handleArrayChange = (field: string, text: string) => {
+    if (!website) return;
     const arr = text.split(',').map(s => s.trim()).filter(Boolean);
     setWebsite({ ...website, [field]: arr });
   };
@@ -66,16 +68,16 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
     }
   };
 
-  const handleMetricSave = async (metricType: string, value: string, unit: string, provider: string) => {
+  const handleMetricSave = async (metricType: string, value: string | number | null | undefined, unit?: string, provider?: string) => {
     try {
       const res = await fetch(`/api/websites/${params.id}/metrics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           metric_type: metricType,
-          value: value ? parseFloat(value) : null,
-          unit,
-          provider
+          value: value !== null && value !== undefined && value !== '' ? parseFloat(String(value)) : null,
+          unit: unit || '',
+          provider: provider || ''
         })
       });
       if (res.ok) {
@@ -92,7 +94,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
     }
   };
 
-  const handleFaqSave = async (faq: any) => {
+  const handleFaqSave = async (faq: Partial<WebsiteFAQ>) => {
     try {
       const isNew = !faq.id;
       const url = isNew ? `/api/websites/${params.id}/faqs` : `/api/websites/${params.id}/faqs/${faq.id}`;
@@ -426,7 +428,7 @@ export default function AdminWebsiteEditor({ params }: { params: { id: string } 
                           <h4 className="font-semibold text-slate-300">FAQ Item {index + 1}</h4>
                           {faq.id && (
                             <button 
-                              onClick={() => handleFaqDelete(faq.id)}
+                              onClick={() => { if (faq.id) handleFaqDelete(faq.id); }}
                               className="text-red-400 hover:text-red-300 text-sm"
                             >
                               Delete

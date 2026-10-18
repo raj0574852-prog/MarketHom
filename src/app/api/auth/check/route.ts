@@ -1,24 +1,8 @@
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { isAdminAuthenticated } from '@/lib/auth';
 
-export async function GET(request: Request) {
-  const cookieHeader = request.headers.get('cookie') || '';
-  const sessionToken = process.env.ADMIN_SESSION_TOKEN || '';
-  
-  if (!sessionToken) {
-    return NextResponse.json({ authenticated: false }, { status: 500 });
-  }
-
-  const match = cookieHeader.match(/admin_session=([^;]+)/);
-  const providedToken = match ? match[1] : '';
-
-  let isValid = false;
-  if (providedToken && providedToken.length === sessionToken.length) {
-    isValid = crypto.timingSafeEqual(
-      Buffer.from(providedToken),
-      Buffer.from(sessionToken)
-    );
-  }
+export async function GET() {
+  const isValid = await isAdminAuthenticated();
   
   if (isValid) {
     return NextResponse.json({ authenticated: true });

@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseClient';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(req: Request) {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const supabase = getServiceSupabase();
   const { data: websites, error } = await supabase
     .from('website_listings')
@@ -24,7 +28,7 @@ export async function GET(req: Request) {
     const sellingPriceStr = `$${sellingPrice}`;
 
     let updated = false;
-    const updateObj: any = { id: site.id };
+    const updateObj: Record<string, unknown> = { id: site.id };
 
     if (site.short_description && site.short_description.includes(basePriceStr)) {
       updateObj.short_description = site.short_description.replace(basePriceStr, sellingPriceStr);

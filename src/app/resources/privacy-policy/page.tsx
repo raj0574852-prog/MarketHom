@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="prose prose-invert prose-lg max-w-none text-[hsl(215,20%,70%)]">
           <p>
-            EducationHom ("we," "us," or "our"), operates the website educationhom.com. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
+            EducationHom (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), operates the website educationhom.com. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
           </p>
 
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">1. Information We Collect</h2>
@@ -83,14 +83,14 @@ export default function PrivacyPolicyPage() {
 
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">8. Changes to This Policy</h2>
           <p className="mb-8">
-            We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new policy on this page with an updated "Last Updated" date.
+            We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes by posting the new policy on this page with an updated &quot;Last Updated&quot; date.
           </p>
 
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">9. Contact Us</h2>
           <p>If you have any questions or requests regarding this Privacy Policy, please contact us:</p>
           <ul className="list-none space-y-2 mb-8 mt-4 p-6 glass rounded-xl">
             <li><strong>Email:</strong> <a href="mailto:Sophia@educationhom.com" className="text-[hsl(217,91%,75%)] hover:underline">[Sophia@educationhom.com]</a></li>
-            <li><strong>Phone:</strong> <a href="tel:+91 8824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+918824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
             <li><strong>Address:</strong> Sanganer, Jaipur, Rajasthan, India</li>
           </ul>
         </div>

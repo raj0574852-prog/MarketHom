@@ -8,7 +8,7 @@ import { evaluatePublisherIndexability } from '@/lib/seo/evaluatePublisherIndexa
 
 const CHUNK_SIZE = 1000;
 
-export async function GET(request: Request, context: any) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const baseUrl = CANONICAL_SITE_URL;
   const { id } = await context.params;
   
@@ -48,7 +48,7 @@ export async function GET(request: Request, context: any) {
     for (const route of staticRoutes) {
       const changeFreq = route === '/blog' || route === '/websites' ? 'daily' : 'weekly';
       const priority = route === '' ? 1.0 : (route === '/websites' ? 0.9 : 0.8);
-      addUrl(`${baseUrl}${route}`, undefined, changeFreq, priority);
+      addUrl(`${baseUrl}${route}`, new Date().toISOString(), changeFreq, priority);
     }
 
     try {
@@ -84,9 +84,9 @@ export async function GET(request: Request, context: any) {
       
       // Phase 15G: Only include pages that pass the quality gate
       if (evaluation.sitemapEligible) {
-        // We intentionally do NOT output lastmod for publisher pages to prevent Google from treating 
-        // internal database sync timestamps as article publish/update dates in search snippets.
-        addUrl(`${baseUrl}/website/${site.slug}`, undefined, 'weekly', 0.8);
+        // Use updated_at or last_synced_at for lastmod to help Google discover new/updated listings
+        const lastMod = site.updated_at || site.last_synced_at || site.created_at || new Date().toISOString();
+        addUrl(`${baseUrl}/website/${site.slug}`, lastMod, 'weekly', 0.8);
       }
     }
   }

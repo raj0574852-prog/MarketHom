@@ -1,20 +1,19 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseClient';
 import { evaluatePublisherIndexability } from '@/lib/seo/evaluatePublisherIndexability';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-  // Simple auth for the diagnostic script
-  const url = new URL(request.url);
-  if (url.searchParams.get('token') !== 'diagnostic-123') {
+  if (!await isAdminAuthenticated()) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const supabase = getServiceSupabase();
   const limit = 1000;
   let offset = 0;
-  let allWebsites: any[] = [];
+  let allWebsites: Record<string, unknown>[] = [];
   
   while (true) {
     const { data, error } = await supabase

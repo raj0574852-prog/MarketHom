@@ -11,11 +11,12 @@ export const metadata = {
   description: 'Expert advice, strategy guides, and industry news to help you navigate the ever-changing digital landscape.',
 };
 
-export default async function BlogIndexPage({ searchParams }: { searchParams: { category?: string } }) {
+export default async function BlogIndexPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   // Fetch posts from Supabase on the server
   const posts = await getPublishedPosts();
   
-  const selectedCategory = searchParams.category || 'All';
+  const resolvedSearchParams = await searchParams;
+  const selectedCategory = resolvedSearchParams?.category || 'All';
   const categories = ['All', 'SEO', 'AI SEO', 'PPC', 'Web Dev', 'Link Building', 'CRO', 'Local SEO'];
 
   const filteredPosts = selectedCategory === 'All' 
@@ -61,7 +62,7 @@ export default async function BlogIndexPage({ searchParams }: { searchParams: { 
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16 glass-card">
               <h3 className="text-xl font-bold text-white mb-2">No articles found</h3>
-              <p className="text-sm text-[hsl(215,20%,60%)]">No posts currently exist under the "{selectedCategory}" category.</p>
+              <p className="text-sm text-[hsl(215,20%,60%)]">No posts currently exist under the &quot;{selectedCategory}&quot; category.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

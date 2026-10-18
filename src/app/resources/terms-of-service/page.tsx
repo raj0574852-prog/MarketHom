@@ -26,7 +26,7 @@ export default function TermsOfServicePage() {
 
         <div className="prose prose-invert prose-lg max-w-none text-[hsl(215,20%,70%)]">
           <p>
-            These Terms of Service ("Terms") govern your use of the website and services provided by EducationHom ("Company," "we," "us," or "our"). By accessing our website or engaging our services, you agree to be bound by these Terms.
+            These Terms of Service (&quot;Terms&quot;) govern your use of the website and services provided by EducationHom (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). By accessing our website or engaging our services, you agree to be bound by these Terms.
           </p>
 
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">1. Services Provided</h2>
@@ -82,7 +82,7 @@ export default function TermsOfServicePage() {
           <p>If you have any questions or concerns regarding these Terms of Service, please contact us:</p>
           <ul className="list-none space-y-2 mb-8 mt-4 p-6 glass rounded-xl">
             <li><strong>Email:</strong> <a href="mailto:Sophia@educationhom.com" className="text-[hsl(217,91%,75%)] hover:underline">[Sophia@educationhom.com]</a></li>
-            <li><strong>Phone:</strong> <a href="tel:+91 8824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+918824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
             <li><strong>Address:</strong> Sanganer, Jaipur, Rajasthan, India</li>
           </ul>
         </div>

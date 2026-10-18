@@ -18,6 +18,7 @@ import {
   SiteService, 
   LeadInquiry 
 } from '@/lib/resourcesStore';
+import MarketplaceLeadsTab from '@/components/admin/MarketplaceLeadsTab';
 
 const PRESET_COVER_IMAGES = [
   { label: '🤖 AI & Tech', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop' },
@@ -28,22 +29,20 @@ const PRESET_COVER_IMAGES = [
   { label: '🔗 Link Building', url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop' }
 ];
 
-export default function AdminDashboardPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passcode, setPasscode] = useState('');
-  const [loginError, setLoginError] = useState('');
+type AdminTab = 'dashboard' | 'publish' | 'articles' | 'resources' | 'leads' | 'marketplace-leads' | 'migrate';
 
-  // Active Tab: 'dashboard' | 'publish' | 'articles' | 'resources' | 'leads' | 'migrate'
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'publish' | 'articles' | 'resources' | 'leads' | 'migrate'>('dashboard');
+export default function AdminDashboardPage() {
+  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
 
   // Migration State
   const [isMigrating, setIsMigrating] = useState(false);
-  const [migrationReport, setMigrationReport] = useState<any>(null);
+  const [migrationReport, setMigrationReport] = useState<Record<string, React.ReactNode> | null>(null);
 
   // Data states
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [services, setServices] = useState<SiteService[]>([]);
   const [leads, setLeads] = useState<LeadInquiry[]>([]);
+  const [marketplaceNewCount, setMarketplaceNewCount] = useState<number>(0);
 
   // Search & Filter
   const [articleSearch, setArticleSearch] = useState('');
@@ -79,33 +78,6 @@ export default function AdminDashboardPage() {
   const [serviceCategory, setServiceCategory] = useState('SEO');
   const [servicePrice, setServicePrice] = useState('$1,500 - $3,500/mo');
   const [serviceDesc, setServiceDesc] = useState('');
-
-  useEffect(() => {
-    // Check session on load
-    fetch('/api/auth/check')
-      .then(res => {
-        if (res.ok) setIsAuthenticated(true);
-      })
-      .catch(() => {});
-    
-    loadData();
-
-    // Real-time polling for new client lead inquiries & blog posts every 4 seconds
-    const interval = setInterval(() => {
-      fetchLeadsFromApi();
-      fetchPostsFromApi();
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadData = () => {
-    setPosts(getStoredPosts());
-    setServices(getServices());
-    setLeads(getLeads());
-    fetchLeadsFromApi();
-    fetchPostsFromApi();
-  };
 
   const fetchPostsFromApi = async () => {
     try {
@@ -146,7 +118,7 @@ export default function AdminDashboardPage() {
           }
         }
       }
-    } catch (err) {}
+    } catch (_err) {}
   };
 
   const fetchLeadsFromApi = async () => {
@@ -169,34 +141,56 @@ export default function AdminDashboardPage() {
           }
         }
       }
-    } catch (err) {
+    } catch (_err) {
       // fallback to local leads
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const fetchMarketplaceMetrics = async () => {
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ passcode })
-      });
+      const res = await fetch('/api/marketplace/leads?limit=1');
       if (res.ok) {
-        setIsAuthenticated(true);
-        setLoginError('');
-      } else {
         const data = await res.json();
-        setLoginError(data.error || 'Invalid admin password. Please try again.');
+        if (data.metrics?.newLeads !== undefined) {
+          setMarketplaceNewCount(data.metrics.newLeads);
+        }
       }
-    } catch (err) {
-      setLoginError('Server error. Please try again.');
-    }
+    } catch (_err) {}
   };
+
+  const loadData = () => {
+    setPosts(getStoredPosts());
+    setServices(getServices());
+    setLeads(getLeads());
+    fetchLeadsFromApi();
+    fetchPostsFromApi();
+    fetchMarketplaceMetrics();
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadData();
+    }, 0);
+
+    // Real-time polling for new client lead inquiries & blog posts every 4 seconds
+    const interval = setInterval(() => {
+      fetchLeadsFromApi();
+      fetchPostsFromApi();
+      fetchMarketplaceMetrics();
+    }, 4000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    setIsAuthenticated(false);
+    window.location.href = '/admin/login';
   };
 
   const executeMigration = async () => {
@@ -291,8 +285,8 @@ Include:
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 8 * 1024 * 1024) {
-      alert('Image size is too large. Please select an image under 8MB.');
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert('Image size exceeds 1.5MB. For database and page performance, please select an optimized image under 1.5MB or enter an image URL.');
       return;
     }
 
@@ -398,34 +392,42 @@ Include:
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     };
 
-    const saved = savePost(newPostData);
-
     try {
       const res = await fetch('/api/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(saved)
+        body: JSON.stringify(newPostData)
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.posts && Array.isArray(data.posts)) {
-          setPosts(data.posts);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
-          }
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        alert(`Failed to publish article: ${errData.error || 'Server error'}`);
+        return; // Preserve form content so editor can fix/retry!
+      }
+
+      const data = await res.json();
+      const savedPostRecord = data.post || newPostData;
+      savePost(savedPostRecord);
+
+      if (data.posts && Array.isArray(data.posts)) {
+        setPosts(data.posts);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('markethom_blog_posts', JSON.stringify(data.posts));
         }
       }
-    } catch (err) {}
 
-    setPublishSuccessMsg(editingPostId ? 'Article updated successfully!' : '🎉 Article published live to the Blog section!');
-    loadData();
+      setPublishSuccessMsg(editingPostId ? 'Article updated successfully!' : '🎉 Article published live to the Blog section!');
+      loadData();
 
-    setTimeout(() => {
-      setPublishSuccessMsg('');
-      if (!editingPostId) {
-        resetArticleForm();
-      }
-    }, 2000);
+      setTimeout(() => {
+        setPublishSuccessMsg('');
+        if (!editingPostId) {
+          resetArticleForm();
+        }
+      }, 2000);
+    } catch (_err) {
+      alert('Network error while saving article. Please check your connection and retry.');
+    }
   };
 
   const resetArticleForm = () => {
@@ -522,44 +524,7 @@ Include:
     return matchesSearch && matchesCat;
   });
 
-  if (!isAuthenticated) {
-    return (
-      <main className="min-h-screen bg-[hsl(222,47%,5%)] text-white flex items-center justify-center p-6 pt-24">
-        <div className="w-full max-w-md glass-card p-8 border border-[hsl(217,91%,54%)]/30 rounded-2xl shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[hsl(217,91%,54%)]/10 rounded-full blur-3xl" />
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[hsl(217,91%,54%)] to-[hsl(270,91%,65%)] flex items-center justify-center mx-auto mb-4 text-2xl font-black shadow-lg shadow-[hsl(217,91%,54%)]/30">
-              M
-            </div>
-            <h1 className="text-3xl font-black text-white mb-2">EducationHom Admin</h1>
-            <p className="text-xs text-[hsl(215,20%,60%)]">Control Panel & Content Management System</p>
-          </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Admin Password</label>
-              <input 
-                type="password" 
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Enter admin password" 
-                className="w-full px-4 py-3 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white placeholder-[hsl(215,20%,40%)] focus:outline-none focus:border-[hsl(217,91%,54%)] text-sm transition-all"
-                required
-              />
-            </div>
-
-            {loginError && (
-              <p className="text-xs text-red-400 font-medium text-center">{loginError}</p>
-            )}
-
-            <button type="submit" className="w-full btn-primary py-3 justify-center text-sm font-bold shadow-lg shadow-[hsl(217,91%,54%)]/20">
-              Access Admin Panel →
-            </button>
-          </form>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-[hsl(222,47%,5%)] text-white pt-24 pb-16">
@@ -598,6 +563,7 @@ Include:
             { id: 'articles', label: `📚 Manage Articles (${posts.length})` },
             { id: 'resources', label: `🛠️ Site Services (${services.length})` },
             { id: 'leads', label: `📬 Client Leads (${leads.filter(l => l.status === 'New').length} New)` },
+            { id: 'marketplace-leads', label: `🛒 Marketplace Leads (${marketplaceNewCount} New)` },
             { id: 'migrate', label: `🚀 Supabase Migration` }
           ].map(tab => (
             tab.isLink ? (
@@ -611,7 +577,7 @@ Include:
             ) : (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as AdminTab)}
               className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                 activeTab === tab.id
                   ? 'bg-[hsl(217,91%,54%)] text-white shadow-lg shadow-[hsl(217,91%,54%)]/25'
@@ -855,7 +821,7 @@ Include:
                       <div className="flex flex-wrap items-center gap-2 pt-1 font-bold">
                         <span className="text-white">To fix this:</span>
                         <span>1. Right-click your ChatGPT image & save to computer</span>
-                        <span>2. Click <strong className="text-white underline">"📁 Upload Image File"</strong> above!</span>
+                        <span>2. Click <strong className="text-white underline">&quot;📁 Upload Image File&quot;</strong> above!</span>
                       </div>
                     </div>
                   )}
@@ -1103,7 +1069,7 @@ Include:
                   </div>
 
                   <p className="text-[11px] text-[hsl(215,20%,50%)] mb-2">
-                    💡 <span className="text-white font-semibold">Tip:</span> You can now click <span className="text-amber-300 font-bold">"+ H1"</span>, <span className="text-[hsl(217,91%,70%)] font-bold">"+ H2"</span>, <span className="text-cyan-300 font-bold">"🔗 + Add Link"</span>, or <span className="text-purple-400 font-bold">"💬 + Quote"</span> in any mode—including inside <span className="text-purple-400 font-bold">"👁️ Live Article Preview"</span>!
+                    💡 <span className="text-white font-semibold">Tip:</span> You can now click <span className="text-amber-300 font-bold">&quot;+ H1&quot;</span>, <span className="text-[hsl(217,91%,70%)] font-bold">&quot;+ H2&quot;</span>, <span className="text-cyan-300 font-bold">&quot;🔗 + Add Link&quot;</span>, or <span className="text-purple-400 font-bold">&quot;💬 + Quote&quot;</span> in any mode—including inside <span className="text-purple-400 font-bold">&quot;👁️ Live Article Preview&quot;</span>!
                   </p>
 
                   {editorMode === 'preview' ? (
@@ -1462,7 +1428,7 @@ Include:
                       <td className="py-4 px-4">
                         <select
                           value={lead.status}
-                          onChange={(e) => handleUpdateLead(lead.id, e.target.value as any)}
+                          onChange={(e) => handleUpdateLead(lead.id, e.target.value as LeadInquiry['status'])}
                           className="px-2.5 py-1 rounded bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] text-xs text-white font-bold"
                         >
                           <option value="New">New</option>
@@ -1476,6 +1442,11 @@ Include:
               </table>
             </div>
           </div>
+        )}
+
+        {/* TAB 6: MARKETPLACE LEADS */}
+        {activeTab === 'marketplace-leads' && (
+          <MarketplaceLeadsTab />
         )}
       </div>
     </main>

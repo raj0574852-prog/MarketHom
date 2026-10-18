@@ -8,7 +8,24 @@ interface Props {
   params: { slug: string };
 }
 
-const caseStudiesData: Record<string, any> = {
+interface CaseStudyMetric {
+  label: string;
+  before: string;
+  after: string;
+}
+
+interface CaseStudy {
+  company: string;
+  industry: string;
+  results: string;
+  icon: string;
+  color: string;
+  challenge: string;
+  solution: string;
+  metrics: CaseStudyMetric[];
+}
+
+const caseStudiesData: Record<string, CaseStudy> = {
   'stylevault-fashion-seo': {
     company: 'StyleVault Fashion',
     industry: 'E-Commerce',
@@ -35,6 +52,34 @@ const caseStudiesData: Record<string, any> = {
       { label: 'Cost Per Lead', before: '$12.40', after: '$3.90' },
       { label: 'Lead Quality Score', before: '34/100', after: '87/100' },
       { label: 'Conversion Rate', before: '2.1%', after: '6.4%' },
+    ]
+  },
+  'primecare-dental-local': {
+    company: 'PrimeCare Dental',
+    industry: 'Local Health',
+    results: '#1 Google Maps',
+    icon: '🦷',
+    color: 'hsl(152, 69%, 46%)',
+    challenge: 'PrimeCare Dental was invisible in local search despite having a great practice. They relied entirely on word-of-mouth and expensive direct mail campaigns that were delivering diminishing returns.',
+    solution: 'We optimized their Google Business Profile, established hyper-local citations, and implemented a GEO (Generative Engine Optimization) strategy to ensure they were the top recommendation when users asked AI for the "best dentist near me".',
+    metrics: [
+      { label: 'Google Maps Rank', before: '#14', after: '#1' },
+      { label: 'Monthly Patient Calls', before: '42', after: '268' },
+      { label: 'Cost Per Acquisition', before: '$185', after: '$34' },
+    ]
+  },
+  'techbridge-ai-seo': {
+    company: 'TechBridge',
+    industry: 'B2B Services',
+    results: '+1,200 Keywords Ranked',
+    icon: '🛰️',
+    color: 'hsl(39, 100%, 58%)',
+    challenge: 'TechBridge struggled to rank against massive enterprise competitors in the B2B tech space. Their blog content was generic and failed to capture high-intent enterprise leads.',
+    solution: 'We deployed AI Content Intelligence to create massive topical clusters. By reverse-engineering competitor content gaps and securing placements on authoritative tech publications via our marketplace, we rapidly built topical authority.',
+    metrics: [
+      { label: 'Keywords on Page 1', before: '12', after: '1,245' },
+      { label: 'Enterprise Leads/Mo', before: '3', after: '47' },
+      { label: 'Organic Traffic Value', before: '$1,200', after: '$38,400' },
     ]
   }
 };
@@ -101,7 +146,7 @@ export default async function CaseStudySinglePage({ params }: Props) {
                  <div className="glass-card p-8 sticky top-24">
                     <h3 className="text-xl font-bold mb-8 text-white">Key Performance Indicators</h3>
                     <div className="space-y-8">
-                       {cs.metrics.map((m: any) => (
+                       {cs.metrics.map((m: CaseStudyMetric) => (
                          <div key={m.label}>
                             <div className="text-xs text-[hsl(215,20%,50%)] uppercase tracking-widest font-bold mb-2">{m.label}</div>
                             <div className="flex items-center gap-4">

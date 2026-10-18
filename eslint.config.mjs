@@ -12,6 +12,19 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ignore random root scratch scripts and legacy testing scripts
+    "*.js",
+    "*.mjs",
+    "*.ts",
+    "*.tsx",
+    "scripts/**",
+    "verify/**",
+    "temp/**",
+    "!next.config.js",
+    "!next.config.ts",
+    "!postcss.config.mjs",
+    "!tailwind.config.ts",
+    "!eslint.config.mjs"
   ]),
 ]);
 

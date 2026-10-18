@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseClient';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET() {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const supabase = getServiceSupabase();
   
   // Clear any stuck locks

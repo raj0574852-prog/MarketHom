@@ -1,61 +1,60 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { WebsiteListing } from './types';
-import { CANONICAL_SITE_URL } from '@/lib/constants';
+import MarketplaceInquiryModal from './MarketplaceInquiryModal';
 
 export function PublisherOrderSummary({ website }: { website: WebsiteListing }) {
-  const whatsappNumber = "918824896910";
-  const pageUrl = `${CANONICAL_SITE_URL}/website/${website.slug}`;
-  const whatsappMessage = encodeURIComponent(`I want to purchase the placement on ${website.name || website.domain}. Here is the link: ${pageUrl}`);
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden sticky top-6">
-      <div className="p-6 border-b border-slate-100">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Order Summary</h3>
-        
-        {website.content_placement_selling_price ? (
-          <>
-            <div className="flex justify-between items-start mb-1">
-              <span className="text-sm font-medium text-slate-700">Content Placement</span>
-              <span className="text-lg font-bold text-slate-900">
-                {website.currency === 'USD' ? '$' : website.currency}{website.content_placement_selling_price}
-              </span>
-            </div>
-            {website.discount_price && (
+    <>
+      <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden lg:sticky lg:top-6 min-w-0">
+        <div className="p-6 border-b border-slate-100 min-w-0 break-words">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Order Summary</h3>
+          
+          {website.content_placement_selling_price ? (
+            <>
               <div className="flex justify-between items-start mb-1">
-                <span className="text-sm font-medium text-slate-500">Regular Price</span>
-                <span className="text-sm font-medium text-slate-400 line-through">
-                  {website.currency === 'USD' ? '$' : website.currency}{website.discount_price}
+                <span className="text-sm font-medium text-slate-700">Content Placement</span>
+                <span className="text-lg font-bold text-slate-900">
+                  {website.currency === 'USD' ? '$' : website.currency}{website.content_placement_selling_price}
                 </span>
               </div>
-            )}
-            <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-              You provide the written article. Publisher publishes it on their site permanently.
-            </p>
-          </>
-        ) : (
-          <div className="mb-4">
-            <span className="text-lg font-bold text-slate-900">Contact for Pricing</span>
-            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-              Price varies. Please contact us for a quote on this publisher.
-            </p>
-          </div>
-        )}
-      </div>
-      
-      <div className="p-6 bg-slate-50/50">
-        <div className="space-y-3 mb-6">
-          <a 
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex justify-center py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition-all duration-200 flex justify-center items-center gap-2"
-          >
-            Buy Now
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </a>
+              {website.discount_price && (
+                <div className="flex justify-between items-start mb-1">
+                  <span className="text-sm font-medium text-slate-500">Regular Price</span>
+                  <span className="text-sm font-medium text-slate-400 line-through">
+                    {website.currency === 'USD' ? '$' : website.currency}{website.discount_price}
+                  </span>
+                </div>
+              )}
+              <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                You provide the written article. Publisher publishes it on their site permanently.
+              </p>
+            </>
+          ) : (
+            <div className="mb-4">
+              <span className="text-lg font-bold text-slate-900">Contact for Pricing</span>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Price varies. Please contact us for a quote on this publisher.
+              </p>
+            </div>
+          )}
+        </div>
+        
+        <div className="p-6 bg-slate-50/50">
+          <div className="space-y-3 mb-6">
+            <button 
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="w-full flex justify-center py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer"
+            >
+              Buy Now
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
           
           <a 
             href={website.website_url}
@@ -79,5 +78,12 @@ export function PublisherOrderSummary({ website }: { website: WebsiteListing }) 
         </div>
       </div>
     </div>
+
+    <MarketplaceInquiryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        website={website}
+      />
+    </>
   );
 }

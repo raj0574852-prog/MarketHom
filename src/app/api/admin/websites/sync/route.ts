@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import { runWebsiteSync } from '@/services/websiteSyncService';
 import { getServiceSupabase } from '@/lib/supabaseClient';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export const maxDuration = 300; // 5 minutes max duration for Vercel
 
 
 export async function POST(req: Request) {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
-    // In a real app, verify the admin session here
-    // For this implementation, we assume basic auth or route protection in middleware
     
     const result = await runWebsiteSync('manual');
     
@@ -17,13 +19,16 @@ export async function POST(req: Request) {
     } else {
       return NextResponse.json(result, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API Sync Error:', error);
     return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 export async function GET(req: Request) {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const supabase = getServiceSupabase();
   
   // Get sync status

@@ -95,7 +95,7 @@ export function PreviewAuthoritySnapshot() {
                 <span className="text-emerald-600">41</span>
               </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                A metric provided by Ahrefs showing the strength of a website's total backlink profile on a 0–100 logarithmic scale.
+                A metric provided by Ahrefs showing the strength of a website&apos;s total backlink profile on a 0–100 logarithmic scale.
               </p>
               <p className="text-[10px] text-slate-400 mt-2 font-medium uppercase tracking-wider">Source: Ahrefs</p>
             </div>

@@ -59,7 +59,7 @@ export default function CaseStudiesPage() {
               Proven <span className="gradient-text">Success.</span>
             </h1>
             <p className="text-[hsl(215,20%,65%)] text-xl leading-relaxed">
-              We don't just promise growth; we deliver it. Explore our collection of case studies to see the measurable impact we've had on businesses worldwide.
+              We don&apos;t just promise growth; we deliver it. Explore our collection of case studies to see the measurable impact we&apos;ve had on businesses worldwide.
             </p>
           </div>
         </div>

@@ -28,7 +28,9 @@ const metricInfo: Record<string, { label: string, description: string, provider:
   }
 };
 
-export default function MetricGrid({ metrics, linkValidity }: { metrics?: any[], linkValidity?: string | null }) {
+import type { MetricItem } from './types';
+
+export default function MetricGrid({ metrics, linkValidity }: { metrics?: MetricItem[], linkValidity?: string | null }) {
   if (!metrics || metrics.length === 0) return null;
   
   const getMetricData = (type: string) => {

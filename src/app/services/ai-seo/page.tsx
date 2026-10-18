@@ -6,56 +6,46 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'AI Content Intelligence Platform | SEO, AEO, GEO & LLM Optimization | EducationHom',
   description: 'Engineer high-converting content optimized for Google SEO, Answer Engines (AEO), Generative Engines (GEO), and LLM Chatbots. Written with deep expert authority.',
-  keywords: [
-    'AI Content Intelligence',
-    'AEO Engine',
-    'GEO Optimization',
-    'Generative Engine Optimization',
-    'Answer Engine Optimization',
-    'LLM Content Strategy',
-    'Semantic Search Engine',
-    'EEAT Content Platform'
-  ],
 };
 
 const PILLARS = [
   {
-    icon: '🎯',
+    icon: 'ðŸŽ¯',
     title: 'Google SEO & Semantic Search',
     subtitle: 'Entity Graphs & LSI Intent',
     description: 'We construct deep entity relationship graphs and LSI keyword clusters so Google algorithmically recognizes your brand as the #1 topical authority.',
     bullets: ['Entity-based LSI mapping', 'Schema.org JSON-LD integration', 'Search intent alignment', 'Core Web Vitals friendly HTML']
   },
   {
-    icon: '🤖',
+    icon: 'ðŸ¤–',
     title: 'AEO (Answer Engine Optimization)',
     subtitle: 'Perplexity & AI Overviews',
     description: 'Structure your content to win Google AI Overviews, Perplexity answers, and Bing Copilot direct summaries with conversational Q&A snippets.',
     bullets: ['Direct answer snippet formatting', 'Structured Q&A accordions', 'Concise zero-click summaries', 'Fact-checked citation blocks']
   },
   {
-    icon: '⚡',
+    icon: 'âš¡',
     title: 'GEO (Generative Engine Optimization)',
     subtitle: 'LLM Citation & Retrieval',
     description: 'Train Large Language Models (LLMs) to cite your domain as the primary source of truth when users ask ChatGPT, Claude, or Gemini for recommendations.',
     bullets: ['Brand citation scaffolding', 'Source authority references', 'Statistic & data embedding', 'Prompt-retrieval optimization']
   },
   {
-    icon: '👤',
+    icon: 'ðŸ‘¤',
     title: 'Human Expert EEAT & Voice',
     subtitle: 'Zero Robotic AI Footprints',
-    description: 'Every article undergoes deep expert tone calibration—injecting real case studies, industry nuances, and authentic perspectives that bypass AI detectors.',
+    description: 'Every article undergoes deep expert tone calibrationâ€”injecting real case studies, industry nuances, and authentic perspectives that bypass AI detectors.',
     bullets: ['100% human-expert tone', 'No robotic AI cliches or filler', 'E-E-A-T trust signals', 'Subject-matter specialist review']
   }
 ];
 
 const COMPARISON_MATRIX = [
   { feature: 'Search Engine Optimization', traditional: 'Basic Keywords', platform: 'Deep Entity Graph & Semantic Search' },
-  { feature: 'AI Overviews & AEO', traditional: '❌ Ignored', platform: '✅ Optimized for Perplexity & AI Overviews' },
-  { feature: 'LLM Citation (GEO)', traditional: '❌ Not Supported', platform: '✅ Formatted for ChatGPT & Claude Citations' },
-  { feature: 'Tone & Quality', traditional: 'Robotic & Repetitive AI Text', platform: '✨ Authentic 100% Human Expert Voice' },
-  { feature: 'Topical Authority', traditional: 'Isolated Articles', platform: '🕸️ Multi-Layer Topic Universe Clusters' },
-  { feature: 'Search Engine Indexing', traditional: 'High Risk of Penalties', platform: '🛡️ Safe, Google EEAT Compliant' },
+  { feature: 'AI Overviews & AEO', traditional: 'âŒ Ignored', platform: 'âœ… Optimized for Perplexity & AI Overviews' },
+  { feature: 'LLM Citation (GEO)', traditional: 'âŒ Not Supported', platform: 'âœ… Formatted for ChatGPT & Claude Citations' },
+  { feature: 'Tone & Quality', traditional: 'Robotic & Repetitive AI Text', platform: 'âœ¨ Authentic 100% Human Expert Voice' },
+  { feature: 'Topical Authority', traditional: 'Isolated Articles', platform: 'ðŸ•¸ï¸ Multi-Layer Topic Universe Clusters' },
+  { feature: 'Search Engine Indexing', traditional: 'High Risk of Penalties', platform: 'ðŸ›¡ï¸ Safe, Google EEAT Compliant' },
 ];
 
 const WORKFLOW_STEPS = [
@@ -77,27 +67,27 @@ export default function AiSeoPage() {
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
-              <span className="badge mb-4">🚀 Next-Gen AI Content Intelligence</span>
+              <span className="badge mb-4">ðŸš€ Next-Gen AI Content Intelligence</span>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight text-white">
                 Content Engine Built for <span className="gradient-text">Google, AEO & LLMs.</span>
               </h1>
               <p className="text-[hsl(215,20%,70%)] text-lg md:text-xl mb-8 leading-relaxed">
-                Publish content engineered for <strong className="text-white">Google SEO</strong>, <strong className="text-white">Answer Engines (AEO)</strong>, and <strong className="text-white">Generative Search (GEO)</strong> like ChatGPT & Perplexity—producing articles that feel written by an expert rather than AI.
+                Publish content engineered for <strong className="text-white">Google SEO</strong>, <strong className="text-white">Answer Engines (AEO)</strong>, and <strong className="text-white">Generative Search (GEO)</strong> like ChatGPT & Perplexityâ€”producing articles that feel written by an expert rather than AI.
               </p>
               
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="btn-primary py-4 px-8 text-base font-bold shadow-xl shadow-[hsl(217,91%,54%)]/25">
-                  Get Free AI Content Audit →
+                  Get Free AI Content Audit â†’
                 </Link>
                 <Link href="#comparison" className="btn-outline py-4 px-6 text-sm font-semibold">
-                  Compare Features ↓
+                  Compare Features â†“
                 </Link>
               </div>
 
               <div className="mt-8 flex items-center gap-6 text-xs text-[hsl(215,20%,55%)]">
-                <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Google EEAT Compliant</span>
-                <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Perplexity & ChatGPT Ready</span>
-                <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> 0% Robotic AI Cliches</span>
+                <span className="flex items-center gap-1.5"><span className="text-emerald-400">âœ“</span> Google EEAT Compliant</span>
+                <span className="flex items-center gap-1.5"><span className="text-emerald-400">âœ“</span> Perplexity & ChatGPT Ready</span>
+                <span className="flex items-center gap-1.5"><span className="text-emerald-400">âœ“</span> 0% Robotic AI Cliches</span>
               </div>
             </div>
 
@@ -107,7 +97,7 @@ export default function AiSeoPage() {
                 <div className="flex items-center justify-between pb-4 border-b border-[hsl(215,25%,22%)]">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[hsl(217,91%,54%)] to-[hsl(270,91%,65%)] flex items-center justify-center font-bold text-white text-lg">
-                      🤖
+                      ðŸ¤–
                     </div>
                     <div>
                       <div className="text-xs font-bold text-white">EducationHom AI Intelligence Engine</div>
@@ -150,7 +140,7 @@ export default function AiSeoPage() {
                 </div>
 
                 <div className="p-4 rounded-xl bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,20%)] text-[11px] text-[hsl(215,20%,65%)] leading-relaxed italic">
-                  "Our platform doesn't just generate text; it engineers semantic authority that both Google algorithms and ChatGPT recommendations trust completely."
+                  &quot;Our platform doesn&apos;t just generate text; it engineers semantic authority that both Google algorithms and ChatGPT recommendations trust completely.&quot;
                 </div>
               </div>
             </div>
@@ -190,7 +180,7 @@ export default function AiSeoPage() {
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-4 border-t border-[hsl(215,25%,22%)]/40 text-xs text-white">
                   {pillar.bullets.map(b => (
                     <li key={b} className="flex items-center gap-2">
-                      <span className="text-emerald-400 font-bold">✓</span>
+                      <span className="text-emerald-400 font-bold">âœ“</span>
                       <span>{b}</span>
                     </li>
                   ))}

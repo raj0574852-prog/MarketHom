@@ -1,6 +1,7 @@
 import React from 'react';
+import type { MetricItem } from './types';
 
-export default function AuthoritySnapshot({ metrics }: { metrics?: any[] }) {
+export default function AuthoritySnapshot({ metrics }: { metrics?: MetricItem[] }) {
   if (!metrics || metrics.length === 0) return null;
 
   const getMetric = (type: string) => metrics.find(m => m.metric_type === type);

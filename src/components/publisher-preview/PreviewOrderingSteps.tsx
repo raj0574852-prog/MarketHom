@@ -45,7 +45,7 @@ export function PreviewOrderingSteps() {
             </div>
             <h4 className="font-bold text-slate-900 text-sm mb-1">We Check It</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Our system verifies the live link to ensure it meets the publisher's stated guidelines.
+              Our system verifies the live link to ensure it meets the publisher&apos;s stated guidelines.
             </p>
           </div>
 

@@ -48,6 +48,13 @@ const defaultServiceList = [
     category: 'Social',
     priceRange: '$1,500 - $4,000/mo',
     description: 'Strategic social media management that builds community, increases brand awareness, and drives meaningful engagement.',
+  },
+  {
+    id: 'guest-posting',
+    name: 'Guest Posting',
+    category: 'Guest Posting',
+    priceRange: '$500 - $2,500/mo',
+    description: 'High-authority guest posts on DA 40-90+ sites to drive referral traffic, build PageRank, and train AI search engines.',
   }
 ];
 
@@ -70,7 +77,10 @@ export default function ServicesPage() {
         });
       }
     });
-    setServicesList(combined);
+    const timer = setTimeout(() => {
+      setServicesList(combined);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -106,9 +116,16 @@ export default function ServicesPage() {
                 
                 <div className="pt-4 border-t border-[hsl(215,25%,22%)]/40 flex items-center justify-between">
                   <span className="text-xs font-bold text-[hsl(217,91%,70%)] uppercase tracking-wider">{s.category}</span>
-                  <Link href="/contact" className="btn-outline px-4 py-2 text-xs">
-                    Get Free Strategy →
-                  </Link>
+                  <div className="flex gap-2">
+                    {(s.id === 'guest-posting' || s.id === 'link-building') && (
+                      <Link href="/websites" className="btn-outline px-4 py-2 text-xs border-[hsl(270,80%,60%)]/50 text-[hsl(270,80%,75%)] hover:bg-[hsl(270,80%,60%)]/10">
+                        Marketplace →
+                      </Link>
+                    )}
+                    <Link href={`/services/${s.id}`} className="btn-outline px-4 py-2 text-xs">
+                      View Details →
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

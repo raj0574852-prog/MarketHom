@@ -154,7 +154,7 @@ export default function PricingPage() {
                 </div>
 
                 <div className="mb-8">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-[hsl(215,20%,40%)] mb-4">What's Included</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-[hsl(215,20%,40%)] mb-4">What&apos;s Included</h4>
                   <ul className="space-y-3">
                     {tier.included.map((item) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-[hsl(215,20%,65%)]">

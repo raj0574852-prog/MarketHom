@@ -45,7 +45,7 @@ export default function HeroSection() {
           <div className="inline-flex items-center gap-2 mb-8 animate-fade-in-up opacity-0 delay-100">
             <span className="badge">
               <span className="w-2 h-2 rounded-full bg-[hsl(152,69%,46%)] animate-pulse inline-block" />
-              Trusted by 500+ Growing Businesses
+              Join our network of growing businesses
             </span>
           </div>
 

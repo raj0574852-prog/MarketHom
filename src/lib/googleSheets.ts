@@ -37,7 +37,7 @@ export interface WebsiteRow {
   total_deals?: number;
   sample_link?: string;
   logo_url?: string;
-  [key: string]: any; // Allow capturing other fields
+  [key: string]: unknown; // Allow capturing other fields
 }
 
 // Maps google sheet headers to our internal field names
@@ -78,10 +78,10 @@ export function mapHeaders(header: string): string {
   return h.replace(/[^a-z0-9_]/g, '_');
 }
 
-function computeHash(data: any): string {
+function computeHash(data: Record<string, unknown>): string {
   // Sort keys to ensure deterministic hashing
   const sortedKeys = Object.keys(data).sort();
-  const sortedData: Record<string, any> = {};
+  const sortedData: Record<string, unknown> = {};
   for (const key of sortedKeys) {
     if (key !== 'source_hash' && key !== 'domain') {
       sortedData[key] = data[key];
@@ -138,7 +138,7 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
 
         const rows: WebsiteRow[] = [];
         
-        for (const row of results.data as any[]) {
+        for (const row of results.data as Record<string, string>[]) {
           if (!row.domain) continue;
           
           const normalizedDomain = normalizeDomain(row.domain);
@@ -157,7 +157,7 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
           
           const authorityScore = row.authority_score ? parseInt(row.authority_score, 10) : undefined;
           
-          const parsePrice = (val: any) => {
+          const parsePrice = (val: unknown) => {
             if (!val || String(val).toUpperCase() === 'N/A') return undefined;
             const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
             return isNaN(num) ? undefined : num;
@@ -168,7 +168,7 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
           const totalDeals = row.total_deals ? parseInt(row.total_deals, 10) : undefined;
 
           // Parse booleans safely
-          const parseBoolean = (val: any) => {
+          const parseBoolean = (val: unknown) => {
             if (val === undefined || val === null || val === '') return undefined;
             const s = String(val).toLowerCase().trim();
             if (s === 'yes' || s === 'true' || s === '1' || s === 'y') return true;
@@ -209,7 +209,7 @@ export async function fetchGoogleSheet(spreadsheetId: string, sheetName?: string
         }
         resolve({ rows, isComplete });
       },
-      error: (error: any) => {
+      error: (error: Error) => {
         reject(error);
       }
     });

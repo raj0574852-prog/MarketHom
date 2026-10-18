@@ -66,7 +66,7 @@ export default function RefundPolicyPage() {
           <p>To request a refund for an eligible scenario, please contact our billing department with your order details and a detailed explanation of the issue.</p>
           <ul className="list-none space-y-2 mb-8 mt-4 p-6 glass rounded-xl">
             <li><strong>Email:</strong> <a href="mailto:Sophia@educationhom.com" className="text-[hsl(217,91%,75%)] hover:underline">[Sophia@educationhom.com]</a></li>
-            <li><strong>Phone:</strong> <a href="tel:+91 8824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+918824896910" className="text-[hsl(217,91%,75%)] hover:underline">+91 8824896910</a></li>
             <li><strong>Address:</strong> Sanganer, Jaipur, Rajasthan, India</li>
           </ul>
         </div>

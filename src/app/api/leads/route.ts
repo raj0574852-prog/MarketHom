@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { isAdminAuthenticated } from '@/lib/auth';
+import { syncLeadToGoogleSheets } from '@/lib/googleSheetsLeadSync';
 
 export interface LeadInquiry {
   id: string;
@@ -30,6 +32,9 @@ if (!globalForLeads.serverLeads) {
 }
 
 export async function GET() {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   return NextResponse.json({
     success: true,
     leads: globalForLeads.serverLeads || INITIAL_SERVER_LEADS
@@ -65,10 +70,31 @@ export async function POST(request: Request) {
     // Add new lead at top
     globalForLeads.serverLeads = [newLead, ...globalForLeads.serverLeads];
 
+    // Trigger sync to Google Sheets
+    let sheetSyncResult = null;
+    try {
+      sheetSyncResult = await syncLeadToGoogleSheets({
+        name: newLead.name,
+        email: newLead.email,
+        whatsapp: newLead.phone || '',
+        leadType: newLead.serviceRequested ? `${newLead.serviceRequested} Inquiry` : 'Contact Inquiry',
+        publisherDomain: '',
+        listingUrl: newLead.website || 'https://www.educationhom.com/contact',
+        price: (newLead.budget && newLead.budget.trim()) ? newLead.budget.trim() : 'Custom Quote',
+        message: newLead.message || '',
+        source: 'Contact Page',
+        status: 'New',
+        leadId: newLead.id
+      });
+    } catch (syncErr) {
+      console.warn('[LeadsRoute] Google Sheets sync error:', syncErr);
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Lead saved successfully',
-      lead: newLead
+      lead: newLead,
+      googleSheetsSynced: sheetSyncResult?.success ?? false
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Failed to process lead' }, { status: 500 });
@@ -76,6 +102,9 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  if (!await isAdminAuthenticated()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { id, status } = body;

@@ -24,7 +24,7 @@ export interface PricingCalculationResult {
  * @param originalPrice The original publisher price
  * @returns PricingCalculationResult | null if originalPrice is invalid
  */
-export function calculateContentPlacementSellingPrice(originalPrice: any): PricingCalculationResult | null {
+export function calculateContentPlacementSellingPrice(originalPrice: unknown): PricingCalculationResult | null {
   // Validate original price
   if (originalPrice === null || originalPrice === undefined) {
     return null;

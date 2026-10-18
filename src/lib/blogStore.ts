@@ -22,23 +22,23 @@ export interface BlogPost {
 export const INITIAL_POSTS: BlogPost[] = [
   {
     id: '1',
-    slug: 'ai-seo-strategies-2025',
-    title: '10 AI SEO Strategies That Will Dominate Search in 2025',
+    slug: 'ai-seo-strategies-2026',
+    title: '10 AI SEO Strategies That Will Dominate Search in 2026',
     excerpt: 'Artificial intelligence is reshaping how Google ranks content. Here are the 10 AI-powered SEO strategies that top agencies are using right now.',
     category: 'AI SEO',
-    author: 'Alex Rivera',
-    authorRole: 'Head of AI Search',
-    date: 'Apr 28, 2025',
+    author: 'Editorial Team',
+    authorRole: 'EducationHom',
+    date: 'Apr 28, 2026',
     readTime: '8 min read',
     icon: '🤖',
     featured: true,
     featuredImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop',
-    metaTitle: '10 AI SEO Strategies for 2025 | EducationHom',
-    metaDescription: 'Discover the top 10 AI-powered SEO strategies for 2025. Learn how to optimize for SGE, ChatGPT, and semantic topical authority.',
+    metaTitle: '10 AI SEO Strategies for 2026 | EducationHom',
+    metaDescription: 'Discover the top 10 AI-powered SEO strategies for 2026. Learn how to optimize for SGE, ChatGPT, and semantic topical authority.',
     noIndex: false,
     noFollow: false,
     content: `
-      <p className="text-lg leading-relaxed mb-6">The landscape of search is changing faster than ever. With the rise of AI-powered search engines like Google's SGE and Perplexity, traditional SEO tactics are being challenged. To stay ahead in 2025, agencies and brands must embrace AI not just for content creation, but for strategy, analysis, and optimization.</p>
+      <p className="text-lg leading-relaxed mb-6">The landscape of search is changing faster than ever. With the rise of AI-powered search engines like Google's SGE and Perplexity, traditional SEO tactics are being challenged. To stay ahead in 2026, agencies and brands must embrace AI not just for content creation, but for strategy, analysis, and optimization.</p>
       
       <h2 className="text-2xl font-bold mt-8 mb-4 text-white">1. AI-Powered Topical Authority Mapping</h2>
       <p className="mb-6 leading-relaxed">Search engines are moving away from individual keywords and toward entities and topics. AI tools can now analyze the entire "topical universe" of your niche, identifying the exact clusters of content you need to create to be seen as an authority by Google.</p>
@@ -61,14 +61,14 @@ export const INITIAL_POSTS: BlogPost[] = [
     title: '7 PPC Mistakes That Are Silently Killing Your ROI',
     excerpt: 'Most businesses are flushing 40-60% of their ad budget down the drain. Discover the seven most common PPC mistakes and how to fix them.',
     category: 'PPC',
-    author: 'Priya Sharma',
-    authorRole: 'PPC Lead',
-    date: 'Apr 21, 2025',
+    author: 'Editorial Team',
+    authorRole: 'EducationHom',
+    date: 'Apr 21, 2026',
     readTime: '6 min read',
     icon: '💰',
     featured: false,
     content: `
-      <p className="text-lg leading-relaxed mb-6">Running Google or Meta ads without a rigorous strategy is the fastest way to burn through your marketing budget. Over the past year, our team audited over $5M in ad spend across 100+ accounts. Here are the 7 most frequent (and expensive) mistakes we uncover.</p>
+      <p className="text-lg leading-relaxed mb-6">Running Google or Meta ads without a rigorous strategy is the fastest way to burn through your marketing budget. Here are the 7 most frequent (and expensive) mistakes we uncover.</p>
       
       <h2 className="text-2xl font-bold mt-8 mb-4 text-white">1. Broad Match Without Negative Keyword Lists</h2>
       <p className="mb-6 leading-relaxed">Broad match keywords can bring in traffic, but without an aggressive, updated list of negative keywords, you will end up paying for irrelevant searches that never convert.</p>
@@ -146,15 +146,6 @@ export function savePost(post: Omit<BlogPost, 'id'> & { id?: string }): BlogPost
     }
   }
 
-  // Sync with Server API /api/blog
-  if (typeof window !== 'undefined') {
-    fetch('/api/blog', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(savedPost)
-    }).catch(() => {});
-  }
-
   return savedPost;
 }
 
@@ -164,13 +155,6 @@ export function deletePost(id: string): void {
   const updated = posts.filter(p => p.id !== id && p.slug !== id);
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-  }
-
-  // Sync delete with Server API /api/blog
-  if (typeof window !== 'undefined') {
-    fetch(`/api/blog?id=${encodeURIComponent(id)}`, {
-      method: 'DELETE'
-    }).catch(() => {});
   }
 }
 

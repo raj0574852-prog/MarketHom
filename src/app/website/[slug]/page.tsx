@@ -17,6 +17,7 @@ import PublisherOverview from '@/components/websites/PublisherOverview';
 import HowItWorks from '@/components/websites/HowItWorks';
 import { generatePublisherFAQs } from '@/components/websites/faqGenerator';
 import { normalizePublisherMetrics } from '@/components/websites/utils/normalizeMetrics';
+import type { WebsiteListing } from '@/components/websites/types';
 
 export const revalidate = 60;
 
@@ -40,6 +41,8 @@ async function getListingData(slug: string) {
         website_url: `https://${slug}`,
         category_id: 'General',
         price: 23,
+        content_placement_selling_price: 23,
+        content_placement_price: 23,
         currency: 'USD',
         location: 'Worldwide',
         language: 'English',
@@ -80,13 +83,13 @@ function isSafeText(text: string | null | undefined, maxLength: number): boolean
   return true;
 }
 
-function resolvePublisherMetadata(website: any) {
+function resolvePublisherMetadata(website: WebsiteListing) {
   const domain = website.domain;
   const category = (website.category_id && website.category_id !== 'General') ? website.category_id : 'General';
   
   // 1. Title Validation & Fallback
   let title = '';
-  if (isSafeText(website.seo_title, 80)) {
+  if (website.seo_title && isSafeText(website.seo_title, 80)) {
     title = website.seo_title;
   } else {
     const idealTitle = `Buy Guest Post on ${domain} | EducationHom`;
@@ -99,14 +102,15 @@ function resolvePublisherMetadata(website: any) {
 
   // 2. Description Validation & Fallback
   let description = '';
-  if (isSafeText(website.seo_description, 250)) {
+  if (website.seo_description && isSafeText(website.seo_description, 250)) {
     description = website.seo_description;
   } else {
     let metricsStr = '';
-    const metrics = website.website_metrics || website.metrics || {};
-    const da = metrics.da || metrics.domain_authority;
-    const dr = metrics.dr || metrics.domain_rating;
-    const traffic = metrics.traffic || metrics.semrush_traffic || metrics.organic_traffic;
+    const metricsList = website.website_metrics || [];
+    const getMetricVal = (type: string) => metricsList.find(m => m.metric_type === type)?.value;
+    const da = getMetricVal('DA');
+    const dr = getMetricVal('DR');
+    const traffic = getMetricVal('ORGANIC_TRAFFIC') || getMetricVal('SEMRUSH_TRAFFIC') || getMetricVal('TRAFFIC');
     
     const parts = [];
     if (da && String(da).toLowerCase() !== 'n/a' && Number(da) > 0) parts.push(`DA ${da}`);
@@ -169,7 +173,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       absolute: title
     },
     description,
-    keywords: keywords.join(', '),
     alternates: {
       canonical
     },
@@ -219,13 +222,6 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             '@context': 'https://schema.org',
             '@graph': [
               {
-                '@type': 'Organization',
-                '@id': `${CANONICAL_SITE_URL}/#organization`,
-                'name': 'EducationHom',
-                'url': CANONICAL_SITE_URL,
-                'logo': `${CANONICAL_SITE_URL}/logo.png`
-              },
-              {
                 '@type': 'WebPage',
                 '@id': `${canonical}#webpage`,
                 'url': canonical,
@@ -268,30 +264,32 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumb */}
-        <div className="mb-4 text-sm font-medium text-slate-500 flex items-center gap-2">
-          <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-          <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mb-4 text-sm font-medium text-slate-500 flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
+          <Link href="/" className="hover:text-blue-600 transition-colors shrink-0">Home</Link>
+          <svg className="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          <Link href="/websites" className="hover:text-blue-600 transition-colors">Marketplace</Link>
-          <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <Link href="/websites" className="hover:text-blue-600 transition-colors shrink-0">Marketplace</Link>
+          <svg className="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          <span className="text-slate-900 font-bold">{publisherName}</span>
+          <span className="text-slate-900 font-bold min-w-0 break-all">{publisherName}</span>
         </div>
 
         {/* Hero Area */}
         <PublisherHero website={website} />
 
         {/* Main Content Layout */}
-        <div className="flex flex-col lg:flex-row gap-8 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_340px] gap-8 relative">
           
-          {/* Left Column - Main Content (~68%) */}
-          <div className="w-full lg:w-[68%] flex flex-col min-w-0">
+          {/* Left Column - Main Content */}
+          <div className="flex flex-col min-w-0 w-full">
             
             <PublisherMetrics metrics={website.website_metrics} />
             
-            <QuickOverview website={website} />
+            <div className="mb-8">
+              <QuickOverview website={website} />
+            </div>
             
             {/* SEO Semantics preserved here */}
             <div className="mb-8">
@@ -327,8 +325,8 @@ export default async function WebsiteDetailPage({ params }: { params: Promise<{ 
             />
           </div>
 
-          {/* Right Column - Order Summary (~32%) */}
-          <div className="w-full lg:w-[32%] shrink-0 order-first lg:order-last mb-8 lg:mb-0">
+          {/* Right Column - Order Summary */}
+          <div className="w-full min-w-0 order-first lg:order-last mb-8 lg:mb-0">
             <PublisherOrderSummary website={website} />
             
             {/* Extra Sidebar Benefits */}

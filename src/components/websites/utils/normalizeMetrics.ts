@@ -1,4 +1,6 @@
-export function normalizePublisherMetrics(metrics: any[] | null | undefined) {
+import type { MetricItem } from '../types';
+
+export function normalizePublisherMetrics(metrics: MetricItem[] | null | undefined) {
   if (!metrics || !Array.isArray(metrics)) {
     return {
       da: null,

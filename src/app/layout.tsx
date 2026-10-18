@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import CookieBanner from '@/components/CookieBanner';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 import { CANONICAL_SITE_URL } from '@/lib/constants';
 
@@ -20,31 +22,15 @@ export const metadata: Metadata = {
   },
   description:
     'EducationHom is an AI-powered digital marketing agency specializing in Google SEO, AI Search Engine Optimization (AEO), GEO (Generative Engine Optimization), PPC, Link Building, and Web Development.',
-  keywords: [
-    'digital marketing agency',
-    'SEO services',
-    'AI SEO',
-    'AEO Answer Engine Optimization',
-    'GEO Generative Engine Optimization',
-    'PPC management',
-    'link building',
-    'guest posting',
-    'web development',
-    'EducationHom',
-  ],
   authors: [{ name: 'EducationHom' }],
   creator: 'EducationHom',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: CANONICAL_SITE_URL,
     siteName: 'EducationHom',
-    title: 'EducationHom | AI Content Intelligence & SEO Agency',
-    description:
-      'Scale your business with EducationHom – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
     images: [
       {
-        url: `${CANONICAL_SITE_URL}/og-image.png`,
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'EducationHom',
@@ -53,10 +39,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EducationHom | AI Content Intelligence & SEO Agency',
-    description:
-      'Scale your business with EducationHom – experts in Google SEO, AEO, GEO, PPC, Guest Posting & Web Development.',
-    images: [`${CANONICAL_SITE_URL}/og-image.png`],
   },
   icons: {
     icon: '/icon.png',
@@ -78,14 +60,12 @@ export const metadata: Metadata = {
 const jsonLdOrganization = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${CANONICAL_SITE_URL}/#organization`,
   name: 'EducationHom',
   url: CANONICAL_SITE_URL,
   logo: `${CANONICAL_SITE_URL}/images/educationhom-logo.webp`,
   description: 'AI Content Intelligence, Google SEO, AEO, GEO, PPC, and Web Development Agency.',
-  sameAs: [
-    'https://twitter.com/markethomagency',
-    'https://linkedin.com/company/markethomagency'
-  ],
+  telephone: '+91 8824896910',
   knowsAbout: [
     'Search Engine Optimization (SEO)',
     'AI Search Engine Optimization (AEO)',
@@ -131,9 +111,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-[hsl(222,47%,7%)] text-white min-h-screen flex flex-col`}>
+        {process.env.NEXT_PUBLIC_GTM_ID && <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />}
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <CookieBanner />
       </body>
     </html>
   );

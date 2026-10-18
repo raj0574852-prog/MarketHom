@@ -1,10 +1,10 @@
 const stats = [
-  { value: '500+', label: 'Clients Served', description: 'Across 30+ industries' },
-  { value: '$120M+', label: 'Revenue Generated', description: 'For our clients' },
-  { value: '98%', label: 'Retention Rate', description: 'Clients who stay with us' },
-  { value: '10x', label: 'Average ROI', description: 'Return on marketing spend' },
-  { value: '4.2B+', label: 'Impressions Earned', description: 'Organic search impressions' },
-  { value: '15+', label: 'Years Experience', description: 'In digital marketing' },
+  { value: 'Premium', label: 'Quality Standards', description: 'Stringent verification' },
+  { value: 'Verified', label: 'Publisher Network', description: 'Manual vetting' },
+  { value: 'Data-Driven', label: 'SEO Strategies', description: 'Backed by analytics' },
+  { value: 'Transparent', label: 'Reporting', description: 'Clear deliverables' },
+  { value: 'Dedicated', label: 'Support Team', description: 'Always here to help' },
+  { value: 'Targeted', label: 'Audience Reach', description: 'Niche specific content' },
 ];
 
 export default function StatsSection() {

@@ -2,26 +2,12 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { BlogPost } from '@/lib/blogStore';
 import { getPublishedPosts, getAllPostsForAdmin, createPost, updatePost, deletePost, getPublishedPostBySlug } from '@/lib/blog/posts';
-import crypto from 'crypto';
-
-// Reusable function to verify the secure admin session
-function verifyAdminSession(request: Request): boolean {
-  const cookieHeader = request.headers.get('cookie') || '';
-  const sessionToken = process.env.ADMIN_SESSION_TOKEN || '';
-  
-  const match = cookieHeader.match(/admin_session=([^;]+)/);
-  const providedToken = match ? match[1] : '';
-
-  if (sessionToken && providedToken && providedToken.length === sessionToken.length) {
-    return crypto.timingSafeEqual(Buffer.from(providedToken), Buffer.from(sessionToken));
-  }
-  return false;
-}
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function GET(request: Request) {
   try {
     // If Admin, they get all posts (including drafts/unlisted if we had them)
-    const isAdmin = verifyAdminSession(request);
+    const isAdmin = await isAdminAuthenticated();
     
     let posts: BlogPost[] = [];
     if (isAdmin) {
@@ -44,7 +30,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    if (!verifyAdminSession(request)) {
+    if (!await isAdminAuthenticated()) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -80,7 +66,12 @@ export async function POST(request: Request) {
     const allPosts = await getAllPostsForAdmin();
 
     try {
-      revalidatePath('/', 'layout');
+      revalidatePath('/', 'page');
+      revalidatePath('/blog', 'page');
+      if (savedPost?.slug) {
+        revalidatePath(`/blog/${savedPost.slug}`, 'page');
+      }
+      revalidatePath('/sitemap.xml', 'page');
     } catch (e) {
       console.warn('Failed to revalidate cache', e);
     }
@@ -91,16 +82,17 @@ export async function POST(request: Request) {
       post: savedPost,
       posts: allPosts
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in POST /api/blog:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Failed to publish article' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to publish article';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
 
 export async function PUT(request: Request) {
   // We no longer need the bulk PUT sync from localStorage. 
   // We reject it here, except maybe if they are using it? The admin panel triggers this sometimes.
-  if (!verifyAdminSession(request)) {
+  if (!await isAdminAuthenticated()) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
   
@@ -117,7 +109,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    if (!verifyAdminSession(request)) {
+    if (!await isAdminAuthenticated()) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -132,19 +124,22 @@ export async function DELETE(request: Request) {
     const allPosts = await getAllPostsForAdmin();
 
     try {
-      revalidatePath('/', 'layout');
+      revalidatePath('/', 'page');
+      revalidatePath('/blog', 'page');
+      revalidatePath('/sitemap.xml', 'page');
     } catch (e) {
       console.warn('Failed to revalidate cache', e);
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Article permanently deleted from Supabase',
+      message: 'Article safely archived from Supabase',
       posts: allPosts,
       deletedIds: []
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in DELETE /api/blog:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Failed to delete article' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to delete article';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

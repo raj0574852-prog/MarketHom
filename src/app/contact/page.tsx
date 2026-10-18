@@ -16,7 +16,7 @@ const contactInfo = [
     label: 'Call Us',
     value: '+91 8824896910',
     href: 'tel:+918824896910',
-    sub: 'Mon–Fri, 9am–6pm EST',
+    sub: 'Mon–Fri, 9am–6pm IST',
   },
   {
     icon: '💬',
@@ -43,9 +43,11 @@ export default function ContactPage() {
     service: '', budget: '', message: '', consent: false,
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
     setStatus('sending');
 
     try {
@@ -62,7 +64,7 @@ export default function ContactPage() {
       });
 
       // 2. Also POST directly to server endpoint
-      await fetch('/api/leads', {
+      const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -76,11 +78,21 @@ export default function ContactPage() {
           message: form.message
         })
       });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.success === false) {
+        setErrorMessage(data.error || 'Failed to submit inquiry. Please try again.');
+        setStatus('error');
+        return;
+      }
+
+      setStatus('sent');
     } catch (err) {
       console.error('Lead submission error:', err);
+      setErrorMessage('Network error submitting inquiry. Please check your connection and try again.');
+      setStatus('error');
     }
-
-    setStatus('sent');
   };
 
   return (
@@ -91,7 +103,7 @@ export default function ContactPage() {
         <div className="container-custom relative z-10 text-center">
           <span className="badge mb-4">Contact Us</span>
           <h1 className="text-5xl md:text-6xl font-black mb-5">
-            Let's <span className="gradient-text">Start Growing</span>
+            Let&apos;s <span className="gradient-text">Start Growing</span>
             <br />Your Business Today
           </h1>
           <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
@@ -154,7 +166,19 @@ export default function ContactPage() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <h2 className="text-2xl font-bold mb-2 text-white">Get Your Free Audit</h2>
-                    <p className="text-[hsl(215,20%,60%)] text-sm mb-6">Fill out the form below and we'll have a custom strategy ready for you within 24 hours.</p>
+                    <p className="text-[hsl(215,20%,60%)] text-sm mb-6">Fill out the form below and we&apos;ll have a custom strategy ready for you within 24 hours.</p>
+
+                    {status === 'error' && errorMessage && (
+                      <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-sm text-red-400 flex items-start gap-3">
+                        <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                          <span className="font-semibold block text-red-300">Submission Failed</span>
+                          <span>{errorMessage}</span>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       {/* Name */}
@@ -260,7 +284,7 @@ export default function ContactPage() {
                         className="mt-0.5 w-4 h-4 rounded border-[hsl(215,25%,22%)] accent-[hsl(217,91%,54%)]"
                       />
                       <span className="text-xs text-[hsl(215,20%,55%)]">
-                        I agree to EducationHom's Privacy Policy and consent to being contacted about my inquiry. We never spam or sell your data.
+                        I agree to EducationHom&apos;s Privacy Policy and consent to being contacted about my inquiry. We never spam or sell your data.
                       </span>
                     </label>
 

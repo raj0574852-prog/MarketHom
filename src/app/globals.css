@@ -32,6 +32,8 @@
     font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
   }
 
   h1, h2, h3, h4, h5, h6 {

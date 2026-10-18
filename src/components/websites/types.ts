@@ -49,12 +49,33 @@ export interface WebsiteListing {
   canonical_url?: string;
   created_at?: string;
   updated_at?: string;
-  website_metrics?: any[];
+  source?: string;
+  total_deals?: number;
+  sample_link?: string;
+  link_insert_price?: number;
+  cbd_content_placement_price?: number;
+  cbd_content_creation_placement_price?: number;
+  cbd_link_insert_price?: number;
+  adult_content_placement_price?: number;
+  adult_content_creation_placement_price?: number;
+  adult_link_insert_price?: number;
+  metrics?: MetricItem[];
+  website_metrics?: MetricItem[];
   website_faqs?: WebsiteFAQ[];
 }
 
+export interface MetricItem {
+  id?: string;
+  website_listing_id?: string;
+  metric_type: string;
+  value: string | number | null;
+  unit?: string;
+  provider?: string;
+  recorded_at?: string;
+}
+
 export interface WebsiteFAQ {
-  id: string;
+  id?: string;
   website_listing_id: string;
   question: string;
   answer: string;

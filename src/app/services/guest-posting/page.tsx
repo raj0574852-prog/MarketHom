@@ -6,44 +6,35 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'How Guest Posting Helps You Rank #1 on Google & AI Search | EducationHom',
   description: 'Learn how premium guest posting on DA 40-90+ sites passes PageRank link equity, accelerates Google rankings, and trains AI chatbots (AEO & GEO) to recommend your clients.',
-  keywords: [
-    'how guest posting helps ranking',
-    'guest post SEO strategy',
-    'AEO link building',
-    'GEO citations',
-    'PageRank link equity',
-    'high DA backlinks',
-    'client ranking case study'
-  ],
 };
 
 const HOW_GUEST_POSTS_BOOST_RANKINGS = [
   {
-    icon: '⚡',
+    icon: 'âš¡',
     title: '1. Direct PageRank & Link Equity Transfer',
     subtitle: 'Pass High-Authority Link Juice',
-    description: 'When a DA 40-90+ site with strong Google trust links to your client’s target landing page, Google transfers authority ("PageRank"). This directly pushes your page up the search engine results pages (SERPs) for competitive keywords.',
-    impact: 'Increases Keyword Rankings by 40%–120% within 30–60 days.'
+    description: 'When a DA 40-90+ site with strong Google trust links to your clientâ€™s target landing page, Google transfers authority ("PageRank"). This directly pushes your page up the search engine results pages (SERPs) for competitive keywords.',
+    impact: 'Increases Keyword Rankings by 40%â€“120% within 30â€“60 days.'
   },
   {
-    icon: '🎯',
+    icon: 'ðŸŽ¯',
     title: '2. Topical Relevance & Google Entity Signals',
     subtitle: 'Niche Contextual Alignment',
-    description: 'Google does not just count links; it evaluates the topic of the publisher. By publishing articles on tightly matched niche sites, Google tags your client’s domain as a verified topical authority.',
+    description: 'Google does not just count links; it evaluates the topic of the publisher. By publishing articles on tightly matched niche sites, Google tags your clientâ€™s domain as a verified topical authority.',
     impact: 'Establishes instant domain trust and protects against algorithm shifts.'
   },
   {
-    icon: '🤖',
+    icon: 'ðŸ¤–',
     title: '3. Generative Engine (GEO) & LLM Citation Training',
     subtitle: 'Train ChatGPT & Perplexity',
     description: 'Modern AI search tools like ChatGPT, Claude, and Perplexity index high-authority publications. When your brand is referenced on top sites, LLMs cite your client as the top recommended vendor in AI chat responses.',
     impact: 'Drives zero-click AI recommendations and direct referral traffic.'
   },
   {
-    icon: '📈',
+    icon: 'ðŸ“ˆ',
     title: '4. High-Intent Referral Traffic & Direct Client Leads',
     subtitle: 'Real Readers, Real Sales',
-    description: 'Unlike standard spam links, guest posts on active websites with 5,000+ monthly visitors send targeted, high-intent readers straight to your client’s site who are ready to purchase.',
+    description: 'Unlike standard spam links, guest posts on active websites with 5,000+ monthly visitors send targeted, high-intent readers straight to your clientâ€™s site who are ready to purchase.',
     impact: 'Generates immediate referral leads while SEO rankings build.'
   }
 ];
@@ -52,7 +43,7 @@ const CLIENT_OPTIMIZATION_BLUEPRINT = [
   {
     phase: 'Step 1',
     title: 'Competitor Backlink & Gap Analysis',
-    detail: 'We reverse-engineer the top 3 ranking competitors for your client’s target keywords to identify exact DA levels, anchor text distribution, and publisher gap opportunities.'
+    detail: 'We reverse-engineer the top 3 ranking competitors for your clientâ€™s target keywords to identify exact DA levels, anchor text distribution, and publisher gap opportunities.'
   },
   {
     phase: 'Step 2',
@@ -62,7 +53,7 @@ const CLIENT_OPTIMIZATION_BLUEPRINT = [
   {
     phase: 'Step 3',
     title: 'AI Content Intelligence Drafting',
-    detail: 'Every guest article is written using AI Content Intelligence—optimized for Google SEO, AEO, and GEO, and styled in a 100% human-expert voice.'
+    detail: 'Every guest article is written using AI Content Intelligenceâ€”optimized for Google SEO, AEO, and GEO, and styled in a 100% human-expert voice.'
   },
   {
     phase: 'Step 4',
@@ -78,7 +69,7 @@ const CLIENT_OPTIMIZATION_BLUEPRINT = [
 
 const CLIENT_RESULTS = [
   { metric: '+340%', label: 'Organic Traffic Increase', desc: 'Average client growth in 90 days after launching 5 high-DA guest posts' },
-  { metric: 'DA 40–90+', label: 'Guaranteed Domain Authority', desc: 'Placements exclusively on real websites with proven Google trust' },
+  { metric: 'DA 40â€“90+', label: 'Guaranteed Domain Authority', desc: 'Placements exclusively on real websites with proven Google trust' },
   { metric: '#1 SERP', label: 'Top Google Rankings Achieved', desc: 'Over 85% of target client landing pages hit page 1 within 60 days' },
   { metric: '100% Safe', label: 'White-Hat & Future-Proof', desc: 'Zero PBNs, zero spam, 100% compliant with Google EEAT guidelines' }
 ];
@@ -99,15 +90,18 @@ export default function GuestPostingPage() {
                 How Guest Posts <span className="gradient-text">Rank Clients #1</span> on Google.
               </h1>
               <p className="text-[hsl(215,20%,65%)] text-lg md:text-xl mb-8 leading-relaxed">
-                Guest posting isn't just about links—it's the fastest way to transfer <strong className="text-white">PageRank authority</strong>, build <strong className="text-white">topical trust</strong>, and train <strong className="text-white">AI engines (ChatGPT & Perplexity)</strong> to recommend your clients.
+                Guest posting isn&apos;t just about linksâ€”it&apos;s the fastest way to transfer <strong className="text-white">PageRank authority</strong>, build <strong className="text-white">topical trust</strong>, and train <strong className="text-white">AI engines (ChatGPT & Perplexity)</strong> to recommend your clients.
               </p>
               
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="btn-primary py-4 px-8 text-base font-bold shadow-xl shadow-[hsl(217,91%,54%)]/25">
-                  Get Free Client Strategy Audit →
+                  Get Free Client Strategy Audit â†’
+                </Link>
+                <Link href="/websites" className="btn-outline py-4 px-6 text-sm font-semibold border-[hsl(270,80%,60%)]/50 hover:bg-[hsl(270,80%,60%)]/10 text-[hsl(270,80%,75%)]">
+                  Browse Marketplace (32k+ Sites) â†’
                 </Link>
                 <Link href="#ranking-system" className="btn-outline py-4 px-6 text-sm font-semibold">
-                  How Rankings Work ↓
+                  How Rankings Work â†“
                 </Link>
               </div>
             </div>
@@ -131,7 +125,7 @@ export default function GuestPostingPage() {
                      ].map((item, i) => (
                        <li key={i} className="flex items-center gap-3 text-xs text-[hsl(215,20%,70%)] font-medium">
                           <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold flex-shrink-0">
-                            ✓
+                            âœ“
                           </div>
                           {item}
                        </li>
@@ -169,7 +163,7 @@ export default function GuestPostingPage() {
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[hsl(222,47%,9%)] border border-[hsl(217,91%,54%)]/20 text-xs font-bold text-emerald-300">
-                  ⚡ Client Result: {item.impact}
+                  âš¡ Client Result: {item.impact}
                 </div>
               </div>
             ))}

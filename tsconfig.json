@@ -24,11 +24,10 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["src/lib/pricing/__tests__/**/*", "node_modules", "find_slugs.ts"]
+  "exclude": ["node_modules", "scripts", "verify", "*.js", "*.ts", "temp.tsx"]
 }

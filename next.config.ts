@@ -34,6 +34,11 @@ const nextConfig: NextConfig = {
         destination: 'https://www.educationhom.com/:path*',
         permanent: true,
       },
+      {
+        source: '/guest-posting',
+        destination: '/services/guest-posting',
+        permanent: true,
+      },
     ];
   },
 

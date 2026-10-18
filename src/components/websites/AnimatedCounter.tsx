@@ -14,25 +14,28 @@ function easeOutQuart(x: number): number {
 
 export function AnimatedCounter({ value, duration = 1500, children }: AnimatedCounterProps) {
   const [currentValue, setCurrentValue] = useState<number | null | undefined>(value);
+  const [prevPropValue, setPrevPropValue] = useState(value);
+  if (value !== prevPropValue) {
+    setPrevPropValue(value);
+    setCurrentValue(value);
+  }
+
   const elementRef = useRef<HTMLDivElement>(null);
   const animatedRef = useRef(false);
 
   useEffect(() => {
     if (value === null || value === undefined) {
-      setCurrentValue(value);
       return;
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
-      setCurrentValue(value);
       animatedRef.current = true;
       return;
     }
 
-    // If we already animated and value changes, just jump to new value
+    // If we already animated and value changes, keep new value
     if (animatedRef.current) {
-      setCurrentValue(value);
       return;
     }
 

@@ -1,26 +1,11 @@
 import { NextResponse } from 'next/server';
 import { INITIAL_POSTS, BlogPost } from '@/lib/blogStore';
 import { getServiceSupabase } from '@/lib/supabaseClient';
-import crypto from 'crypto';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
-    // 1. Verify Admin Session
-    const cookieHeader = request.headers.get('cookie') || '';
-    const sessionToken = process.env.ADMIN_SESSION_TOKEN || '';
-    
-    const match = cookieHeader.match(/admin_session=([^;]+)/);
-    const providedToken = match ? match[1] : '';
-
-    let isValid = false;
-    if (sessionToken && providedToken && providedToken.length === sessionToken.length) {
-      isValid = crypto.timingSafeEqual(
-        Buffer.from(providedToken),
-        Buffer.from(sessionToken)
-      );
-    }
-
-    if (!isValid) {
+    if (!await isAdminAuthenticated()) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 

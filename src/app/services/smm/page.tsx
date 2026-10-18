@@ -6,7 +6,7 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'Social Media Marketing | Build Your Brand Community | EducationHom',
   description: 'Scale your brand on social media with strategic content and community management. We handle Meta, LinkedIn, Instagram, and TikTok for high-growth brands.',
-  keywords: ['SMM', 'Social Media Marketing', 'Instagram marketing', 'LinkedIn strategy', 'brand awareness'],
+
 };
 
 export default function SmmPage() {
@@ -23,7 +23,7 @@ export default function SmmPage() {
                 Social that <span className="gradient-text">Converts.</span>
               </h1>
               <p className="text-[hsl(215,20%,65%)] text-xl mb-8 leading-relaxed">
-                Social media isn't just about likes and follows—it's about building a loyal community that drives real business results. We combine thumb-stopping creative with data-driven strategy to turn your social channels into growth engines.
+                Social media isn&apos;t just about likes and followsâ€”it&apos;s about building a loyal community that drives real business results. We combine thumb-stopping creative with data-driven strategy to turn your social channels into growth engines.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="btn-primary">Get Your Social Strategy</Link>

@@ -6,7 +6,7 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'Next.js & React Web Development | High-Performance Sites | EducationHom',
   description: 'We build blazing-fast, SEO-optimized websites using Next.js and React. Sites that rank, load in milliseconds, and convert visitors into customers.',
-  keywords: ['web development', 'Next.js developer', 'React development', 'headless CMS', 'Core Web Vitals', 'CRO'],
+
 };
 
 export default function WebDevPage() {
@@ -70,10 +70,10 @@ export default function WebDevPage() {
         <div className="container-custom">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: 'Next.js & React', desc: 'The fastest frontend framework on the planet for SEO and performance.', icon: '⚛️' },
-              { title: 'Headless CMS', desc: 'Manage content effortlessly with Sanity, Strapi, or Contentful.', icon: '🏗️' },
-              { title: 'Core Web Vitals', desc: 'We guarantee green scores for LCP, FID, and CLS on every project.', icon: '🚀' },
-              { title: 'Conversion-Led', desc: 'Design that guides users toward your goals and maximizes ROI.', icon: '📈' },
+              { title: 'Next.js & React', desc: 'The fastest frontend framework on the planet for SEO and performance.', icon: 'âš›ï¸' },
+              { title: 'Headless CMS', desc: 'Manage content effortlessly with Sanity, Strapi, or Contentful.', icon: 'ðŸ—ï¸' },
+              { title: 'Core Web Vitals', desc: 'We guarantee green scores for LCP, FID, and CLS on every project.', icon: 'ðŸš€' },
+              { title: 'Conversion-Led', desc: 'Design that guides users toward your goals and maximizes ROI.', icon: 'ðŸ“ˆ' },
             ].map((f, i) => (
               <div key={i} className="glass-card p-6 text-center">
                 <div className="text-3xl mb-4">{f.icon}</div>

@@ -6,7 +6,7 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'PPC Management Services | Maximize Your Ad ROI | EducationHom',
   description: 'Drive immediate results with expert PPC management. We optimize Google Ads, Meta Ads, and LinkedIn campaigns for maximum conversions.',
-  keywords: ['PPC management', 'Google Ads agency', 'Paid Search', 'Meta Ads', 'conversion rate optimization'],
+
 };
 
 const ppcStats = [
@@ -47,7 +47,7 @@ export default function PpcPage() {
                  </div>
                ))}
                <div className="glass-card p-8 flex items-center justify-center bg-gradient-to-br from-[hsl(39,100%,58%)]/20 to-transparent">
-                  <span className="text-4xl">💰</span>
+                  <span className="text-4xl">ðŸ’°</span>
                </div>
             </div>
           </div>
@@ -66,30 +66,30 @@ export default function PpcPage() {
                <h3 className="text-xl font-bold mb-4 text-white">Google Search & Shopping</h3>
                <p className="text-[hsl(215,20%,60%)] text-sm mb-6">Capture intent exactly when users are looking for your solution. We optimize for quality score to lower your CPC.</p>
                <ul className="space-y-2 text-xs text-[hsl(215,20%,50%)]">
-                  <li>• Keyword Research</li>
-                  <li>• Negative Keyword Management</li>
-                  <li>• Ad Copy A/B Testing</li>
-                  <li>• Shopping Feed Optimization</li>
+                  <li>â€¢ Keyword Research</li>
+                  <li>â€¢ Negative Keyword Management</li>
+                  <li>â€¢ Ad Copy A/B Testing</li>
+                  <li>â€¢ Shopping Feed Optimization</li>
                </ul>
             </div>
             <div className="glass-card p-8">
                <h3 className="text-xl font-bold mb-4 text-white">Social Media Advertising</h3>
                <p className="text-[hsl(215,20%,60%)] text-sm mb-6">Interrupt the scroll with thumb-stopping creative and precision audience targeting on Meta, LinkedIn, and TikTok.</p>
                <ul className="space-y-2 text-xs text-[hsl(215,20%,50%)]">
-                  <li>• Custom Audience Building</li>
-                  <li>• Lookalike Modeling</li>
-                  <li>• Creative Production</li>
-                  <li>• Lead Gen Forms</li>
+                  <li>â€¢ Custom Audience Building</li>
+                  <li>â€¢ Lookalike Modeling</li>
+                  <li>â€¢ Creative Production</li>
+                  <li>â€¢ Lead Gen Forms</li>
                </ul>
             </div>
             <div className="glass-card p-8">
                <h3 className="text-xl font-bold mb-4 text-white">Retargeting & LPO</h3>
                <p className="text-[hsl(215,20%,60%)] text-sm mb-6">Bring back lost visitors and convert them on landing pages built specifically to drive action and maximize ROI.</p>
                <ul className="space-y-2 text-xs text-[hsl(215,20%,50%)]">
-                  <li>• Dynamic Retargeting</li>
-                  <li>• Landing Page Design</li>
-                  <li>• Conversion Tracking</li>
-                  <li>• Heatmap Analysis</li>
+                  <li>â€¢ Dynamic Retargeting</li>
+                  <li>â€¢ Landing Page Design</li>
+                  <li>â€¢ Conversion Tracking</li>
+                  <li>â€¢ Heatmap Analysis</li>
                </ul>
             </div>
           </div>

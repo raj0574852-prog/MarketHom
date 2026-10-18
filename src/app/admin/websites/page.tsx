@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import type { WebsiteListing } from '@/components/websites/types';
 
 export default function AdminWebsitesPage() {
-  const [websites, setWebsites] = useState<any[]>([]);
+  const [websites, setWebsites] = useState<WebsiteListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
@@ -42,7 +43,11 @@ export default function AdminWebsitesPage() {
   }, [searchQuery, statusFilter]);
 
   useEffect(() => {
-    fetchWebsites(page, searchQuery, statusFilter);
+    const timer = setTimeout(() => {
+      fetchWebsites(page, searchQuery, statusFilter);
+    }, 0);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const handleSync = async () => {
@@ -57,9 +62,10 @@ export default function AdminWebsitesPage() {
       } else {
         setSyncStatus(`Sync failed: ${data.message}`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error syncing:', error);
-      setSyncStatus(`Sync error: ${error.message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      setSyncStatus(`Sync error: ${message}`);
     } finally {
       setIsSyncing(false);
       setTimeout(() => setSyncStatus(null), 8000);

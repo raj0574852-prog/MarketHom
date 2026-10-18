@@ -1,24 +1,26 @@
 'use client';
 
 import React from 'react';
+import type { MetricItem } from './types';
 import { PublisherMetricGauge } from './PublisherMetricGauge';
 import { PublisherTooltip } from './PublisherTooltip';
 import { normalizePublisherMetrics } from './utils/normalizeMetrics';
 import { AnimatedCounter } from './AnimatedCounter';
 import { formatCompactNumber } from './utils/formatters';
 
-export function PublisherAuthoritySnapshot({ metrics, domain }: { metrics: any[] | null | undefined, domain: string }) {
+export function PublisherAuthoritySnapshot({ metrics, domain }: { metrics: MetricItem[] | null | undefined, domain: string }) {
   const normalized = normalizePublisherMetrics(metrics);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
       <div className="p-6 border-b border-slate-100">
         <h2 className="text-lg font-bold text-slate-900">Authority Snapshot</h2>
-        <p className="text-sm text-slate-500 mt-1">SEO metrics for {domain}</p>
+        <p className="text-sm text-slate-500 mt-1 break-all min-w-0">SEO metrics for {domain}</p>
       </div>
 
+      {(normalized.dr !== null || normalized.da !== null || normalized.authorityScore !== null) && (
       <div className="p-8 bg-slate-50 border-b border-slate-100">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 justify-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 justify-items-center min-w-0">
           
           <AnimatedCounter value={normalized.dr}>
             {(animatedDr) => (
@@ -79,6 +81,7 @@ export function PublisherAuthoritySnapshot({ metrics, domain }: { metrics: any[]
 
         </div>
       </div>
+      )}
 
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -120,7 +123,7 @@ export function PublisherAuthoritySnapshot({ metrics, domain }: { metrics: any[]
                     <span className="text-emerald-600">{animatedDr !== null ? animatedDr : 'N/A'}</span>
                   </h4>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    A metric provided by Ahrefs showing the strength of a website's total backlink profile on a 0–100 logarithmic scale.
+                    A metric provided by Ahrefs showing the strength of a website&apos;s total backlink profile on a 0–100 logarithmic scale.
                   </p>
                   <p className="text-[10px] text-slate-400 mt-2 font-medium uppercase tracking-wider">Source: Ahrefs</p>
                 </div>

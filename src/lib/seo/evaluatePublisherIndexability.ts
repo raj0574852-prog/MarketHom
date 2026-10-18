@@ -115,7 +115,7 @@ export function evaluatePublisherIndexability(
   // The bare minimum for a valuable marketplace listing is having a specific niche/category + price (Score 25).
   // Pages scoring < 25 (e.g., General category with no details) are mathematically duplicate/thin content.
   let classification: IndexabilityClassification;
-  let indexable = true; // All technically eligible pages are now indexable
+  const indexable = true; // All technically eligible pages are now indexable
 
   if (score >= 45) {
     classification = 'INDEX';

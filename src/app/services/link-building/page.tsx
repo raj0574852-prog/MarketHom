@@ -6,7 +6,7 @@ import CTASection from '@/components/home/CTASection';
 export const metadata: Metadata = {
   title: 'White-Hat Link Building Services | Build Domain Authority | EducationHom',
   description: 'Earn high-quality, high-authority backlinks with our manual outreach and digital PR services. Safe, effective, and results-driven link building.',
-  keywords: ['link building', 'backlinks', 'digital PR', 'domain authority', 'guest posting', 'HARO'],
+
 };
 
 export default function LinkBuildingPage() {
@@ -27,6 +27,9 @@ export default function LinkBuildingPage() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="btn-primary">Start Building Authority</Link>
+                <Link href="/websites" className="btn-outline border-[hsl(270,80%,60%)]/50 hover:bg-[hsl(270,80%,60%)]/10 text-[hsl(270,80%,75%)]">
+                  Browse Marketplace (32k+ Sites) â†’
+                </Link>
               </div>
             </div>
             

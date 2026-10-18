@@ -19,13 +19,13 @@ export default function CTASection() {
           </span>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            Let's Build Your
+            Let&apos;s Build Your
             <br />
             Growth Engine Today
           </h2>
 
           <p className="text-white/75 text-lg mb-10 leading-relaxed">
-            Join 500+ businesses that trust EducationHom to drive traffic, generate leads, and grow revenue. Your free audit is just one click away.
+            Partner with EducationHom to drive traffic, generate leads, and grow revenue. Your free audit is just one click away.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

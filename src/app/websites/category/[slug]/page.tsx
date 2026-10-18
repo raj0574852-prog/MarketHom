@@ -55,14 +55,14 @@ export default async function CategoryHubPage({ params, searchParams }: Props) {
   const limit = 30; // Increased limit for category hubs to flatten architecture faster
   const offset = (pageNum - 1) * limit;
 
-  let query = supabase
+  const query = supabase
     .from('website_listings')
     .select('id, slug, name, domain, price, currency, short_description, content_placement_price, content_placement_selling_price', { count: 'exact' })
     .eq('status', 'published')
     .eq('is_listed', true)
     .eq('category_id', categoryName);
 
-  let { data: websitesRaw, error, count: filteredCount } = await query
+  const { data: websitesRaw, error, count: filteredCount } = await query
     .order('featured', { ascending: false })
     .range(offset, offset + limit - 1);
 

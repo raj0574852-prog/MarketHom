@@ -20,6 +20,7 @@ const navLinks = [
       { label: 'Web Development', href: '/services/web-development', icon: '💻' },
     ],
   },
+  { label: 'Marketplace', href: '/websites' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'About', href: '/about' },
   {
@@ -49,8 +50,11 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    setMobileOpen(false);
-    setActiveDropdown(null);
+    const timer = setTimeout(() => {
+      setMobileOpen(false);
+      setActiveDropdown(null);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return (
