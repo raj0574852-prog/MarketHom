@@ -2,6 +2,36 @@ import React from 'react';
 import { WebsiteListing } from './types';
 import PublisherLogo from './PublisherLogo';
 
+function getCategoryBannerImage(category?: string): string {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('tech') || cat.includes('software') || cat.includes('saas') || cat.includes('app') || cat.includes('ai')) {
+    return 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('finance') || cat.includes('business') || cat.includes('crypto') || cat.includes('money') || cat.includes('invest')) {
+    return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('marketing') || cat.includes('seo') || cat.includes('media') || cat.includes('digital') || cat.includes('agency')) {
+    return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('health') || cat.includes('fitness') || cat.includes('medical') || cat.includes('wellness') || cat.includes('diet')) {
+    return 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('education') || cat.includes('learn') || cat.includes('school') || cat.includes('college') || cat.includes('academic')) {
+    return 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('travel') || cat.includes('hotel') || cat.includes('tourism') || cat.includes('vacation')) {
+    return 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('real estate') || cat.includes('home') || cat.includes('property') || cat.includes('construction')) {
+    return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1600&auto=format&fit=crop';
+  }
+  if (cat.includes('sport') || cat.includes('game') || cat.includes('gaming') || cat.includes('football')) {
+    return 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1600&auto=format&fit=crop';
+  }
+  // Universal sleek modern digital abstract network image
+  return 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop';
+}
+
 export function PublisherHero({ website }: { website: WebsiteListing }) {
   const isVerified = website.verification_status === 'verified' && website.last_verified_at;
 
@@ -26,20 +56,40 @@ export function PublisherHero({ website }: { website: WebsiteListing }) {
     }
   }
 
+  // Choose the hero background image: featured_image_url or category-matched Unsplash banner
+  const heroBannerUrl = website.featured_image_url || getCategoryBannerImage(website.category_id);
+
   return (
-    <div className="relative w-full rounded-t-2xl overflow-hidden bg-white shadow-sm border border-slate-200 mb-8">
-      {/* Hero Background - Using a premium gradient instead of an external image dependency to ensure reliability across all categories */}
-      <div className="w-full h-[200px] md:h-[280px] bg-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-black"></div>
-        {/* Subtle grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+    <div className="relative w-full rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-200 mb-8 group">
+      {/* Hero Background with High-Definition Cover Banner */}
+      <div className="w-full h-[220px] md:h-[290px] bg-slate-950 relative overflow-hidden">
+        {/* Background photo */}
+        <img
+          src={heroBannerUrl}
+          alt={`${website.name || website.domain} background cover`}
+          className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.55] contrast-[1.1] transition-transform duration-700 group-hover:scale-105"
+        />
+
+        {/* Ambient color gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-900/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/80" />
+
+        {/* Subtle grid texture */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none opacity-60" />
+
+        {/* Top right badges */}
+        <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+          <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/90 text-xs font-semibold flex items-center gap-1.5 shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Verified Placement
+          </span>
+        </div>
       </div>
 
       {/* Content Area */}
-      <div className="relative px-6 pb-8 md:px-10 md:pb-10 -mt-12 md:-mt-16 flex flex-col md:flex-row gap-6">
+      <div className="relative px-6 pb-8 md:px-10 md:pb-10 -mt-14 md:-mt-16 flex flex-col md:flex-row gap-6">
         {/* Logo Container */}
-        <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-xl shadow-md border border-slate-100 flex items-center justify-center flex-shrink-0 overflow-hidden relative z-10 p-2">
+        <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl shadow-xl border-2 border-white flex items-center justify-center flex-shrink-0 overflow-hidden relative z-10 p-3 ring-4 ring-slate-900/10">
           <PublisherLogo domain={website.domain} name={website.name} className="w-full h-full object-contain" />
         </div>
 
@@ -84,6 +134,7 @@ export function PublisherHero({ website }: { website: WebsiteListing }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
               {website.domain}
+              <span className="text-slate-400 text-xs">↗</span>
             </a>
           </div>
 
