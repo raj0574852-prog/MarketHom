@@ -226,7 +226,7 @@ describe('Google Sheets Lead Sync - Remote HTTP Execution', () => {
     const result = await syncLeadToGoogleSheets({
       name: 'Test User',
       email: 'test@example.com'
-    });
+    }, '');
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('not configured');

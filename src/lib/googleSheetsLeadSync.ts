@@ -128,6 +128,9 @@ export function validateAndNormalizeLeadPayload(lead: GoogleSheetLeadPayload): {
   return { isValid: true, normalized };
 }
 
+export const DEFAULT_GOOGLE_APPS_SCRIPT_WEB_APP_URL =
+  'https://script.google.com/macros/s/AKfycbyb5wreOUh_mOIYmJy1p2bL1cEZd2OXxliJ7YomRcafMgVy1YKvZRKvteYTxl9RF50-/exec';
+
 /**
  * Synchronizes a lead to Google Sheets via the deployed Google Apps Script Web App.
  */
@@ -135,7 +138,10 @@ export async function syncLeadToGoogleSheets(
   lead: GoogleSheetLeadPayload,
   endpointUrlOverride?: string
 ): Promise<GoogleSheetSyncResult> {
-  const endpointUrl = endpointUrlOverride || process.env.GOOGLE_APPS_SCRIPT_WEB_APP_URL;
+  const endpointUrl =
+    endpointUrlOverride !== undefined
+      ? endpointUrlOverride
+      : (process.env.GOOGLE_APPS_SCRIPT_WEB_APP_URL || DEFAULT_GOOGLE_APPS_SCRIPT_WEB_APP_URL);
 
   if (!endpointUrl || !endpointUrl.trim()) {
     console.warn('[GoogleSheetsLeadSync] Configuration error: GOOGLE_APPS_SCRIPT_WEB_APP_URL is not set.');
