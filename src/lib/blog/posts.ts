@@ -1,5 +1,5 @@
 import { getServiceSupabase } from '../supabaseClient';
-import { BlogPost } from '../blogStore';
+import { BlogPost, getPostBySlug, getStoredPosts } from '../blogStore';
 
 interface SupabasePostRow {
   id: string;
@@ -65,38 +65,52 @@ function mapFromSupabase(row: SupabasePostRow): BlogPost {
 }
 
 export async function getPublishedPosts(): Promise<BlogPost[]> {
-  const client = getServiceSupabase();
-  const { data, error } = await client
-    .from('posts')
-    .select('*')
-    .eq('status', 'published')
-    .order('created_at', { ascending: false });
+  let dbPosts: BlogPost[] = [];
+  try {
+    const client = getServiceSupabase();
+    const { data, error } = await client
+      .from('posts')
+      .select('*')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching published posts:', error);
-    return [];
+    if (!error && data && data.length > 0) {
+      dbPosts = data.map(mapFromSupabase);
+    }
+  } catch (err) {
+    console.error('Error fetching published posts from Supabase:', err);
   }
 
-  return (data || []).map(mapFromSupabase);
+  if (dbPosts.length > 0) {
+    return dbPosts;
+  }
+
+  return getStoredPosts();
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
-  const client = getServiceSupabase();
-  const { data, error } = await client
-    .from('posts')
-    .select('*')
-    .eq('slug', slug)
-    .eq('status', 'published')
-    .maybeSingle();
+  try {
+    const client = getServiceSupabase();
+    const { data, error } = await client
+      .from('posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .maybeSingle();
 
-  if (error || !data) {
-    if (error && error.code !== 'PGRST116') {
-      console.error(`Error fetching post by slug ${slug}:`, error);
+    if (!error && data) {
+      return mapFromSupabase(data);
     }
-    return null;
+  } catch (err) {
+    console.error(`Error fetching post by slug ${slug}:`, err);
   }
 
-  return mapFromSupabase(data);
+  try {
+    const fallback = getPostBySlug(slug);
+    if (fallback) return fallback;
+  } catch {}
+
+  return null;
 }
 
 export async function getRecentPublishedPosts(limit: number = 3): Promise<BlogPost[]> {
