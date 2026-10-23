@@ -19,6 +19,7 @@ import {
   LeadInquiry 
 } from '@/lib/resourcesStore';
 import MarketplaceLeadsTab from '@/components/admin/MarketplaceLeadsTab';
+import { generateAutoKeywords } from '@/lib/blog/keywords';
 
 const PRESET_COVER_IMAGES = [
   { label: '🤖 AI & Tech', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop' },
@@ -324,6 +325,14 @@ Include:
   if (formFeaturedImage) seoScore += 15;
   if (headingCount >= 2) seoScore += 20;
 
+  const currentCategory = formCategory === 'Custom' ? (formCustomCategory || 'Marketing') : formCategory;
+  const autoKeywordsPreview = generateAutoKeywords({
+    title: formTitle,
+    category: currentCategory,
+    excerpt: formExcerpt || formTitle,
+    content: formContent
+  });
+
   const insertTag = (tag: string) => {
     if (tag === 'h1') {
       setFormContent(prev => prev + '\n\n<h1 class="text-3xl font-black my-4 text-white">Main Heading H1</h1>');
@@ -374,6 +383,12 @@ Include:
 
     const currentSlug = formSlug || formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const computedCanonical = formCanonicalUrl.trim() || `https://www.educationhom.com/blog/${currentSlug}`;
+    const computedKeywords = formKeywords.trim() || generateAutoKeywords({
+      title: formTitle,
+      category: categoryToUse,
+      excerpt: formExcerpt || formTitle,
+      content: finalContent
+    });
 
     const newPostData = {
       id: editingPostId || undefined,
@@ -390,7 +405,7 @@ Include:
       featured: formFeatured,
       metaTitle: formMetaTitle || formTitle,
       metaDescription: formMetaDescription || formExcerpt,
-      keywords: formKeywords.trim() || undefined,
+      keywords: computedKeywords,
       noIndex: formNoIndex,
       noFollow: formNoFollow,
       canonicalUrl: computedCanonical,
@@ -1178,17 +1193,40 @@ Include:
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Target SEO Keywords</label>
-                      <span className="text-[10px] text-[hsl(215,20%,50%)]">Meta tags &amp; Schema</span>
+                      <span className="text-[10px] text-emerald-400 font-medium">Auto-generated if empty</span>
                     </div>
                     <textarea
                       rows={3}
                       value={formKeywords}
                       onChange={(e) => setFormKeywords(e.target.value)}
-                      placeholder="e.g. digital marketing, best seo services, content strategy 2026 (comma separated)"
+                      placeholder={autoKeywordsPreview}
                       className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs placeholder-[hsl(215,20%,40%)]"
                     />
                     <div className="mt-1 text-[10px] text-[hsl(215,20%,50%)]">
-                      Comma-separated keywords. Injected into meta keywords, JSON-LD schema &amp; post tags.
+                      {formKeywords.trim() ? (
+                        <div className="flex items-center justify-between">
+                          <span>Custom keywords active. Injected into meta tags &amp; schema.</span>
+                          <button
+                            type="button"
+                            onClick={() => setFormKeywords('')}
+                            className="text-[10px] text-amber-400 hover:underline"
+                          >
+                            Reset to auto
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap items-center gap-1">
+                          <span>Auto-derived from blog:</span>
+                          <span className="text-white/80 font-medium">{autoKeywordsPreview}</span>
+                          <button
+                            type="button"
+                            onClick={() => setFormKeywords(autoKeywordsPreview)}
+                            className="ml-1 text-[10px] text-[hsl(217,91%,70%)] underline hover:text-white"
+                          >
+                            (Customize)
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

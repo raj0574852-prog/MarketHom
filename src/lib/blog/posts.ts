@@ -1,6 +1,7 @@
 import { getServiceSupabase } from '../supabaseClient';
 import { BlogPost, getPostBySlug, getStoredPosts } from '../blogStore';
 import { CANONICAL_SITE_URL } from '../constants';
+import { generateAutoKeywords } from './keywords';
 
 interface SupabasePostRow {
   id: string;
@@ -35,7 +36,16 @@ function mapToSupabase(post: Partial<BlogPost>) {
   if (post.featuredImage !== undefined) { mapped.featured_image = post.featuredImage; delete mapped.featuredImage; }
   if (post.metaTitle !== undefined) { mapped.meta_title = post.metaTitle; delete mapped.metaTitle; }
   if (post.metaDescription !== undefined) { mapped.meta_description = post.metaDescription; delete mapped.metaDescription; }
-  if (post.keywords !== undefined) { mapped.keywords = post.keywords; }
+  
+  // Keywords: If provided and not blank, use it; otherwise auto-generate from title, category, excerpt & content
+  const providedKeywords = post.keywords && typeof post.keywords === 'string' ? post.keywords.trim() : '';
+  mapped.keywords = providedKeywords || generateAutoKeywords({
+    title: post.title,
+    category: post.category,
+    excerpt: post.excerpt,
+    content: post.content
+  });
+
   if (post.noIndex !== undefined) { mapped.no_index = post.noIndex; delete mapped.noIndex; }
   if (post.noFollow !== undefined) { mapped.no_follow = post.noFollow; delete mapped.noFollow; }
   
@@ -64,6 +74,16 @@ function mapFromSupabase(row: SupabasePostRow): BlogPost {
     ? String(row.canonical_url).trim()
     : `${CANONICAL_SITE_URL}/blog/${row.slug}`;
 
+  // Guarantee keywords are always populated
+  const keywords = (row.keywords && String(row.keywords).trim().length > 0)
+    ? String(row.keywords).trim()
+    : generateAutoKeywords({
+        title: row.title,
+        category: row.category,
+        excerpt: row.excerpt,
+        content: row.content
+      });
+
   return {
     ...row,
     authorRole: row.author_role,
@@ -71,7 +91,7 @@ function mapFromSupabase(row: SupabasePostRow): BlogPost {
     featuredImage: sanitizedImage,
     metaTitle: row.meta_title,
     metaDescription: row.meta_description,
-    keywords: (row.keywords as string) || undefined,
+    keywords,
     noIndex: row.no_index,
     noFollow: row.no_follow,
     canonicalUrl,

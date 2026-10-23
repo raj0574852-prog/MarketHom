@@ -4,6 +4,7 @@ import CTASection from '@/components/home/CTASection';
 import { getPublishedPostBySlug } from '@/lib/blog/posts';
 import { Metadata } from 'next';
 import { CANONICAL_SITE_URL } from '@/lib/constants';
+import { generateAutoKeywords } from '@/lib/blog/keywords';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,9 +40,17 @@ export async function generateMetadata(
       ? String(post.canonicalUrl).trim()
       : `${CANONICAL_SITE_URL}/blog/${post.slug}`;
 
-    const keywordsArray = post.keywords
-      ? post.keywords.split(',').map((k: string) => k.trim()).filter(Boolean)
-      : undefined;
+    const effectiveKeywords = (post.keywords && post.keywords.trim()) || generateAutoKeywords({
+      title: post.title,
+      category: post.category,
+      excerpt: post.excerpt,
+      content: post.content
+    });
+
+    const keywordsArray = effectiveKeywords
+      .split(',')
+      .map((k: string) => k.trim())
+      .filter(Boolean);
 
     const robots = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
@@ -102,9 +111,17 @@ export default async function BlogPostPage({ params }: Props) {
       ? String(post.canonicalUrl).trim()
       : `${CANONICAL_SITE_URL}/blog/${post.slug}`;
 
-    const keywordsArray = post.keywords
-      ? post.keywords.split(',').map((k: string) => k.trim()).filter(Boolean)
-      : [];
+    const effectiveKeywords = (post.keywords && post.keywords.trim()) || generateAutoKeywords({
+      title: post.title,
+      category: post.category,
+      excerpt: post.excerpt,
+      content: post.content
+    });
+
+    const keywordsArray = effectiveKeywords
+      .split(',')
+      .map((k: string) => k.trim())
+      .filter(Boolean);
 
     const robotsDirective = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
