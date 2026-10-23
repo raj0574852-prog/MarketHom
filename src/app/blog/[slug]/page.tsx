@@ -35,17 +35,28 @@ export async function generateMetadata(
       };
     }
 
+    const canonicalUrl = post.canonicalUrl && String(post.canonicalUrl).trim().length > 0
+      ? String(post.canonicalUrl).trim()
+      : `${CANONICAL_SITE_URL}/blog/${post.slug}`;
+
+    const keywordsArray = post.keywords
+      ? post.keywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+      : undefined;
+
     const robots = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
     return {
       title: post.metaTitle || `${post.title} | EducationHom`,
       description: post.metaDescription || post.excerpt,
+      keywords: keywordsArray && keywordsArray.length > 0 ? keywordsArray : undefined,
       robots,
-      alternates: post.canonicalUrl ? { canonical: post.canonicalUrl } : undefined,
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
         title: post.metaTitle || post.title,
         description: post.metaDescription || post.excerpt || '',
-        url: `${CANONICAL_SITE_URL}/blog/${post.slug}`,
+        url: canonicalUrl,
         siteName: 'EducationHom',
         images: post.featuredImage ? [post.featuredImage] : ['/og-image.png'],
         locale: 'en_US',
@@ -87,6 +98,14 @@ export default async function BlogPostPage({ params }: Props) {
       );
     }
 
+    const canonicalUrl = post.canonicalUrl && String(post.canonicalUrl).trim().length > 0
+      ? String(post.canonicalUrl).trim()
+      : `${CANONICAL_SITE_URL}/blog/${post.slug}`;
+
+    const keywordsArray = post.keywords
+      ? post.keywords.split(',').map((k: string) => k.trim()).filter(Boolean)
+      : [];
+
     const robotsDirective = `${post.noIndex ? 'noindex' : 'index'}, ${post.noFollow ? 'nofollow' : 'follow'}`;
 
     const jsonLdArticle = {
@@ -97,6 +116,7 @@ export default async function BlogPostPage({ params }: Props) {
       image: post.featuredImage || 'https://www.educationhom.com/og-image.png',
       datePublished: safeIsoDate(post.date),
       dateModified: safeIsoDate(post.date),
+      ...(keywordsArray.length > 0 ? { keywords: keywordsArray.join(', ') } : {}),
       author: {
         '@type': 'Person',
         name: post.author || 'EducationHom Expert',
@@ -107,7 +127,7 @@ export default async function BlogPostPage({ params }: Props) {
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `https://www.educationhom.com/blog/${post.slug}`
+        '@id': canonicalUrl
       },
     };
 
@@ -173,6 +193,17 @@ export default async function BlogPostPage({ params }: Props) {
                 className="prose-dark max-w-none space-y-6" 
                 dangerouslySetInnerHTML={{ __html: post.content || '' }} 
               />
+
+              {keywordsArray.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-[hsl(215,25%,22%)]/40 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-[hsl(215,20%,50%)] uppercase tracking-wider mr-2">Target Keywords:</span>
+                  {keywordsArray.map((kw: string, i: number) => (
+                    <span key={i} className="px-3 py-1 rounded-full text-xs font-medium bg-[hsl(215,25%,16%)] text-[hsl(217,91%,75%)] border border-[hsl(215,25%,24%)]">
+                      #{kw}
+                    </span>
+                  ))}
+                </div>
+              )}
               
               <div className="mt-16 p-8 glass-card border-[hsl(217,91%,54%)]/20 flex flex-col md:flex-row items-center gap-8">
                  <div className="flex-1">

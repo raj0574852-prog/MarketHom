@@ -14,6 +14,7 @@ export interface BlogPost {
   featuredImage?: string;
   metaTitle?: string;
   metaDescription?: string;
+  keywords?: string;
   noIndex?: boolean;
   noFollow?: boolean;
   canonicalUrl?: string;

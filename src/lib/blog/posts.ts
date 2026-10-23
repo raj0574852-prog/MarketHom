@@ -1,5 +1,6 @@
 import { getServiceSupabase } from '../supabaseClient';
 import { BlogPost, getPostBySlug, getStoredPosts } from '../blogStore';
+import { CANONICAL_SITE_URL } from '../constants';
 
 interface SupabasePostRow {
   id: string;
@@ -14,6 +15,7 @@ interface SupabasePostRow {
   featured_image?: string;
   meta_title?: string;
   meta_description?: string;
+  keywords?: string;
   no_index?: boolean;
   no_follow?: boolean;
   canonical_url?: string;
@@ -33,9 +35,15 @@ function mapToSupabase(post: Partial<BlogPost>) {
   if (post.featuredImage !== undefined) { mapped.featured_image = post.featuredImage; delete mapped.featuredImage; }
   if (post.metaTitle !== undefined) { mapped.meta_title = post.metaTitle; delete mapped.metaTitle; }
   if (post.metaDescription !== undefined) { mapped.meta_description = post.metaDescription; delete mapped.metaDescription; }
+  if (post.keywords !== undefined) { mapped.keywords = post.keywords; }
   if (post.noIndex !== undefined) { mapped.no_index = post.noIndex; delete mapped.noIndex; }
   if (post.noFollow !== undefined) { mapped.no_follow = post.noFollow; delete mapped.noFollow; }
-  if (post.canonicalUrl !== undefined) { mapped.canonical_url = post.canonicalUrl; delete mapped.canonicalUrl; }
+  
+  // Canonical URL: If provided, use it. If not provided or blank, automatically construct from slug
+  const slug = post.slug || (post.title ? post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : '');
+  const providedCanonical = post.canonicalUrl && typeof post.canonicalUrl === 'string' ? post.canonicalUrl.trim() : '';
+  mapped.canonical_url = providedCanonical || (slug ? `${CANONICAL_SITE_URL}/blog/${slug}` : null);
+  delete mapped.canonicalUrl;
   
   // Always ensure status is set to published for public viewing
   if (!mapped.status) mapped.status = 'published';
@@ -51,6 +59,11 @@ function mapFromSupabase(row: SupabasePostRow): BlogPost {
     sanitizedImage = undefined;
   }
 
+  // Guarantee canonicalUrl is always populated
+  const canonicalUrl = row.canonical_url && String(row.canonical_url).trim().length > 0
+    ? String(row.canonical_url).trim()
+    : `${CANONICAL_SITE_URL}/blog/${row.slug}`;
+
   return {
     ...row,
     authorRole: row.author_role,
@@ -58,9 +71,10 @@ function mapFromSupabase(row: SupabasePostRow): BlogPost {
     featuredImage: sanitizedImage,
     metaTitle: row.meta_title,
     metaDescription: row.meta_description,
+    keywords: (row.keywords as string) || undefined,
     noIndex: row.no_index,
     noFollow: row.no_follow,
-    canonicalUrl: row.canonical_url,
+    canonicalUrl,
   } as BlogPost;
 }
 
@@ -151,21 +165,68 @@ export async function createPost(post: BlogPost): Promise<BlogPost | null> {
   return upsertPost(post);
 }
 
-export async function updatePost(id: string, updates: Partial<BlogPost>): Promise<BlogPost | null> {
-  const adminSupabase = getServiceSupabase();
-  const { data, error } = await adminSupabase
+async function safeUpdate(adminSupabase: any, payload: Record<string, any>, id: string) {
+  let { data, error } = await adminSupabase
     .from('posts')
-    .update({ ...mapToSupabase(updates), updated_at: new Date().toISOString() })
+    .update(payload)
     .eq('id', id)
     .select()
     .single();
 
+  if (error && 'keywords' in payload && (error.message?.includes('keywords') || error.code === 'PGRST204' || error.code === '42703')) {
+    console.warn('Supabase posts table missing keywords column, retrying update without keywords:', error.message);
+    const { keywords, ...withoutKeywords } = payload;
+    const retryResult = await adminSupabase
+      .from('posts')
+      .update(withoutKeywords)
+      .eq('id', id)
+      .select()
+      .single();
+    data = retryResult.data;
+    error = retryResult.error;
+  }
+
   if (error) {
+    throw error;
+  }
+  return data;
+}
+
+async function safeInsert(adminSupabase: any, payload: Record<string, any>) {
+  let { data, error } = await adminSupabase
+    .from('posts')
+    .insert([payload])
+    .select()
+    .single();
+
+  if (error && 'keywords' in payload && (error.message?.includes('keywords') || error.code === 'PGRST204' || error.code === '42703')) {
+    console.warn('Supabase posts table missing keywords column, retrying insert without keywords:', error.message);
+    const { keywords, ...withoutKeywords } = payload;
+    const retryResult = await adminSupabase
+      .from('posts')
+      .insert([withoutKeywords])
+      .select()
+      .single();
+    data = retryResult.data;
+    error = retryResult.error;
+  }
+
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
+export async function updatePost(id: string, updates: Partial<BlogPost>): Promise<BlogPost | null> {
+  const adminSupabase = getServiceSupabase();
+  const payload = { ...mapToSupabase(updates), updated_at: new Date().toISOString() };
+  try {
+    const data = await safeUpdate(adminSupabase, payload, id);
+    return mapFromSupabase(data);
+  } catch (error) {
     console.error(`Error updating post ${id}:`, error);
     throw error;
   }
-
-  return mapFromSupabase(data);
 }
 
 export async function deletePost(id: string): Promise<boolean> {
@@ -213,29 +274,20 @@ export async function upsertPost(post: BlogPost): Promise<BlogPost | null> {
     .maybeSingle();
 
   if (existing) {
-    const { data, error } = await adminSupabase
-      .from('posts')
-      .update({ ...mapped, id: existing.id, updated_at: now })
-      .eq('id', existing.id)
-      .select()
-      .single();
-
-    if (error) {
+    try {
+      const data = await safeUpdate(adminSupabase, { ...mapped, id: existing.id, updated_at: now }, existing.id);
+      return mapFromSupabase(data);
+    } catch (error) {
       console.error(`Error updating post ${existing.id}:`, error);
       throw error;
     }
-    return mapFromSupabase(data);
   } else {
-    const { data, error } = await adminSupabase
-      .from('posts')
-      .insert([{ ...mapped, created_at: now, updated_at: now }])
-      .select()
-      .single();
-
-    if (error) {
+    try {
+      const data = await safeInsert(adminSupabase, { ...mapped, created_at: now, updated_at: now });
+      return mapFromSupabase(data);
+    } catch (error) {
       console.error('Error inserting post:', error);
       throw error;
     }
-    return mapFromSupabase(data);
   }
 }

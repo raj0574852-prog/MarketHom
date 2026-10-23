@@ -67,6 +67,7 @@ export default function AdminDashboardPage() {
   // SEO Form State
   const [formMetaTitle, setFormMetaTitle] = useState('');
   const [formMetaDescription, setFormMetaDescription] = useState('');
+  const [formKeywords, setFormKeywords] = useState('');
   const [formNoIndex, setFormNoIndex] = useState(false);
   const [formNoFollow, setFormNoFollow] = useState(false);
   const [formCanonicalUrl, setFormCanonicalUrl] = useState('');
@@ -371,10 +372,13 @@ Include:
         .join('\n\n');
     }
 
+    const currentSlug = formSlug || formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const computedCanonical = formCanonicalUrl.trim() || `https://www.educationhom.com/blog/${currentSlug}`;
+
     const newPostData = {
       id: editingPostId || undefined,
       title: formTitle,
-      slug: formSlug || formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+      slug: currentSlug,
       excerpt: formExcerpt || formTitle,
       category: categoryToUse,
       author: formAuthor,
@@ -386,9 +390,10 @@ Include:
       featured: formFeatured,
       metaTitle: formMetaTitle || formTitle,
       metaDescription: formMetaDescription || formExcerpt,
+      keywords: formKeywords.trim() || undefined,
       noIndex: formNoIndex,
       noFollow: formNoFollow,
-      canonicalUrl: formCanonicalUrl,
+      canonicalUrl: computedCanonical,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     };
 
@@ -443,6 +448,7 @@ Include:
     setFormFeatured(false);
     setFormMetaTitle('');
     setFormMetaDescription('');
+    setFormKeywords('');
     setFormNoIndex(false);
     setFormNoFollow(false);
     setFormCanonicalUrl('');
@@ -463,6 +469,7 @@ Include:
     setFormFeatured(!!post.featured);
     setFormMetaTitle(post.metaTitle || post.title);
     setFormMetaDescription(post.metaDescription || post.excerpt);
+    setFormKeywords(post.keywords || '');
     setFormNoIndex(!!post.noIndex);
     setFormNoFollow(!!post.noFollow);
     setFormCanonicalUrl(post.canonicalUrl || '');
@@ -1134,31 +1141,56 @@ Include:
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider mb-2">Canonical URL</label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Canonical URL</label>
+                      <span className="text-[10px] text-emerald-400 font-medium">Auto-generated if empty</span>
+                    </div>
                     <input
                       type="text"
                       value={formCanonicalUrl}
                       onChange={(e) => setFormCanonicalUrl(e.target.value)}
-                      placeholder="https://educationhom.com/blog/custom-canonical"
+                      placeholder={`https://www.educationhom.com/blog/${formSlug || (formTitle ? formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : 'post-slug')}`}
                       className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs font-mono placeholder-[hsl(215,20%,40%)]"
                     />
+                    <div className="mt-1 text-[10px] text-[hsl(215,20%,50%)] truncate">
+                      Effective Canonical: <span className="text-white/80 font-mono">{formCanonicalUrl.trim() || `https://www.educationhom.com/blog/${formSlug || (formTitle ? formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : 'post-slug')}`}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Meta Description</label>
-                    <span className={`text-[10px] font-mono ${formMetaDescription.length > 160 ? 'text-amber-400' : 'text-[hsl(215,20%,50%)]'}`}>
-                      {formMetaDescription.length}/160 chars
-                    </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Meta Description</label>
+                      <span className={`text-[10px] font-mono ${formMetaDescription.length > 160 ? 'text-amber-400' : 'text-[hsl(215,20%,50%)]'}`}>
+                        {formMetaDescription.length}/160 chars
+                      </span>
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={formMetaDescription}
+                      onChange={(e) => setFormMetaDescription(e.target.value)}
+                      placeholder="Snippet description displayed in Google Search engine results..."
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs placeholder-[hsl(215,20%,40%)]"
+                    />
                   </div>
-                  <textarea
-                    rows={2}
-                    value={formMetaDescription}
-                    onChange={(e) => setFormMetaDescription(e.target.value)}
-                    placeholder="Snippet description displayed in Google Search engine results..."
-                    className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs placeholder-[hsl(215,20%,40%)]"
-                  />
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-xs font-bold text-[hsl(215,20%,60%)] uppercase tracking-wider">Target SEO Keywords</label>
+                      <span className="text-[10px] text-[hsl(215,20%,50%)]">Meta tags &amp; Schema</span>
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={formKeywords}
+                      onChange={(e) => setFormKeywords(e.target.value)}
+                      placeholder="e.g. digital marketing, best seo services, content strategy 2026 (comma separated)"
+                      className="w-full px-4 py-2.5 bg-[hsl(222,47%,9%)] border border-[hsl(215,25%,22%)] rounded-xl text-white text-xs placeholder-[hsl(215,20%,40%)]"
+                    />
+                    <div className="mt-1 text-[10px] text-[hsl(215,20%,50%)]">
+                      Comma-separated keywords. Injected into meta keywords, JSON-LD schema &amp; post tags.
+                    </div>
+                  </div>
                 </div>
 
                 {/* Robots Link Directives */}

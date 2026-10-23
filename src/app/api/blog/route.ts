@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { BlogPost } from '@/lib/blogStore';
 import { getPublishedPosts, getAllPostsForAdmin, createPost, updatePost, deletePost, getPublishedPostBySlug } from '@/lib/blog/posts';
 import { isAdminAuthenticated } from '@/lib/auth';
+import { CANONICAL_SITE_URL } from '@/lib/constants';
 
 export async function GET(request: Request) {
   try {
@@ -42,6 +43,10 @@ export async function POST(request: Request) {
 
     const dateStr = body.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     const slug = body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const canonicalUrl = (body.canonicalUrl && typeof body.canonicalUrl === 'string' && body.canonicalUrl.trim().length > 0)
+      ? body.canonicalUrl.trim()
+      : `${CANONICAL_SITE_URL}/blog/${slug}`;
+    const keywords = typeof body.keywords === 'string' ? body.keywords.trim() : undefined;
     
     // Check if we are updating an existing post
     const existingPost = body.id ? await getAllPostsForAdmin().then(posts => posts.find(p => p.id === body.id)) : null;
@@ -50,7 +55,13 @@ export async function POST(request: Request) {
 
     if (existingPost) {
       // Update
-      const updates = { ...body, date: dateStr, slug };
+      const updates = {
+        ...body,
+        date: dateStr,
+        slug,
+        canonicalUrl,
+        keywords: keywords || existingPost.keywords
+      };
       savedPost = await updatePost(existingPost.id, updates);
     } else {
       // Create
@@ -58,7 +69,9 @@ export async function POST(request: Request) {
         ...body,
         id: body.id || 'post-' + Date.now(),
         date: dateStr,
-        slug
+        slug,
+        canonicalUrl,
+        keywords
       };
       savedPost = await createPost(newPost);
     }
