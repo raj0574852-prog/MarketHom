@@ -1,8 +1,17 @@
 /**
  * Intelligent SEO Keyword Generator for Blog Articles
- * Automatically extracts high-intent, relevant SEO keywords from article title, category, excerpt, and content
- * when the admin does not specify custom keywords.
+ * Formats keywords according to high-authority SEO patterns:
+ * [primary topic], [primary topic com], [specific topic phrase/guest post], [agency brand variations]
+ * 
+ * Example:
+ * moneynewsweb, moneynewsweb com, MoneyNewsWeb guest post, education hom, educationhom.com, educationhom com
  */
+
+const BRAND_KEYWORDS = [
+  'education hom',
+  'educationhom.com',
+  'educationhom com'
+];
 
 const STOP_WORDS = new Set([
   'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', 'aren\'t',
@@ -20,7 +29,7 @@ const STOP_WORDS = new Set([
   'we', 'we\'d', 'we\'ll', 'we\'re', 'we\'ve', 'were', 'weren\'t', 'what', 'what\'s', 'when', 'when\'s',
   'where', 'where\'s', 'which', 'while', 'who', 'who\'s', 'whom', 'why', 'why\'s', 'with', 'won\'t',
   'would', 'wouldn\'t', 'you', 'you\'d', 'you\'ll', 'you\'re', 'you\'ve', 'your', 'yours', 'yourself',
-  'yourselves', 'step', 'steps', 'guide', 'ultimate', 'complete', 'simple', 'easy', 'ways', 'tips',
+  'yourselves', 'step', 'steps', 'ultimate', 'complete', 'simple', 'easy', 'ways', 'tips',
   'top', 'best', 'new', 'post', 'blog', 'article', 'read', 'share', 'make', 'use', 'using', 'get',
   'getting', 'way', 'need', 'know', 'see', 'look', 'take', 'come', 'think', 'also', 'just', 'like',
   'even', 'well', 'much', 'many', 'good', 'great', 'first', 'last', 'next', 'year', 'day', 'time'
@@ -28,47 +37,11 @@ const STOP_WORDS = new Set([
 
 function cleanText(text: string): string {
   return text
-    .replace(/<[^>]+>/g, ' ') // Strip HTML
-    .replace(/https?:\/\/\S+/g, ' ') // Strip URLs
-    .replace(/[^\p{L}\p{N}\s-]/gu, ' ') // Keep letters, numbers, spaces, hyphens
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-function extractKeyPhrases(rawText: string, maxPhrases: number = 4): string[] {
-  const cleaned = cleanText(rawText).toLowerCase();
-  const words = cleaned.split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
-  const phrases: string[] = [];
-
-  // Extract meaningful 2-word phrases
-  for (let i = 0; i < words.length - 1; i++) {
-    const w1 = words[i];
-    const w2 = words[i + 1];
-    if (!STOP_WORDS.has(w1) && !STOP_WORDS.has(w2) && w1.length > 2 && w2.length > 2) {
-      phrases.push(`${w1} ${w2}`);
-    }
-  }
-
-  // Extract meaningful 3-word phrases
-  for (let i = 0; i < words.length - 2; i++) {
-    const w1 = words[i];
-    const w2 = words[i + 1];
-    const w3 = words[i + 2];
-    if (!STOP_WORDS.has(w1) && !STOP_WORDS.has(w2) && !STOP_WORDS.has(w3)) {
-      phrases.push(`${w1} ${w2} ${w3}`);
-    }
-  }
-
-  // Count frequencies
-  const freqMap = new Map<string, number>();
-  for (const phrase of phrases) {
-    freqMap.set(phrase, (freqMap.get(phrase) || 0) + 1);
-  }
-
-  return Array.from(freqMap.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, maxPhrases)
-    .map(([phrase]) => phrase);
 }
 
 export function generateAutoKeywords(input: {
@@ -77,72 +50,94 @@ export function generateAutoKeywords(input: {
   excerpt?: string;
   content?: string;
 }): string {
-  const keywordsSet = new Set<string>();
+  const title = (input.title || '').trim();
+  const category = (input.category || '').trim();
+  const keywordsList: string[] = [];
+  const seen = new Set<string>();
 
-  // 1. Add Category as primary anchor keyword
-  if (input.category && input.category.trim()) {
-    const cat = input.category.trim().toLowerCase();
-    keywordsSet.add(cat);
-    // If category has multiple words (e.g. "AI SEO" or "Content Marketing"), add sub-tags
-    if (cat.includes(' ')) {
-      const parts = cat.split(/\s+/).filter(p => !STOP_WORDS.has(p) && p.length > 2);
-      if (parts.length > 1) {
-        keywordsSet.add(parts.join(' '));
+  const addKeyword = (kw: string) => {
+    const trimmed = kw.trim();
+    const lower = trimmed.toLowerCase();
+    if (!lower || seen.has(lower)) return;
+    seen.add(lower);
+    keywordsList.push(trimmed);
+  };
+
+  // Special match for MoneyNewsWeb or similar platform guest posts
+  if (/moneynewsweb/i.test(title)) {
+    addKeyword('moneynewsweb');
+    addKeyword('moneynewsweb com');
+    addKeyword('MoneyNewsWeb guest post');
+    for (const brand of BRAND_KEYWORDS) {
+      addKeyword(brand);
+    }
+    return keywordsList.join(', ');
+  }
+
+  if (title) {
+    // 1. Detect primary entity/subject from title
+    // E.g.: "Newsgiga Com: Everything You Need...", "Technical SEO: Complete Guide..."
+    let entity = '';
+    let entityCase = '';
+
+    const delimiterMatch = title.match(/^([^:\-–—|?]+?)(?:\s+(?:guest\s+post|guide|review|vs|platform|service|tips|tutorial|strategies|checklist)|\s*[:\-–—|?]|$)/i);
+    if (delimiterMatch && delimiterMatch[1].trim()) {
+      let candidate = delimiterMatch[1].trim();
+      candidate = candidate.replace(/^(?:what\s+is|how\s+to|why|the|\d+)\s+/i, '').trim();
+      if (candidate.length >= 2) {
+        entityCase = candidate;
+        entity = candidate.toLowerCase();
+      }
+    }
+
+    if (!entity) {
+      const firstWord = title.split(/\s+/)[0].replace(/[^\w-]/g, '');
+      if (firstWord.length >= 3) {
+        entityCase = firstWord;
+        entity = firstWord.toLowerCase();
+      } else if (category) {
+        entityCase = category;
+        entity = category.toLowerCase();
+      }
+    }
+
+    if (entity) {
+      const baseEntity = entity.replace(/\s+com$/i, '').replace(/\.com$/i, '').trim();
+      const baseEntityCase = entityCase.replace(/\s+com$/i, '').replace(/\.com$/i, '').trim();
+      
+      // 1. Primary entity (e.g. "moneynewsweb", "newsgiga")
+      addKeyword(baseEntity);
+
+      // 2. Entity domain / com variation (e.g. "moneynewsweb com", "newsgiga com")
+      addKeyword(`${baseEntity} com`);
+
+      // 3. Specific article focus phrase (e.g. "MoneyNewsWeb guest post")
+      const titleLower = title.toLowerCase();
+      if (titleLower.includes('guest post')) {
+        addKeyword(`${baseEntityCase} guest post`);
+      } else if (titleLower.includes('guide')) {
+        addKeyword(`${baseEntityCase} guide`);
+      } else {
+        const words = title.replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w.toLowerCase()));
+        if (words.length >= 2) {
+          addKeyword(`${words[0]} ${words[1]}`.toLowerCase());
+        } else if (category && category.toLowerCase() !== baseEntity) {
+          addKeyword(category.toLowerCase());
+        }
       }
     }
   }
 
-  // 2. Extract Key Phrases from Title
-  if (input.title && input.title.trim()) {
-    const titleClean = cleanText(input.title).toLowerCase();
-    const titleWords = titleClean.split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
-    
-    // Add 2-word title combos
-    for (let i = 0; i < titleWords.length - 1; i++) {
-      const phrase = `${titleWords[i]} ${titleWords[i + 1]}`;
-      keywordsSet.add(phrase);
-    }
-
-    // Add strongest single words from title (up to 2)
-    for (const word of titleWords.slice(0, 3)) {
-      if (word.length >= 3 && !STOP_WORDS.has(word)) {
-        keywordsSet.add(word);
-      }
-    }
+  // 4. Add agency branding keywords
+  for (const brand of BRAND_KEYWORDS) {
+    addKeyword(brand);
   }
 
-  // 3. Extract Headings (H2 / H3) from Content
-  if (input.content) {
-    const headingMatches = input.content.matchAll(/<h[23][^>]*>(.*?)<\/h[23]>/gi);
-    for (const match of headingMatches) {
-      if (keywordsSet.size >= 8) break;
-      const headingText = match[1];
-      const headingPhrases = extractKeyPhrases(headingText, 1);
-      for (const phrase of headingPhrases) {
-        keywordsSet.add(phrase);
-      }
-    }
+  // Fallback defaults if title was blank
+  if (keywordsList.length <= BRAND_KEYWORDS.length && category) {
+    addKeyword(category.toLowerCase());
+    addKeyword(`${category.toLowerCase()} agency`);
   }
 
-  // 4. Extract from Excerpt or Content if we still have few keywords
-  if (keywordsSet.size < 5) {
-    const sourceText = input.excerpt || input.content || '';
-    const contentPhrases = extractKeyPhrases(sourceText, 3);
-    for (const phrase of contentPhrases) {
-      keywordsSet.add(phrase);
-    }
-  }
-
-  // Fallback defaults if title or content was very short
-  if (keywordsSet.size === 0) {
-    return 'digital marketing, seo strategy, content growth, agency insights';
-  }
-
-  // Deduplicate and limit to top 6 - 8 clean keywords
-  const resultList = Array.from(keywordsSet)
-    .map(k => k.trim())
-    .filter(k => k.length >= 3 && !k.match(/^\d+$/))
-    .slice(0, 7);
-
-  return resultList.join(', ');
+  return keywordsList.join(', ');
 }
