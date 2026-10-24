@@ -48,12 +48,14 @@ export async function POST(request: Request) {
       ? body.canonicalUrl.trim()
       : `${CANONICAL_SITE_URL}/blog/${slug}`;
     const providedKeywords = typeof body.keywords === 'string' ? body.keywords.trim() : '';
-    const keywords = providedKeywords || generateAutoKeywords({
-      title: body.title,
-      category: body.category,
-      excerpt: body.excerpt,
-      content: body.content
-    });
+    const keywords = (providedKeywords && providedKeywords.includes('education hom'))
+      ? providedKeywords
+      : generateAutoKeywords({
+          title: body.title,
+          category: body.category,
+          excerpt: body.excerpt,
+          content: body.content
+        });
     
     // Check if we are updating an existing post
     const existingPost = body.id ? await getAllPostsForAdmin().then(posts => posts.find(p => p.id === body.id)) : null;

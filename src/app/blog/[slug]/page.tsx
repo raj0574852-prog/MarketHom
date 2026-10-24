@@ -40,12 +40,14 @@ export async function generateMetadata(
       ? String(post.canonicalUrl).trim()
       : `${CANONICAL_SITE_URL}/blog/${post.slug}`;
 
-    const effectiveKeywords = (post.keywords && post.keywords.trim()) || generateAutoKeywords({
-      title: post.title,
-      category: post.category,
-      excerpt: post.excerpt,
-      content: post.content
-    });
+    const effectiveKeywords = (post.keywords && post.keywords.includes('education hom'))
+      ? post.keywords.trim()
+      : generateAutoKeywords({
+          title: post.title,
+          category: post.category,
+          excerpt: post.excerpt,
+          content: post.content
+        });
 
     const keywordsArray = effectiveKeywords
       .split(',')
@@ -111,12 +113,14 @@ export default async function BlogPostPage({ params }: Props) {
       ? String(post.canonicalUrl).trim()
       : `${CANONICAL_SITE_URL}/blog/${post.slug}`;
 
-    const effectiveKeywords = (post.keywords && post.keywords.trim()) || generateAutoKeywords({
-      title: post.title,
-      category: post.category,
-      excerpt: post.excerpt,
-      content: post.content
-    });
+    const effectiveKeywords = (post.keywords && post.keywords.includes('education hom'))
+      ? post.keywords.trim()
+      : generateAutoKeywords({
+          title: post.title,
+          category: post.category,
+          excerpt: post.excerpt,
+          content: post.content
+        });
 
     const keywordsArray = effectiveKeywords
       .split(',')
