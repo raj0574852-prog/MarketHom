@@ -1,120 +1,149 @@
-import Link from 'next/link';
+'use client';
 
-const services = [
+import React from 'react';
+import Link from 'next/link';
+import { Search, Bot, Target, Code, Link2, Share2, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { SpotlightCard } from '@/components/ui/SpotlightCard';
+
+const SERVICES = [
   {
-    icon: '🔍',
-    name: 'SEO Services',
-    category: 'SEO',
-    priceRange: '$1,500 - $4,500/mo',
-    description: 'Dominate organic search results with our data-driven SEO strategies. Technical audits to content optimization.',
+    icon: Search,
+    name: 'Technical & Programmatic SEO',
+    category: 'Search Engine Optimization',
+    priceRange: '$1,500 – $4,500/mo',
+    description: 'Data-driven site architecture, crawl optimization, and programmatic topical authority that dominates SERPs.',
+    features: ['Technical Core Web Vitals audit', 'Topical map architecture', 'Continuous indexation monitoring'],
     href: '/services/seo',
   },
   {
-    icon: '🤖',
-    name: 'AI SEO',
-    category: 'SEO',
-    priceRange: '$2,000 - $5,000/mo',
-    description: 'Harness the power of artificial intelligence to stay ahead of algorithm updates and build topical authority faster.',
+    icon: Bot,
+    name: 'AI Search Optimization (AEO / GEO)',
+    category: 'AI Engine Optimization',
+    priceRange: '$2,000 – $5,000/mo',
+    description: 'Position your brand as the primary reference when ChatGPT, Perplexity, and Gemini generate answers.',
+    features: ['LLM brand presence tracking', 'Entity relation schema architecture', 'Conversational query capture'],
     href: '/services/ai-seo',
   },
   {
-    icon: '💰',
-    name: 'PPC Advertising',
-    category: 'PPC',
-    priceRange: '$2,000 - $6,000/mo',
-    description: 'Maximize every dollar with laser-targeted PPC campaigns across Google, Meta, and LinkedIn. Stop wasting budget.',
+    icon: Target,
+    name: 'High-Intent Performance PPC',
+    category: 'Paid Search & Meta',
+    priceRange: '$2,000 – $6,000/mo',
+    description: 'Precision bidding and conversion tracking on Google Ads and LinkedIn that scales pipeline with positive ROAS.',
+    features: ['Negative keyword isolation', 'Dynamic remarketing funnels', 'Conversion API tracking'],
     href: '/services/ppc',
   },
   {
-    icon: '💻',
-    name: 'Web Development',
-    category: 'Web Dev',
-    priceRange: '$3,500 - $12,000',
-    description: 'Get a blazing-fast, conversion-optimized website built on Next.js and React. Sites that rank and convert.',
+    icon: Code,
+    name: 'High-Performance Web Development',
+    category: 'Next.js & Modern Web',
+    priceRange: '$3,500 – $12,000',
+    description: 'Blazing-fast, mobile-first websites built with Next.js, React, and Tailwind designed strictly to rank and convert.',
+    features: ['Sub-second page speeds', 'Built-in SEO & OpenGraph schemas', 'Responsive UX micro-interactions'],
     href: '/services/web-development',
   },
   {
-    icon: '🔗',
-    name: 'Link Building',
-    category: 'Link Building',
-    priceRange: '$1,200 - $3,500/mo',
-    description: 'Earn high-authority backlinks that boost your domain strength and push you to the top of Google\'s search results.',
+    icon: Link2,
+    name: 'Authority Link Building & PR',
+    category: 'Off-Page SEO',
+    priceRange: '$1,200 – $3,500/mo',
+    description: 'Secure editorial guest placements and contextual backlinks from real, high-DR publications with organic traffic.',
+    features: ['Manual editorial outreach', 'Zero PBN / pure white-hat links', 'DoFollow guaranteed indexation'],
     href: '/services/link-building',
   },
   {
-    icon: '📱',
-    name: 'Social Media Marketing',
-    category: 'Social',
-    priceRange: '$1,500 - $4,000/mo',
-    description: 'Build a loyal community and drive real business results through strategic social media marketing.',
+    icon: Share2,
+    name: 'Social Media & Brand Velocity',
+    category: 'Omnichannel Growth',
+    priceRange: '$1,500 – $4,000/mo',
+    description: 'Build an engaged audience and capture demand across LinkedIn, X, and YouTube to amplify organic brand search volume.',
+    features: ['Thought leadership content', 'Multi-channel distribution', 'Social-to-search attribution'],
     href: '/services/smm',
   },
 ];
 
-// This is now a pure Server Component — no JS sent to the browser for this section
 export default function ServicesSection() {
   return (
-    <section className="section-padding mesh-bg" id="services">
-      <div className="container-custom">
+    <section className="section-padding relative overflow-hidden bg-slate-950/90" id="services">
+      {/* Background radial accent */}
+      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
+      
+      <div className="container-custom relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <span className="badge mb-4">Our Services</span>
-          <h2 className="text-4xl md:text-5xl font-black mb-5">
-            Everything You Need to{' '}
-            <span className="gradient-text">Dominate Online</span>
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">
+            Specialized Practice Areas
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black mb-5 tracking-tight text-white leading-tight">
+            Integrated Services Built for{' '}
+            <span className="gradient-text">Compounding Organic Scale</span>
           </h2>
-          <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            We don&apos;t offer cookie-cutter solutions. Every strategy is custom-built to your business goals, market, and competition.
+          <p className="text-slate-400 text-lg leading-relaxed">
+            We abandon one-size-fits-all packages. Every campaign is engineered specifically around your competitive niche, unit economics, and pipeline goals.
           </p>
         </div>
 
-        {/* Services Grid */}
+        {/* Services Bento Grid with Spotlight Illumination */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
-            <div
-              key={service.name}
-              className="glass-card p-7 group flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] flex items-center justify-center text-xl shadow-lg shadow-[hsl(217,91%,54%)]/20">
-                    {service.icon}
+          {SERVICES.map((service) => {
+            const Icon = service.icon;
+            return (
+              <SpotlightCard
+                key={service.name}
+                spotlightColor="rgba(59, 130, 246, 0.2)"
+                className="p-8 flex flex-col justify-between group hover:-translate-y-1 transition-transform duration-300"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/5">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                      {service.priceRange}
+                    </span>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-[hsl(217,91%,54%)]/15 text-[hsl(217,91%,70%)] text-xs font-bold font-mono">
-                    {service.priceRange}
+
+                  <span className="text-[11px] font-bold text-blue-400 uppercase tracking-widest block mb-2">
+                    {service.category}
                   </span>
+
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-blue-300 transition-colors">
+                    {service.name}
+                  </h3>
+
+                  <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                    {service.description}
+                  </p>
+
+                  <ul className="space-y-2.5 mb-8">
+                    {service.features.map((feat) => (
+                      <li key={feat} className="flex items-center gap-2 text-xs text-slate-300">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[hsl(217,91%,75%)] transition-colors">
-                  {service.name}
-                </h3>
-                <p className="text-[hsl(215,20%,60%)] text-sm mb-5 leading-relaxed">
-                  {service.description}
-                </p>
-              </div>
+                <div className="pt-5 border-t border-white/10 flex items-center justify-between">
+                  <Link
+                    href={service.href}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+                  >
+                    <span>View Methodology</span>
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                  </Link>
 
-              <div className="pt-4 border-t border-[hsl(215,25%,22%)]/40 flex items-center justify-between">
-                <span className="text-xs font-bold text-[hsl(215,20%,50%)] uppercase tracking-wider">{service.category}</span>
-                <Link
-                  href="/contact"
-                  title="Get Free Audit"
-                  className="flex items-center gap-2 text-xs font-bold text-[hsl(217,91%,65%)] hover:gap-3 transition-all"
-                >
-                  Get Audit →
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="text-center mt-12">
-          <Link href="/services" title="View All SEO Services" className="btn-outline">
-            <span>View All Services</span>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </Link>
+                  <Link
+                    href="/contact"
+                    className="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    Get Proposal →
+                  </Link>
+                </div>
+              </SpotlightCard>
+            );
+          })}
         </div>
       </div>
     </section>
