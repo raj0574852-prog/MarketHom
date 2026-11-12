@@ -105,6 +105,11 @@ function mapFromSupabase(row: SupabasePostRow): BlogPost {
 }
 
 export async function getPublishedPosts(): Promise<BlogPost[]> {
+  const isConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
+  if (!isConfigured) {
+    return getStoredPosts();
+  }
+
   let dbPosts: BlogPost[] = [];
   try {
     const client = getServiceSupabase();
@@ -129,20 +134,23 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | null> {
-  try {
-    const client = getServiceSupabase();
-    const { data, error } = await client
-      .from('posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .maybeSingle();
+  const isConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
+  if (isConfigured) {
+    try {
+      const client = getServiceSupabase();
+      const { data, error } = await client
+        .from('posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .maybeSingle();
 
-    if (!error && data) {
-      return mapFromSupabase(data);
+      if (!error && data) {
+        return mapFromSupabase(data);
+      }
+    } catch (err) {
+      console.error(`Error fetching post by slug ${slug}:`, err);
     }
-  } catch (err) {
-    console.error(`Error fetching post by slug ${slug}:`, err);
   }
 
   try {
@@ -154,21 +162,31 @@ export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | n
 }
 
 export async function getRecentPublishedPosts(limit: number = 3): Promise<BlogPost[]> {
-  const client = getServiceSupabase();
-  const { data, error } = await client
-    .from('posts')
-    .select('*')
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error('Error fetching recent posts:', error);
-    return [];
+  const isConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder'));
+  if (!isConfigured) {
+    return getStoredPosts().slice(0, limit);
   }
 
-  return (data || []).map(mapFromSupabase);
+  try {
+    const client = getServiceSupabase();
+    const { data, error } = await client
+      .from('posts')
+      .select('*')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching recent posts:', error);
+      return getStoredPosts().slice(0, limit);
+    }
+
+    return (data && data.length > 0) ? data.map(mapFromSupabase) : getStoredPosts().slice(0, limit);
+  } catch {
+    return getStoredPosts().slice(0, limit);
+  }
 }
+
 
 // Admin only operations
 export async function getAllPostsForAdmin(): Promise<BlogPost[]> {
