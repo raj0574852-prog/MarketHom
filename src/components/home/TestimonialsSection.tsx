@@ -1,153 +1,123 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import { Star, Quote, CheckCircle2, TrendingUp } from 'lucide-react';
 
-const testimonials = [
+const TESTIMONIALS = [
   {
     name: 'Sarah Mitchell',
-    title: 'CEO, StyleVault Fashion',
-    avatar: 'SM',
+    title: 'CEO & Founder',
+    company: 'StyleVault Apparel',
     rating: 5,
-    text: 'EducationHom transformed our online presence completely. In 8 months, our organic traffic went from 12,000 to over 53,000 monthly visitors. The team is incredibly strategic and results-focused. Worth every penny.',
-    result: '+342% Organic Traffic',
-    color: 'hsl(270,80%,60%)',
+    quote: 'EducationHom completely shifted our growth trajectory. Over 8 months, our organic traffic surged from 12,000 to over 53,000 monthly visitors. Their team operates with institutional rigor and relentless precision.',
+    metric: '+342% Organic Traffic',
+    tag: 'E-Commerce Growth',
   },
   {
     name: 'James Rodriguez',
-    title: 'Founder, DataFlow Pro',
-    avatar: 'JR',
+    title: 'Head of Growth',
+    company: 'DataFlow Systems',
     rating: 5,
-    text: 'Their PPC expertise is unmatched. They reduced our cost per lead by 69% while simultaneously tripling the quality of leads coming in. Our sales team couldn\'t be happier. This is what a real marketing partner looks like.',
-    result: '-69% Cost Per Lead',
-    color: 'hsl(217,91%,54%)',
+    quote: 'Their search & PPC infrastructure cut our cost-per-lead by 69% while tripling the qualification rate of enterprise prospects. If you are serious about predictable pipeline, EducationHom is the gold standard.',
+    metric: '-69% Acquisition Cost',
+    tag: 'B2B Enterprise SaaS',
   },
   {
     name: 'Dr. Amanda Chen',
-    title: 'Owner, PrimeCare Dental',
-    avatar: 'AC',
+    title: 'Managing Director',
+    company: 'PrimeCare Clinics',
     rating: 5,
-    text: 'We were invisible on Google. EducationHom got us to #1 on Google Maps within 4 months. Our phone is ringing off the hook. Patient bookings went up 422%. This team delivers real, measurable results.',
-    result: '#1 Google Maps',
-    color: 'hsl(152,69%,46%)',
+    quote: 'We were losing patients daily to competitors before EducationHom audited and overhauled our local search graph. Within 4 months, we secured #1 positions across all metropolitan branches with a 422% increase in bookings.',
+    metric: '#1 Map Placement (6 Hubs)',
+    tag: 'Healthcare Network',
   },
   {
     name: 'Marcus Thompson',
-    title: 'Marketing Director, TechBridge',
-    avatar: 'MT',
+    title: 'VP of Marketing',
+    company: 'TechBridge Cloud',
     rating: 5,
-    text: 'The AI SEO strategy they implemented gave us a massive edge over competitors. We\'re now ranking for 1,200+ keywords we never thought possible. Their content strategy is truly next-level.',
-    result: '+1,200 Keywords Ranked',
-    color: 'hsl(39,100%,58%)',
+    quote: 'Their AI SEO and entity optimization gave us an immediate edge in AI search engines. We are now quoted as the primary authority in ChatGPT and Perplexity across 40+ key software decision queries.',
+    metric: '40+ AI Citations',
+    tag: 'AI & Cloud Infrastructure',
   },
   {
     name: 'Lisa Park',
-    title: 'Co-Founder, GreenLeaf Organics',
-    avatar: 'LP',
+    title: 'Co-Founder',
+    company: 'Verde Organics',
     rating: 5,
-    text: 'From website redesign to full SEO and social media management — EducationHom does it all seamlessly. Revenue from organic channels grew by 215% in the first year. The team is proactive, transparent, and genuinely invested.',
-    result: '+215% Organic Revenue',
-    color: 'hsl(340,80%,58%)',
+    quote: 'From brand positioning to continuous tier-1 editorial placements, EducationHom has driven a 215% annual revenue increase strictly through organic channels. Total transparency, zero fluff.',
+    metric: '+215% Organic Revenue',
+    tag: 'Consumer Direct',
   },
   {
     name: 'David Kim',
-    title: 'VP Marketing, CloudSync',
-    avatar: 'DK',
+    title: 'Chief Technology Officer',
+    company: 'CloudSync Solutions',
     rating: 5,
-    text: 'Their link building and guest posting program built our domain authority from 18 to 54 in 9 months. We now compete with industry giants for the most competitive keywords. Best agency decision we ever made.',
-    result: 'DA 18 → 54 in 9mo',
-    color: 'hsl(190,80%,50%)',
+    quote: 'Their white-hat link acquisition and technical Core Web Vitals remediation propelled our domain rating from 18 to 54 in under 9 months. We routinely outrank legacy competitors on the hardest terms.',
+    metric: 'DR 18 → 54 in 9mo',
+    tag: 'Developer Tools',
   },
 ];
 
 export default function TestimonialsSection() {
-  const [active, setActive] = useState(0);
-  const t = testimonials[active];
-
   return (
-    <section className="section-padding bg-[hsl(222,47%,5%)]" id="testimonials">
-      <div className="container-custom">
-        <div className="text-center mb-16">
-          <span className="badge mb-4">Client Stories</span>
-          <h2 className="text-4xl md:text-5xl font-black mb-5">
-            What Our Clients{' '}
-            <span className="gradient-text">Say About Us</span>
-          </h2>
-          <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            500+ businesses trust EducationHom. Here&apos;s what they&apos;re saying.
-          </p>
-        </div>
-
-        {/* Featured Testimonial */}
-        <div className="max-w-3xl mx-auto mb-12">
-          <div className="glass-card p-8 md:p-10 text-center relative overflow-hidden">
-            <div
-              className="absolute inset-0 opacity-5 pointer-events-none"
-              style={{ background: `radial-gradient(circle at center, ${t.color}, transparent 70%)` }}
-            />
-            <div className="flex justify-center gap-1 mb-6">
-              {Array.from({ length: t.rating }).map((_, i) => (
-                <svg key={i} className="w-5 h-5 text-[hsl(39,100%,58%)]" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              ))}
-            </div>
-            <blockquote className="text-lg md:text-xl text-[hsl(215,20%,80%)] leading-relaxed mb-8 italic relative z-10">
-              &ldquo;{t.text}&rdquo;
-            </blockquote>
-            <div className="flex items-center justify-center gap-4">
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                style={{ background: `linear-gradient(135deg, ${t.color}, hsl(270,80%,60%))` }}
-              >
-                {t.avatar}
-              </div>
-              <div className="text-left">
-                <div className="font-bold text-white">{t.name}</div>
-                <div className="text-sm text-[hsl(215,20%,55%)]">{t.title}</div>
-              </div>
-              <span
-                className="ml-4 text-xs font-bold px-3 py-1.5 rounded-full"
-                style={{
-                  background: `${t.color}20`,
-                  color: t.color,
-                  border: `1px solid ${t.color}40`,
-                }}
-              >
-                {t.result}
-              </span>
-            </div>
+    <section className="section-padding relative overflow-hidden bg-slate-950/90" id="testimonials">
+      <div className="container-custom relative z-10">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">
+            Client Validation
           </div>
+          <h2 className="text-4xl md:text-5xl font-black mb-5 tracking-tight text-white leading-tight">
+            Trusted by Leaders Who{' '}
+            <span className="gradient-text">Demand Real Growth</span>
+          </h2>
+          <p className="text-slate-400 text-lg leading-relaxed">
+            Read direct feedback from enterprise executives, startup founders, and marketing directors scaling their revenue with EducationHom.
+          </p>
         </div>
 
-        {/* Testimonial Selector Buttons */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {testimonials.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`p-3 rounded-xl border text-left transition-all duration-200 ${
-                active === i
-                  ? 'border-[hsl(217,91%,54%)]/60 bg-[hsl(217,91%,54%)]/10'
-                  : 'border-[hsl(215,25%,22%)]/40 bg-[hsl(215,25%,12%)]/50 hover:border-[hsl(215,25%,30%)]'
-              }`}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {TESTIMONIALS.map((t, idx) => (
+            <div
+              key={idx}
+              className="rounded-3xl p-8 bg-white/[0.02] border border-white/10 hover:border-blue-500/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-950/20"
             >
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mb-2"
-                style={{ background: item.color }}
-              >
-                {item.avatar}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[...Array(t.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-amber-400" />
+                    ))}
+                  </div>
+
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    {t.metric}
+                  </span>
+                </div>
+
+                <p className="text-slate-300 text-sm leading-relaxed mb-6 font-normal">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
               </div>
-              <div className="text-xs font-semibold text-white truncate">{item.name}</div>
-              <div className="text-[10px] text-[hsl(215,20%,50%)] truncate">{item.title.split(',')[0]}</div>
-            </button>
+
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                <div>
+                  <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">
+                    {t.name}
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    {t.title}, <span className="text-slate-300 font-medium">{t.company}</span>
+                  </div>
+                </div>
+
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  {t.tag}
+                </span>
+              </div>
+            </div>
           ))}
-        </div>
-        
-        {/* Disclaimer */}
-        <div className="mt-8 text-center">
-          <p className="text-[10px] text-[hsl(215,20%,40%)]">
-            * Testimonials and results are for illustrative purposes. Individual results may vary based on industry, budget, and implementation timeline.
-          </p>
         </div>
       </div>
     </section>

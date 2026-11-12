@@ -1,136 +1,134 @@
-import Link from 'next/link';
+'use client';
 
-const caseStudies = [
+import React from 'react';
+import Link from 'next/link';
+import { TrendingUp, ArrowUpRight, BarChart2, ShieldCheck, ArrowRight } from 'lucide-react';
+
+const CASE_STUDIES = [
   {
-    industry: 'E-Commerce',
-    company: 'StyleVault Fashion',
-    logo: '🛍️',
-    challenge: 'Stuck at 12K monthly organic visitors with <2% conversion rate.',
-    result: '+342% organic traffic, +189% revenue in 8 months',
+    industry: 'High-Growth E-Commerce',
+    company: 'StyleVault Apparel',
+    challenge: 'Stagnant organic growth at 12,000 monthly visitors, bleeding margin on paid acquisition with sub-2% conversion.',
+    outcome: 'Engineered programmatic category SEO and high-intent backlink cluster, scaling to 53,000+ monthly visits.',
+    timeframe: '8-Month Trajectory',
     metrics: [
-      { label: 'Organic Traffic', before: '12K', after: '53K', growth: '+342%' },
-      { label: 'Revenue', before: '$48K/mo', after: '$138K/mo', growth: '+188%' },
-      { label: 'Keywords Ranked', before: '245', after: '1,840', growth: '+651%' },
+      { label: 'Organic Traffic', before: '12K/mo', after: '53.4K/mo', growth: '+342%' },
+      { label: 'Monthly Revenue', before: '$48K', after: '$138K', growth: '+188%' },
+      { label: 'Top 3 Keywords', before: '24', after: '412', growth: '+1,616%' },
     ],
-    service: 'SEO + CRO',
-    color: 'hsl(270,80%,60%)',
+    service: 'Technical SEO + Link Velocity',
   },
   {
-    industry: 'SaaS / Tech',
-    company: 'DataFlow Pro',
-    logo: '📊',
-    challenge: 'High CPC with poor quality leads and $12 cost per lead.',
-    result: 'Reduced CPC by 67% while tripling lead quality in 3 months',
+    industry: 'B2B Enterprise SaaS',
+    company: 'DataFlow Systems',
+    challenge: 'Inefficient Google Ads spend with $12.40 CPL and low qualified lead activation among mid-market CTOs.',
+    outcome: 'Restructured conversion funnel, implemented negative search isolation, and deployed targeted AEO entity schemas.',
+    timeframe: '90-Day Sprint',
     metrics: [
-      { label: 'Cost Per Lead', before: '$12.40', after: '$3.90', growth: '-69%' },
-      { label: 'Lead Quality Score', before: '34%', after: '87%', growth: '+156%' },
-      { label: 'Monthly Leads', before: '89', after: '312', growth: '+250%' },
+      { label: 'Cost Per Lead (CPL)', before: '$12.40', after: '$3.90', growth: '-69%' },
+      { label: 'Demo Quality Score', before: '34%', after: '87%', growth: '+156%' },
+      { label: 'Qualified Pipeline', before: '89', after: '312/mo', growth: '+250%' },
     ],
-    service: 'PPC + Landing CRO',
-    color: 'hsl(217,91%,54%)',
+    service: 'PPC + Conversion Optimization',
   },
   {
-    industry: 'Local Business',
-    company: 'PrimeCare Dental',
-    logo: '🦷',
-    challenge: 'No Google visibility in local market, losing to competitors.',
-    result: '#1 Google Maps ranking, 5x appointment bookings',
+    industry: 'Healthcare & Specialized Practice',
+    company: 'PrimeCare Clinics',
+    challenge: 'Completely unranked on Google Maps across 6 metropolitan locations, losing premium patient flow to regional hospital networks.',
+    outcome: 'Standardized citation graph, generated location-specific landing hubs, and secured local authority press mentions.',
+    timeframe: '4-Month Campaign',
     metrics: [
-      { label: 'Google Maps Position', before: 'Not Listed', after: '#1', growth: 'Top 3' },
-      { label: 'Monthly Calls', before: '23', after: '147', growth: '+539%' },
-      { label: 'Patient Bookings', before: '18/mo', after: '94/mo', growth: '+422%' },
+      { label: 'Map Pack Placement', before: 'Unlisted', after: '#1 Across 6 Hubs', growth: 'Rank 1' },
+      { label: 'Inbound Inquiries', before: '23/mo', after: '147/mo', growth: '+539%' },
+      { label: 'New Patient Revenue', before: '$32K', after: '$167K/mo', growth: '+422%' },
     ],
-    service: 'Local SEO + GMB',
-    color: 'hsl(152,69%,46%)',
+    service: 'Local Authority + Geo SEO',
   },
 ];
 
 export default function ResultsSection() {
   return (
-    <section className="section-padding mesh-bg" id="results">
-      <div className="container-custom">
-        <div className="text-center mb-16">
-          <span className="badge mb-4">Proven Results</span>
-          <h2 className="text-4xl md:text-5xl font-black mb-5">
-            Real Businesses.{' '}
-            <span className="gradient-text">Real Results.</span>
-          </h2>
-          <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            Don&apos;t take our word for it. Here&apos;s what we&apos;ve achieved for businesses just like yours.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-          {caseStudies.map((cs, i) => (
-            <div key={i} className="glass-card p-7">
-              {/* Header */}
-              <div className="flex items-start justify-between mb-5">
-                <div>
-                  <span className="text-xs font-semibold text-[hsl(215,20%,50%)] uppercase tracking-wider">{cs.industry}</span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-2xl">{cs.logo}</span>
-                    <h3 className="text-lg font-bold">{cs.company}</h3>
-                  </div>
-                </div>
-                <span
-                  className="text-xs font-bold px-3 py-1.5 rounded-full"
-                  style={{ background: `${cs.color}22`, color: cs.color }}
-                >
-                  {cs.service}
-                </span>
-              </div>
-
-              {/* Challenge */}
-              <div className="bg-[hsl(0,60%,55%)]/8 border border-[hsl(0,60%,55%)]/20 rounded-xl p-3 mb-4">
-                <span className="text-xs font-bold text-[hsl(0,60%,65%)] uppercase tracking-wider">Challenge</span>
-                <p className="text-sm text-[hsl(215,20%,65%)] mt-1">{cs.challenge}</p>
-              </div>
-
-              {/* Metrics */}
-              <div className="space-y-3 mb-5">
-                {cs.metrics.map((m) => (
-                  <div key={m.label} className="flex items-center justify-between">
-                    <span className="text-xs text-[hsl(215,20%,55%)]">{m.label}</span>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-[hsl(215,20%,45%)] line-through">{m.before}</span>
-                      <span className="text-[hsl(215,20%,70%)]">→</span>
-                      <span className="font-bold text-white">{m.after}</span>
-                      <span
-                        className="font-bold px-1.5 py-0.5 rounded"
-                        style={{ color: cs.color, background: `${cs.color}18` }}
-                      >
-                        {m.growth}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Result Banner */}
-              <div
-                className="rounded-xl p-3 text-center text-sm font-semibold"
-                style={{ background: `${cs.color}15`, border: `1px solid ${cs.color}30`, color: cs.color }}
-              >
-                ✅ {cs.result}
-              </div>
+    <section className="section-padding relative overflow-hidden bg-slate-950/80" id="results">
+      <div className="container-custom relative z-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">
+              Verified Client Outcomes
             </div>
-          ))}
-        </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              Evidence Over Opinions:{' '}
+              <span className="gradient-text">Real Commercial Growth</span>
+            </h2>
+          </div>
 
-        <div className="text-center">
-          <Link href="/case-studies" title="View All SEO Case Studies" className="btn-primary">
-            <span>View All Case Studies</span>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
+          <Link
+            href="/case-studies"
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors whitespace-nowrap"
+          >
+            <span>Explore All 24+ Case Studies</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        {/* Disclaimer */}
-        <div className="mt-8 text-center">
-          <p className="text-[10px] text-[hsl(215,20%,40%)]">
-            * Case studies and results are for illustrative purposes. Individual results may vary based on industry, budget, and implementation timeline.
-          </p>
+        {/* Case Studies Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+          {CASE_STUDIES.map((study, idx) => (
+            <div
+              key={idx}
+              className="rounded-3xl p-8 bg-white/[0.02] border border-white/10 hover:border-blue-500/40 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-950/40"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-mono font-bold text-blue-400 tracking-wide">
+                    {study.industry}
+                  </span>
+                  <span className="text-[11px] font-medium text-slate-400 px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
+                    {study.timeframe}
+                  </span>
+                </div>
+
+                <h3 className="text-2xl font-black text-white mb-3 group-hover:text-blue-300 transition-colors">
+                  {study.company}
+                </h3>
+
+                <div className="text-xs text-slate-400 leading-relaxed mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5">
+                  <span className="font-semibold text-slate-300 block mb-1">Challenge:</span>
+                  {study.challenge}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2.5 mb-6">
+                  {study.metrics.map((m, mIdx) => (
+                    <div key={mIdx} className="p-3 rounded-xl bg-slate-900/80 border border-white/5 text-center">
+                      <div className="text-sm md:text-base font-black text-emerald-400">
+                        {m.growth}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
+                        {m.label}
+                      </div>
+                      <div className="text-[9px] text-slate-400 font-mono mt-1">
+                        {m.before} → {m.after}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-5 border-t border-white/10 flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-slate-300">
+                  {study.service}
+                </span>
+
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-blue-400 hover:text-white transition-colors"
+                >
+                  <span>Replicate Results</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

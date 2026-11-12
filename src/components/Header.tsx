@@ -4,43 +4,34 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { 
+  Search, Bot, Target, Share2, Link2, PenTool, Code, 
+  ChevronDown, Shield, FileText, ArrowRight, Menu, X, Globe, Sparkles 
+} from 'lucide-react';
+import { BorderBeam } from '@/components/ui/BorderBeam';
 
-const navLinks = [
-  { label: 'Home', href: '/' },
-  {
-    label: 'Services',
-    href: '/services',
-    children: [
-      { label: 'SEO Services', href: '/services/seo', icon: '🔍' },
-      { label: 'AI SEO', href: '/services/ai-seo', icon: '🤖' },
-      { label: 'PPC Advertising', href: '/services/ppc', icon: '💰' },
-      { label: 'Social Media Marketing', href: '/services/smm', icon: '📱' },
-      { label: 'Link Building', href: '/services/link-building', icon: '🔗' },
-      { label: 'Guest Posting', href: '/services/guest-posting', icon: '✍️' },
-      { label: 'Web Development', href: '/services/web-development', icon: '💻' },
-    ],
-  },
-  { label: 'Marketplace', href: '/websites' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'About', href: '/about' },
-  {
-    label: 'Resources',
-    href: '/resources',
-    children: [
-      { label: 'Privacy Policy', href: '/resources/privacy-policy', icon: '🛡️' },
-      { label: 'Terms of Service', href: '/resources/terms-of-service', icon: '⚖️' },
-      { label: 'Refund Policy', href: '/resources/refund-policy', icon: '💸' },
-      { label: 'Cookie Policy', href: '/resources/cookie-policy', icon: '🍪' },
-    ],
-  },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/contact' },
+const SERVICES_MENU = [
+  { label: 'SEO Services', href: '/services/seo', desc: 'Data-driven technical & on-page ranking', icon: Search },
+  { label: 'AI SEO (AEO/GEO)', href: '/services/ai-seo', desc: 'Optimize for ChatGPT, Perplexity & Gemini', icon: Bot },
+  { label: 'PPC Advertising', href: '/services/ppc', desc: 'High-intent paid search & paid social', icon: Target },
+  { label: 'Link Building', href: '/services/link-building', desc: 'Editorial high-authority backlink outreach', icon: Link2 },
+  { label: 'Guest Posting', href: '/services/guest-posting', desc: 'Guaranteed publisher article placements', icon: PenTool },
+  { label: 'Social Media', href: '/services/smm', desc: 'Community growth & brand authority', icon: Share2 },
+  { label: 'Web Development', href: '/services/web-development', desc: 'Modern Next.js & React speed optimization', icon: Code },
+];
+
+const RESOURCES_MENU = [
+  { label: 'Privacy Policy', href: '/resources/privacy-policy', icon: Shield },
+  { label: 'Terms of Service', href: '/resources/terms-of-service', icon: FileText },
+  { label: 'Refund Policy', href: '/resources/refund-policy', icon: FileText },
+  { label: 'Cookie Policy', href: '/resources/cookie-policy', icon: Shield },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -50,157 +41,234 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMobileOpen(false);
-      setActiveDropdown(null);
-    }, 0);
-    return () => clearTimeout(timer);
+    setMobileOpen(false);
+    setServicesOpen(false);
+    setResourcesOpen(false);
   }, [pathname]);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? 'bg-[hsl(222,47%,7%)]/95 backdrop-blur-xl shadow-[0_2px_40px_hsl(217,91%,54%,0.08)] border-b border-[hsl(215,25%,22%)]/50'
-          : 'bg-transparent'
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-slate-950/90 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50 py-3'
+          : 'bg-transparent py-5'
+      }`}
     >
       <nav className="container-custom">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
+        <div className="flex items-center justify-between">
+          {/* Brand Logo */}
           <Link href="/" title="EducationHom Home" className="flex items-center gap-3 group">
-            <div className="relative h-10 w-auto">
+            <div className="relative h-9 md:h-10 w-auto">
               <Image 
                 src="/images/educationhom-logo.webp"
                 alt="EducationHom"
-                width={200}
-                height={50}
+                width={190}
+                height={46}
                 className="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-300"
                 priority
               />
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <ul className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <li key={link.href} className="relative group">
-                {link.children ? (
-                  <>
-                    <button
-                      className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname.startsWith('/services')
-                          ? 'text-[hsl(217,91%,75%)]'
-                          : 'text-[hsl(215,20%,70%)] hover:text-white'
-                        }`}
-                      onMouseEnter={() => setActiveDropdown('services')}
-                      onMouseLeave={() => setActiveDropdown(null)}
-                    >
-                      {link.label}
-                      <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {/* Dropdown */}
-                    <div
-                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200"
-                      onMouseEnter={() => setActiveDropdown('services')}
-                      onMouseLeave={() => setActiveDropdown(null)}
-                    >
-                      <div className="glass rounded-2xl p-2 min-w-[280px] shadow-2xl shadow-black/50">
-                        {link.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            title={child.label}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[hsl(217,91%,54%)]/10 transition-all duration-200 group/item"
-                          >
-                            <span className="text-lg">{child.icon}</span>
-                            <span className="text-sm font-medium text-[hsl(215,20%,80%)] group-hover/item:text-white transition-colors">
-                              {child.label}
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <Link
-                    href={link.href}
-                    title={link.label}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${pathname === link.href
-                        ? 'text-[hsl(217,91%,75%)] bg-[hsl(217,91%,54%)]/10'
-                        : 'text-[hsl(215,20%,70%)] hover:text-white hover:bg-white/5'
-                      }`}
-                  >
-                    {link.label}
-                  </Link>
-                )}
-              </li>
-            ))}
+          {/* Desktop Nav Links */}
+          <ul className="hidden lg:flex items-center gap-1.5 bg-white/[0.03] px-3 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
+            <li>
+              <Link
+                href="/"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname === '/' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Home
+              </Link>
+            </li>
+
+            {/* Services Dropdown */}
+            <li
+              className="relative"
+              onMouseEnter={() => setServicesOpen(true)}
+              onMouseLeave={() => setServicesOpen(false)}
+            >
+              <button
+                className={`flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname.startsWith('/services') ? 'text-blue-400' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Services
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {servicesOpen && (
+                <div className="absolute top-full left-0 pt-3 w-80 animate-fade-in-up">
+                  <div className="rounded-2xl p-2.5 bg-slate-900/95 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/80 grid gap-1">
+                    {SERVICES_MENU.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all flex-shrink-0 mt-0.5">
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-blue-300 transition-colors">
+                              {item.label}
+                            </div>
+                            <div className="text-[10px] text-slate-400 line-clamp-1">
+                              {item.desc}
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </li>
+
+            <li>
+              <Link
+                href="/websites"
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname.startsWith('/websites') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5 text-blue-400" />
+                <span>Marketplace</span>
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/pricing"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname === '/pricing' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Pricing
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/case-studies"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname.startsWith('/case-studies') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Results
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/about"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname === '/about' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                About
+              </Link>
+            </li>
+
+            {/* Resources Dropdown */}
+            <li
+              className="relative"
+              onMouseEnter={() => setResourcesOpen(true)}
+              onMouseLeave={() => setResourcesOpen(false)}
+            >
+              <button
+                className={`flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname.startsWith('/resources') ? 'text-blue-400' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Resources
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${resourcesOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {resourcesOpen && (
+                <div className="absolute top-full left-0 pt-3 w-56 animate-fade-in-up">
+                  <div className="rounded-2xl p-2 bg-slate-900/95 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/80 grid gap-1">
+                    {RESOURCES_MENU.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+                        >
+                          <Icon className="w-3.5 h-3.5 text-blue-400" />
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </li>
+
+            <li>
+              <Link
+                href="/blog"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                  pathname.startsWith('/blog') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Blog
+              </Link>
+            </li>
           </ul>
 
-          {/* CTA Button */}
+          {/* Right Action: Free Audit Button */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/contact" title="Get Free SEO Audit" className="btn-primary text-sm px-6 py-3">
+            <Link
+              href="/contact"
+              className="relative group inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs text-white bg-blue-600 hover:bg-blue-500 transition-all duration-300 shadow-lg shadow-blue-600/25 hover:shadow-blue-500/40"
+            >
+              <BorderBeam size={80} duration={6} colorFrom="#93c5fd" colorTo="#c084fc" />
+              <Sparkles className="w-3.5 h-3.5" />
               <span>Get Free Audit</span>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle Button */}
           <button
-            className="lg:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/5 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
+            className="lg:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
           >
-            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
-            <span className={`block w-6 h-0.5 bg-white transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-      </nav>
 
-      {/* Mobile Menu */}
-      <div
-        className={`lg:hidden transition-all duration-300 overflow-hidden ${mobileOpen ? 'max-h-screen' : 'max-h-0'
-          }`}
-      >
-        <div className="bg-[hsl(222,47%,9%)]/98 backdrop-blur-xl border-t border-[hsl(215,25%,22%)]/50 px-6 py-4">
-          {navLinks.map((link) => (
-            <div key={link.href}>
-              <Link
-                href={link.href}
-                title={link.label}
-                className={`block py-3 text-base font-medium border-b border-[hsl(215,25%,22%)]/30 transition-colors ${pathname === link.href
-                    ? 'text-[hsl(217,91%,75%)]'
-                    : 'text-[hsl(215,20%,70%)] hover:text-white'
-                  }`}
-              >
-                {link.label}
+        {/* Mobile Slide-down Drawer */}
+        {mobileOpen && (
+          <div className="lg:hidden mt-4 rounded-2xl bg-slate-900/98 backdrop-blur-2xl border border-white/10 p-5 shadow-2xl animate-fade-in-up">
+            <div className="flex flex-col gap-2">
+              <Link href="/" className="px-3 py-2 text-sm font-semibold text-white">Home</Link>
+              <Link href="/services" className="px-3 py-2 text-sm font-semibold text-white">Services</Link>
+              <div className="grid grid-cols-2 gap-2 pl-3 py-1">
+                {SERVICES_MENU.map((s) => (
+                  <Link key={s.href} href={s.href} className="text-xs text-slate-400 hover:text-white py-1">
+                    {s.label}
+                  </Link>
+                ))}
+              </div>
+              <Link href="/websites" className="px-3 py-2 text-sm font-semibold text-white">Marketplace</Link>
+              <Link href="/pricing" className="px-3 py-2 text-sm font-semibold text-white">Pricing</Link>
+              <Link href="/case-studies" className="px-3 py-2 text-sm font-semibold text-white">Case Studies</Link>
+              <Link href="/about" className="px-3 py-2 text-sm font-semibold text-white">About</Link>
+              <Link href="/blog" className="px-3 py-2 text-sm font-semibold text-white">Blog</Link>
+              <Link href="/contact" className="mt-2 w-full py-3 rounded-xl bg-blue-600 text-center font-bold text-sm text-white">
+                Get Free SEO Audit →
               </Link>
-              {link.children && (
-                <div className="pl-4">
-                  {link.children.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      title={child.label}
-                      className="flex items-center gap-2 py-2 text-sm text-[hsl(215,20%,60%)] hover:text-white transition-colors"
-                    >
-                      <span>{child.icon}</span>
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
             </div>
-          ))}
-          <Link href="/contact" title="Get Free SEO Audit" className="btn-primary w-full justify-center mt-4 text-sm">
-            <span>Get Free Audit</span>
-          </Link>
-        </div>
-      </div>
+          </div>
+        )}
+      </nav>
     </header>
   );
 }

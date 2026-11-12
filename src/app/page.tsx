@@ -7,14 +7,15 @@ const StatsSection = dynamic(() => import('@/components/home/StatsSection'), { s
 const ServicesSection = dynamic(() => import('@/components/home/ServicesSection'), { ssr: true });
 const ProcessSection = dynamic(() => import('@/components/home/ProcessSection'), { ssr: true });
 const ResultsSection = dynamic(() => import('@/components/home/ResultsSection'), { ssr: true });
+const TestimonialsSection = dynamic(() => import('@/components/home/TestimonialsSection'), { ssr: true });
 const PricingPreview = dynamic(() => import('@/components/home/PricingPreview'), { ssr: true });
 const BlogPreview = dynamic(() => import('@/components/home/BlogPreview'), { ssr: true });
 const CTASection = dynamic(() => import('@/components/home/CTASection'), { ssr: true });
 
 export const metadata: Metadata = {
-  title: 'EducationHom | Digital Marketing Agency for Growth',
+  title: 'EducationHom | Next-Gen Digital Marketing & SEO Agency',
   description:
-    'EducationHom delivers measurable results through SEO, AI SEO, PPC, Social Media Marketing, Link Building & Web Development. Get your free audit today and start outranking your competition.',
+    'EducationHom delivers compounding organic revenue through technical SEO, AI Search Optimization (AEO/GEO), high-intent PPC, and authoritative link building.',
   publisher: 'EducationHom',
   alternates: {
     canonical: CANONICAL_SITE_URL,
@@ -29,6 +30,7 @@ export default function HomePage() {
       <ServicesSection />
       <ProcessSection />
       <ResultsSection />
+      <TestimonialsSection />
       <PricingPreview />
       <BlogPreview />
       <CTASection />

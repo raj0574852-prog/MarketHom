@@ -1,62 +1,61 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
+import { ArrowUpRight, ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { BorderBeam } from '@/components/ui/BorderBeam';
 
 export default function CTASection() {
   return (
-    <section className="section-padding-sm relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(217,91%,40%)] via-[hsl(240,70%,35%)] to-[hsl(270,80%,40%)]" />
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`,
-          backgroundSize: '30px 30px',
-        }}
-      />
+    <section className="section-padding relative overflow-hidden bg-slate-950 py-24">
+      {/* Cinematic Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-r from-blue-600/25 via-indigo-600/20 to-purple-600/20 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container-custom relative z-10 text-center">
-        <div className="max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-2 bg-white/15 text-white text-xs font-semibold px-4 py-2 rounded-full mb-6 tracking-wider uppercase">
-            🚀 Ready to Scale Your Business?
-          </span>
+      <div className="container-custom relative z-10">
+        <div className="relative rounded-3xl p-10 md:p-16 bg-gradient-to-b from-white/[0.05] to-white/[0.01] border border-white/10 backdrop-blur-2xl text-center max-w-4xl mx-auto shadow-2xl shadow-black/80 overflow-hidden">
+          <BorderBeam size={280} duration={14} colorFrom="#60a5fa" colorTo="#c084fc" />
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            Let&apos;s Build Your
-            <br />
-            Growth Engine Today
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-6">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Ready to Scale Your Organic Engine?</span>
+          </div>
+
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 tracking-tight leading-[1.08]">
+            Let&apos;s Build Your{' '}
+            <span className="gradient-text">Unfair Search Advantage</span>
           </h2>
 
-          <p className="text-white/75 text-lg mb-10 leading-relaxed">
-            Partner with EducationHom to drive traffic, generate leads, and grow revenue. Your free audit is just one click away.
+          <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+            Claim your confidential 360° competitive audit. We will analyze your search footprint, uncover high-intent commercial gaps, and show you exactly how to outrank your competition.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
             <Link
               href="/contact"
-              title="Get Your Free SEO Audit"
-              className="inline-flex items-center gap-2 bg-white text-[hsl(217,91%,40%)] px-8 py-4 rounded-full font-bold text-base hover:bg-white/90 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all duration-300 shadow-xl shadow-blue-600/30 hover:shadow-blue-500/50 hover:-translate-y-0.5"
             >
-              Get Your Free SEO Audit
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
+              <span>Get Your Free SEO Audit</span>
+              <ArrowUpRight className="w-5 h-5" />
             </Link>
+
             <Link
               href="/pricing"
-              title="View Pricing Plans"
-              className="inline-flex items-center gap-2 bg-white/15 text-white px-8 py-4 rounded-full font-semibold text-base hover:bg-white/25 border border-white/30 transition-all duration-300"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full font-semibold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-0.5"
             >
-              View Pricing Plans
+              <span>View Transparent Plans</span>
             </Link>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            {[
-              '✓ No long-term contracts',
-              '✓ Results in 30 days',
-              '✓ Free strategy call',
-              '✓ Cancel anytime',
-            ].map((item) => (
-              <span key={item} className="text-sm text-white/70 font-medium">{item}</span>
-            ))}
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2.5 text-xs text-slate-400 font-medium">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Free 30-Minute Consultation
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Zero Obligation or Lock-In
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Actionable Strategy in 48 Hours
+            </span>
           </div>
         </div>
       </div>

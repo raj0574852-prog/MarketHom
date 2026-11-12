@@ -1,137 +1,151 @@
-import Link from 'next/link';
+'use client';
 
-const plans = [
+import React from 'react';
+import Link from 'next/link';
+import { Check, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import { BorderBeam } from '@/components/ui/BorderBeam';
+
+const PLANS = [
   {
-    name: 'Starter',
-    price: '$997',
-    period: '/mo',
-    description: 'Perfect for small businesses ready to start growing online.',
+    name: 'Foundation Tier',
+    badge: 'Essential Growth',
+    price: '$1,490',
+    period: '/month',
+    description: 'Engineered for businesses launching their search presence and seeking clean technical rankings.',
     features: [
-      'SEO Audit & Strategy',
-      'On-Page SEO (10 pages)',
-      'Monthly Reporting',
-      '5 Target Keywords',
-      '2 Blog Posts/Month',
-      'Google Analytics Setup',
+      'Comprehensive Technical Core Web Vitals Audit',
+      'Targeted Keyword Strategy (15 Commercial Terms)',
+      'On-Page Schema & Entity Optimization (12 Pages)',
+      '3 High-DA Editorial Guest Post Placements',
+      'Continuous 24/7 Indexation Monitoring',
+      'Monthly Executive Performance Review',
     ],
-    cta: 'Get Started',
+    cta: 'Select Foundation Tier',
     popular: false,
-    color: 'hsl(215,25%,22%)',
   },
   {
-    name: 'Growth',
-    price: '$2,497',
-    period: '/mo',
-    description: 'For businesses serious about dominating their market.',
+    name: 'Growth Scale',
+    badge: 'Most Popular',
+    price: '$2,890',
+    period: '/month',
+    description: 'Designed for aggressive market capture, competitive displacement, and compounding topical dominance.',
     features: [
-      'Everything in Starter',
-      '25 Target Keywords',
-      'Link Building (5 links/mo)',
-      '4 Blog Posts/Month',
-      'PPC Campaign Management',
-      'Social Media (2 platforms)',
-      'CRO Consultation',
-      'Priority Support',
+      'Everything in Foundation Tier',
+      'Topical Authority Map & Cluster Blueprint',
+      'Expanded Target Keyword Matrix (40+ Queries)',
+      '8 High-DA / High-Traffic Editorial Placements',
+      'AI Engine Optimization (ChatGPT & Perplexity)',
+      'Conversion Rate Optimization (CRO) Analysis',
+      'Dedicated Senior Strategist & Direct Slack Access',
     ],
-    cta: 'Most Popular',
+    cta: 'Accelerate With Growth',
     popular: true,
-    color: 'hsl(217,91%,54%)',
   },
   {
-    name: 'Domination',
-    price: '$4,997',
-    period: '/mo',
-    description: 'Full-service digital marketing for aggressive growth targets.',
+    name: 'Market Domination',
+    badge: 'Enterprise',
+    price: '$5,490',
+    period: '/month',
+    description: 'Full-funnel digital dominance for market leaders requiring multi-channel search and organic supremacy.',
     features: [
-      'Everything in Growth',
-      'Unlimited Keywords',
-      'Link Building (15 links/mo)',
-      '8 Blog Posts/Month',
-      'AI SEO Strategy',
-      'Full Social Media (4 platforms)',
-      'Dedicated Account Manager',
-      'Weekly Strategy Calls',
-      'Custom Reporting Dashboard',
+      'Everything in Growth Scale',
+      'Unlimited High-Intent Keyword Targeting',
+      '18+ Premium Tier-1 Publication Features/Mo',
+      'Comprehensive Programmatic SEO Engineering',
+      'Full Multi-Channel PPC Campaign Management',
+      'Custom Real-Time Attribution Dashboard',
+      'Bi-Weekly Executive Strategy & Roadmap Calls',
     ],
-    cta: 'Scale Now',
+    cta: 'Deploy Domination Tier',
     popular: false,
-    color: 'hsl(270,80%,60%)',
   },
 ];
 
 export default function PricingPreview() {
   return (
-    <section className="section-padding mesh-bg" id="pricing">
-      <div className="container-custom">
-        <div className="text-center mb-16">
-          <span className="badge mb-4">Pricing</span>
-          <h2 className="text-4xl md:text-5xl font-black mb-5">
+    <section className="section-padding relative overflow-hidden bg-slate-950" id="pricing">
+      <div className="container-custom relative z-10">
+        {/* Header */}
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-4">
+            Transparent Investment Architecture
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black mb-5 tracking-tight text-white leading-tight">
             Transparent Pricing.{' '}
-            <span className="gradient-text">No Hidden Fees.</span>
+            <span className="gradient-text">Compounding Returns.</span>
           </h2>
-          <p className="text-[hsl(215,20%,60%)] text-lg max-w-2xl mx-auto">
-            Choose the plan that fits your ambition. All plans include a free onboarding audit.
+          <p className="text-slate-400 text-lg leading-relaxed">
+            No hidden retainer traps or ambiguous billable hours. Clear deliverables, verified editorial placements, and measurable revenue attribution.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {plans.map((plan) => (
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-12">
+          {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-2xl border p-7 transition-all duration-300 ${
+              className={`relative rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 ${
                 plan.popular
-                  ? 'bg-gradient-to-b from-[hsl(217,91%,54%)]/10 to-[hsl(270,80%,60%)]/5 border-[hsl(217,91%,54%)]/50 shadow-2xl shadow-[hsl(217,91%,54%)]/20 scale-105'
-                  : 'bg-[hsl(215,25%,12%)] border-[hsl(215,25%,22%)]/50 hover:border-[hsl(215,25%,30%)]'
+                  ? 'bg-slate-900/90 border-2 border-blue-500/60 shadow-2xl shadow-blue-900/30 scale-100 lg:-translate-y-2'
+                  : 'bg-white/[0.02] border border-white/10 hover:border-white/20'
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="badge bg-gradient-to-r from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] text-white border-0 text-xs">
-                    ⭐ Most Popular
-                  </span>
-                </div>
+                <BorderBeam size={220} duration={10} colorFrom="#60a5fa" colorTo="#c084fc" />
               )}
 
-              <div className="mb-5">
-                <h3 className="text-xl font-bold mb-1" style={{ color: plan.popular ? 'white' : 'hsl(215,20%,85%)' }}>
-                  {plan.name}
-                </h3>
-                <p className="text-sm text-[hsl(215,20%,55%)]">{plan.description}</p>
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-400">
+                    {plan.badge}
+                  </span>
+                  {plan.popular && (
+                    <span className="flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full bg-blue-500 text-white shadow-md">
+                      <Sparkles className="w-3 h-3" /> Agency Choice
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="text-2xl font-black text-white mb-2">{plan.name}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed mb-6">{plan.description}</p>
+
+                <div className="flex items-baseline gap-1 mb-8 pb-6 border-b border-white/10">
+                  <span className="text-4xl md:text-5xl font-black text-white tracking-tight">{plan.price}</span>
+                  <span className="text-sm font-medium text-slate-400">{plan.period}</span>
+                </div>
+
+                <ul className="space-y-3.5 mb-8">
+                  {plan.features.map((feat) => (
+                    <li key={feat} className="flex items-start gap-2.5 text-xs text-slate-300 leading-snug">
+                      <div className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3 h-3" />
+                      </div>
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-black text-white">{plan.price}</span>
-                <span className="text-[hsl(215,20%,55%)] text-sm">{plan.period}</span>
+              <div>
+                <Link
+                  href="/contact"
+                  className={`w-full py-4 rounded-full text-center font-bold text-xs flex items-center justify-center gap-2 transition-all duration-300 ${
+                    plan.popular
+                      ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-xl shadow-blue-600/30 hover:shadow-blue-500/50'
+                      : 'bg-white/10 text-white hover:bg-white/20 border border-white/15'
+                  }`}
+                >
+                  <span>{plan.cta}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 mt-4">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Month-to-month flexibility • Cancel anytime</span>
+                </div>
               </div>
-
-              <ul className="space-y-2.5 mb-8">
-                {plan.features.map((feat) => (
-                  <li key={feat} className="flex items-start gap-2 text-sm text-[hsl(215,20%,70%)]">
-                    <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                      style={{ color: plan.popular ? 'hsl(152,69%,46%)' : 'hsl(217,91%,54%)' }}>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href="/contact"
-                title="Get Custom Quote"
-                className={plan.popular ? 'btn-primary w-full justify-center' : 'btn-outline w-full justify-center'}
-              >
-                <span>{plan.cta} →</span>
-              </Link>
             </div>
           ))}
-        </div>
-
-        <div className="text-center mt-10">
-          <p className="text-[hsl(215,20%,55%)] text-sm mb-4">Need a custom plan? We build tailored packages for enterprises.</p>
-          <Link href="/pricing" title="See Full Pricing Details" className="text-[hsl(217,91%,65%)] font-semibold hover:text-white transition-colors text-sm">
-            See Full Pricing Details →
-          </Link>
         </div>
       </div>
     </section>
