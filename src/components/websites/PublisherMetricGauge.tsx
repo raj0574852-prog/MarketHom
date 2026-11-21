@@ -17,14 +17,14 @@ export function PublisherMetricGauge({
   max = 100,
   type = 'score',
   size = 'small',
-  colorClass = 'text-blue-600',
+  colorClass = 'text-cyan-400',
 }: PublisherMetricGaugeProps) {
-  const radius = size === 'large' ? 40 : 18;
-  const stroke = size === 'large' ? 8 : 4;
+  const radius = size === 'large' ? 44 : 20;
+  const stroke = size === 'large' ? 7 : 4;
   const normalizedRadius = radius - stroke * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
   
-  const displayPercentage = typeof value === 'number' ? (value / max) * 100 : 0;
+  const displayPercentage = typeof value === 'number' ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
   const strokeDashoffset = circumference - (displayPercentage / 100) * circumference;
 
   const isLarge = size === 'large';
@@ -33,7 +33,7 @@ export function PublisherMetricGauge({
   if (value === null || value === undefined) {
     return (
       <div className="flex flex-col items-center justify-center p-4">
-        <span className="text-2xl font-bold text-slate-300">N/A</span>
+        <span className="text-2xl font-bold text-slate-500">N/A</span>
       </div>
     );
   }
@@ -45,23 +45,23 @@ export function PublisherMetricGauge({
         <svg
           height={viewBoxSize}
           width={viewBoxSize}
-          className="transform -rotate-90"
+          className="transform -rotate-90 drop-shadow-md"
         >
           <circle
-            stroke="#E2E8F0"
+            stroke="rgba(255, 255, 255, 0.1)"
             fill="transparent"
             strokeWidth={stroke}
             r={normalizedRadius}
             cx={radius}
             cy={radius}
           />
-          {/* Progress Circle (Static) */}
+          {/* Progress Circle with glow */}
           <circle
-            className={`${colorClass}`}
+            className={`${colorClass} transition-all duration-1000 ease-out`}
             stroke="currentColor"
             fill="transparent"
             strokeWidth={stroke}
-            strokeDasharray={circumference + ' ' + circumference}
+            strokeDasharray={`${circumference} ${circumference}`}
             style={{ strokeDashoffset }}
             strokeLinecap="round"
             r={normalizedRadius}
@@ -69,10 +69,17 @@ export function PublisherMetricGauge({
             cy={radius}
           />
         </svg>
-        <div className="absolute flex items-center justify-center">
-          <span className={`${isLarge ? 'text-3xl' : 'text-lg'} font-bold text-slate-900`}>
+
+        {/* Center Value */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className={`${isLarge ? 'text-2xl font-black text-white' : 'text-xs font-bold text-white'} tracking-tight`}>
             {value}{type === 'percentage' ? '%' : ''}
           </span>
+          {isLarge && (
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+              / {max}
+            </span>
+          )}
         </div>
       </div>
     </div>

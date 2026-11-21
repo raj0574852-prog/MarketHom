@@ -1,12 +1,11 @@
 import React from 'react';
 import { WebsiteListing } from './types';
+import { Sparkles } from 'lucide-react';
 
 export default function QuickAnswer({ website }: { website: WebsiteListing }) {
   if (!website) return null;
 
-  const { domain, name, category_id, content_placement_selling_price } = website;
-  const displayName = name && name.toLowerCase() !== domain.toLowerCase() ? name : domain;
-  
+  const { domain, name, category_id } = website;
   const categories = [];
   if (category_id && category_id !== 'General') {
     categories.push(category_id);
@@ -17,7 +16,7 @@ export default function QuickAnswer({ website }: { website: WebsiteListing }) {
   }
   
   const uniqueCategories = Array.from(new Set(categories));
-  let displayCategory = 'various topics';
+  let displayCategory = 'digital lifestyle and business';
   if (uniqueCategories.length > 0) {
     const topTopics = uniqueCategories.slice(0, 3);
     if (topTopics.length === 1) {
@@ -29,18 +28,17 @@ export default function QuickAnswer({ website }: { website: WebsiteListing }) {
     }
   }
 
-  // Constructing a factual, AEO-friendly quick answer
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:p-8 mb-8" aria-label="Quick Answer">
-      <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-        <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        Quick Answer
-      </h2>
-      <div className="text-slate-700 leading-relaxed text-lg">
-        <strong>{domain}</strong> is a {displayCategory}-focused publishing opportunity available through EducationHom. 
-        Guest post placements are available for this publisher. Publisher metrics and content requirements are provided below.
+    <div className="relative bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 mb-8 overflow-hidden" aria-label="Quick Answer">
+      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-cyan-400 via-blue-500 to-indigo-500" />
+      
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="w-5 h-5 text-cyan-400" />
+        <h2 className="text-lg font-bold text-white tracking-tight">Executive Summary</h2>
+      </div>
+
+      <div className="text-slate-300 leading-relaxed text-base font-light">
+        <strong className="text-white font-semibold">{domain}</strong> is a high-authority <span className="text-cyan-300">{displayCategory}</span> publication accessible for verified sponsored guest posts and contextual brand editorial links through MarketHom Agency. Placements include permanent DoFollow attribution, guaranteed Google indexing, and fast editorial approval within {website.turnaround_time || '4'} business days.
       </div>
     </div>
   );

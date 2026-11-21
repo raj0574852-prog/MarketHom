@@ -11,24 +11,24 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
   const normalized = normalizePublisherMetrics(metrics);
 
   const getDaStatus = (val: number | null) => {
-    if (val === null) return { text: 'Verified', color: 'bg-slate-100 text-slate-600' };
-    if (val >= 50) return { text: 'High Authority', color: 'bg-blue-100 text-blue-700' };
-    if (val >= 30) return { text: 'Established', color: 'bg-blue-50 text-blue-600' };
-    return { text: 'Growing', color: 'bg-slate-100 text-slate-600' };
+    if (val === null) return { text: 'Verified', color: 'bg-white/5 text-slate-300 border-white/10' };
+    if (val >= 50) return { text: 'High Authority', color: 'bg-blue-500/10 text-blue-300 border-blue-500/30' };
+    if (val >= 30) return { text: 'Established', color: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' };
+    return { text: 'Growing', color: 'bg-white/5 text-slate-300 border-white/10' };
   };
 
   const getDrStatus = (val: number | null) => {
-    if (val === null) return { text: 'Verified', color: 'bg-slate-100 text-slate-600' };
-    if (val >= 50) return { text: 'Elite Tier', color: 'bg-emerald-100 text-emerald-700' };
-    if (val >= 25) return { text: 'Strong Link Equity', color: 'bg-emerald-50 text-emerald-600' };
-    return { text: 'Indexed Profile', color: 'bg-slate-100 text-slate-600' };
+    if (val === null) return { text: 'Verified', color: 'bg-white/5 text-slate-300 border-white/10' };
+    if (val >= 50) return { text: 'Elite Tier', color: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' };
+    if (val >= 25) return { text: 'Strong Equity', color: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' };
+    return { text: 'Indexed Profile', color: 'bg-white/5 text-slate-300 border-white/10' };
   };
 
   const getSpamStatus = (val: number | null) => {
-    if (val === null) return { text: 'Clean Risk', color: 'bg-emerald-50 text-emerald-600' };
-    if (val <= 5) return { text: 'Low / Safe', color: 'bg-emerald-100 text-emerald-700' };
-    if (val <= 15) return { text: 'Moderate', color: 'bg-amber-50 text-amber-600' };
-    return { text: 'Elevated', color: 'bg-red-50 text-red-600' };
+    if (val === null) return { text: 'Clean Risk', color: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' };
+    if (val <= 5) return { text: 'Safe / Low', color: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' };
+    if (val <= 15) return { text: 'Moderate', color: 'bg-amber-500/10 text-amber-300 border-amber-500/30' };
+    return { text: 'Elevated', color: 'bg-rose-500/10 text-rose-300 border-rose-500/30' };
   };
 
   const daStatus = getDaStatus(normalized.da);
@@ -36,12 +36,15 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
   const spamStatus = getSpamStatus(normalized.spamScore);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-8">
+    <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-6 sm:p-8 mb-8 relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 right-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-6 pb-4 border-b border-white/10 relative z-10">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-200">
             SEO Authority & Performance Metrics
           </h2>
         </div>
@@ -51,14 +54,14 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
       </div>
 
       {/* Grid of 5 Distinct Elevated Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 relative z-10">
         
         {/* Metric 1: DA */}
         <AnimatedCounter value={normalized.da}>
           {(animatedDa) => (
-            <div className="bg-gradient-to-b from-blue-50/40 to-white hover:from-blue-50/80 border border-slate-200 hover:border-blue-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between text-center group">
+            <div className="bg-slate-950/70 hover:bg-slate-900/90 border border-white/10 hover:border-blue-400/50 rounded-2xl p-4 shadow-lg hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between text-center group">
               <div className="flex items-center justify-between w-full mb-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-100/70 text-blue-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/15 text-blue-400 border border-blue-500/20">
                   Moz
                 </span>
                 <PublisherTooltip
@@ -68,21 +71,21 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
                   scale="0–100"
                   definition="A search-ranking score developed by Moz that predicts how likely a website is to rank on search engine result pages."
                 >
-                  <span className="text-slate-400 hover:text-blue-600 text-xs cursor-pointer">ⓘ</span>
+                  <span className="text-slate-500 hover:text-blue-400 text-xs cursor-pointer">ⓘ</span>
                 </PublisherTooltip>
               </div>
 
               <div className="my-1">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
+                <div className="text-3xl sm:text-4xl font-black text-white tracking-tight group-hover:text-blue-400 transition-colors">
                   {animatedDa !== null ? animatedDa : 'N/A'}
                 </div>
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
                   Domain Authority
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-slate-100">
-                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${daStatus.color}`}>
+              <div className="mt-2 pt-2 border-t border-white/5">
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${daStatus.color}`}>
                   {daStatus.text}
                 </span>
               </div>
@@ -93,9 +96,9 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
         {/* Metric 2: DR */}
         <AnimatedCounter value={normalized.dr}>
           {(animatedDr) => (
-            <div className="bg-gradient-to-b from-emerald-50/40 to-white hover:from-emerald-50/80 border border-slate-200 hover:border-emerald-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between text-center group">
+            <div className="bg-slate-950/70 hover:bg-slate-900/90 border border-white/10 hover:border-emerald-400/50 rounded-2xl p-4 shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between text-center group">
               <div className="flex items-center justify-between w-full mb-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100/70 text-emerald-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
                   Ahrefs
                 </span>
                 <PublisherTooltip
@@ -103,23 +106,23 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
                   value={normalized.dr !== null ? `${normalized.dr} / 100` : 'N/A'}
                   provider="Ahrefs"
                   scale="0–100"
-                  definition="A metric provided by Ahrefs showing the strength of a target website's backlink profile compared to the other websites in their database on a 100-point scale."
+                  definition="A metric provided by Ahrefs showing the strength of a target website's backlink profile compared to other websites."
                 >
-                  <span className="text-slate-400 hover:text-emerald-600 text-xs cursor-pointer">ⓘ</span>
+                  <span className="text-slate-500 hover:text-emerald-400 text-xs cursor-pointer">ⓘ</span>
                 </PublisherTooltip>
               </div>
 
               <div className="my-1">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight group-hover:text-emerald-600 transition-colors">
+                <div className="text-3xl sm:text-4xl font-black text-white tracking-tight group-hover:text-emerald-400 transition-colors">
                   {animatedDr !== null ? animatedDr : 'N/A'}
                 </div>
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
                   Domain Rating
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-slate-100">
-                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${drStatus.color}`}>
+              <div className="mt-2 pt-2 border-t border-white/5">
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${drStatus.color}`}>
                   {drStatus.text}
                 </span>
               </div>
@@ -130,9 +133,9 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
         {/* Metric 3: Authority Score */}
         <AnimatedCounter value={normalized.authorityScore}>
           {(animatedAuthScore) => (
-            <div className="bg-gradient-to-b from-purple-50/40 to-white hover:from-purple-50/80 border border-slate-200 hover:border-purple-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between text-center group">
+            <div className="bg-slate-950/70 hover:bg-slate-900/90 border border-white/10 hover:border-purple-400/50 rounded-2xl p-4 shadow-lg hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between text-center group">
               <div className="flex items-center justify-between w-full mb-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-100/70 text-purple-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-500/15 text-purple-400 border border-purple-500/20">
                   Semrush
                 </span>
                 <PublisherTooltip
@@ -142,21 +145,21 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
                   scale="0–100"
                   definition="A compound metric from Semrush that measures domain quality and organic search performance."
                 >
-                  <span className="text-slate-400 hover:text-purple-600 text-xs cursor-pointer">ⓘ</span>
+                  <span className="text-slate-500 hover:text-purple-400 text-xs cursor-pointer">ⓘ</span>
                 </PublisherTooltip>
               </div>
 
               <div className="my-1">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight group-hover:text-purple-600 transition-colors">
+                <div className="text-3xl sm:text-4xl font-black text-white tracking-tight group-hover:text-purple-400 transition-colors">
                   {animatedAuthScore !== null ? animatedAuthScore : 'N/A'}
                 </div>
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
                   Auth Score
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-slate-100">
-                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700">
+              <div className="mt-2 pt-2 border-t border-white/5">
+                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-300 border border-purple-500/20">
                   Topical Trust
                 </span>
               </div>
@@ -167,32 +170,32 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
         {/* Metric 4: Spam Score */}
         <AnimatedCounter value={normalized.spamScore}>
           {(animatedSpamScore) => (
-            <div className="bg-gradient-to-b from-slate-50/40 to-white hover:from-slate-50/80 border border-slate-200 hover:border-slate-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between text-center group">
+            <div className="bg-slate-950/70 hover:bg-slate-900/90 border border-white/10 hover:border-slate-400/50 rounded-2xl p-4 shadow-lg transition-all duration-300 flex flex-col justify-between text-center group">
               <div className="flex items-center justify-between w-full mb-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/5 text-slate-300 border border-white/10">
                   Risk
                 </span>
                 <PublisherTooltip
                   title="Spam Score"
                   value={normalized.spamScore !== null ? `${normalized.spamScore}%` : 'Low Risk (<1%)'}
                   provider="Moz"
-                  definition="Moz Spam Score represents the percentage of sites with similar features that have been penalized or banned by Google. Lower is safer."
+                  definition="Moz Spam Score represents the percentage of sites with similar features that have been penalized. Lower is safer."
                 >
-                  <span className="text-slate-400 hover:text-slate-700 text-xs cursor-pointer">ⓘ</span>
+                  <span className="text-slate-500 hover:text-slate-300 text-xs cursor-pointer">ⓘ</span>
                 </PublisherTooltip>
               </div>
 
               <div className="my-1">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight group-hover:text-emerald-600 transition-colors">
+                <div className="text-3xl sm:text-4xl font-black text-white tracking-tight group-hover:text-emerald-400 transition-colors">
                   {animatedSpamScore !== null ? `${animatedSpamScore}%` : 'Clean'}
                 </div>
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
                   Spam Score
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-slate-100">
-                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${spamStatus.color}`}>
+              <div className="mt-2 pt-2 border-t border-white/5">
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${spamStatus.color}`}>
                   {spamStatus.text}
                 </span>
               </div>
@@ -203,33 +206,33 @@ export function PublisherMetrics({ metrics }: { metrics: MetricItem[] | null | u
         {/* Metric 5: Organic Traffic */}
         <AnimatedCounter value={normalized.organicTraffic}>
           {(animatedTraffic) => (
-            <div className="col-span-2 sm:col-span-1 bg-gradient-to-b from-cyan-50/40 to-white hover:from-cyan-50/80 border border-slate-200 hover:border-cyan-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between text-center group">
+            <div className="col-span-2 sm:col-span-1 bg-slate-950/70 hover:bg-slate-900/90 border border-white/10 hover:border-cyan-400/50 rounded-2xl p-4 shadow-lg hover:shadow-cyan-500/10 transition-all duration-300 flex flex-col justify-between text-center group">
               <div className="flex items-center justify-between w-full mb-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-100/70 text-cyan-800">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">
                   Monthly Visits
                 </span>
                 <PublisherTooltip
                   title="Organic Traffic"
-                  value={normalized.organicTraffic !== null && normalized.organicTraffic > 0 ? formatCompactNumber(normalized.organicTraffic) : 'Verified'}
+                  value={normalized.organicTraffic !== null && normalized.organicTraffic > 0 ? formatCompactNumber(normalized.organicTraffic) : 'Active'}
                   provider="Ahrefs / Semrush"
                   definition="Estimated monthly organic search visits. High organic traffic confirms that real users visit the site from Google searches."
                 >
-                  <span className="text-slate-400 hover:text-cyan-600 text-xs cursor-pointer">ⓘ</span>
+                  <span className="text-slate-500 hover:text-cyan-400 text-xs cursor-pointer">ⓘ</span>
                 </PublisherTooltip>
               </div>
 
               <div className="my-1">
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight group-hover:text-cyan-600 transition-colors flex items-center justify-center gap-1">
+                <div className="text-3xl sm:text-4xl font-black text-white tracking-tight group-hover:text-cyan-400 transition-colors flex items-center justify-center gap-1">
                   <span>{typeof animatedTraffic === 'number' && animatedTraffic > 0 ? formatCompactNumber(animatedTraffic) : 'Active'}</span>
-                  <span className="text-emerald-500 text-sm">↗</span>
+                  <span className="text-emerald-400 text-sm">↗</span>
                 </div>
-                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mt-1">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1">
                   Organic Traffic
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-slate-100">
-                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-700">
+              <div className="mt-2 pt-2 border-t border-white/5">
+                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
                   Google Ranked
                 </span>
               </div>
