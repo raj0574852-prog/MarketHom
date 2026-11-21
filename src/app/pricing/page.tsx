@@ -1,208 +1,234 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import CTASection from '@/components/home/CTASection';
+import { BorderBeam } from '@/components/ui/BorderBeam';
+import { Check, Sparkles, HelpCircle, ChevronDown, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Pricing Plans | Scalable Marketing Packages',
-  description: 'Choose the perfect digital marketing package for your business. Transparent pricing for SEO, PPC, and full-service growth engines.',
+  title: 'Investment Packages & Pricing | MarketHom Agency',
+  description: 'Transparent, results-driven pricing for organic search dominance, editorial links, and custom digital marketing solutions.',
 };
 
 const tiers = [
   {
-    name: 'Starter',
+    name: 'Starter Foundation',
     price: '$997',
     period: '/month',
-    description: 'Essential SEO and marketing for small businesses and startups.',
-    cta: 'Get Started',
-    color: 'hsl(217, 91%, 54%)',
+    description: 'Essential technical SEO and initial link equity for early-stage brands and local challengers.',
+    cta: 'Select Starter Plan',
+    popular: false,
     features: [
-      { name: 'Target Keywords', value: '5' },
-      { name: 'On-Page Optimization', value: '10 Pages' },
-      { name: 'Content Marketing', value: '2 Posts/mo' },
-      { name: 'Technical SEO Audit', value: 'Quarterly' },
-      { name: 'Backlink Building', value: '2 Links/mo' },
-      { name: 'Reporting', value: 'Monthly' },
-      { name: 'Support', value: 'Email' },
+      { name: 'Target Keywords Managed', value: '10 Strategic Clusters' },
+      { name: 'On-Page Optimization', value: 'Up to 15 Core Pages' },
+      { name: 'Technical SEO Audit', value: 'Monthly Continuous' },
+      { name: 'Editorial Backlinks', value: '2 Tier-1 Links / mo' },
+      { name: 'Executive Reporting', value: 'Bi-Weekly Dashboards' },
+      { name: 'Dedicated Communication', value: 'Slack & Email' },
     ],
     included: [
-      'Google Analytics Setup',
-      'Google Search Console Setup',
-      'Local Business Profile Opt.',
-      'Basic Site Speed Audit',
+      'Comprehensive Core Web Vitals Audit',
+      'Google Search Console Optimization',
+      'Structured Schema Markup Injection',
+      'Competitor Keyword Gap Analysis',
     ]
   },
   {
-    name: 'Growth',
+    name: 'Growth Engine',
     price: '$2,497',
     period: '/month',
-    description: 'Our most popular plan for businesses ready to dominate their niche.',
-    cta: 'Most Popular',
-    color: 'hsl(270, 80%, 60%)',
+    description: 'Our flagship full-stack growth program for businesses ready to capture competitive industry terms.',
+    cta: 'Claim Growth Engine',
     popular: true,
     features: [
-      { name: 'Target Keywords', value: '25' },
-      { name: 'On-Page Optimization', value: 'Unlimited' },
-      { name: 'Content Marketing', value: '4 Posts/mo' },
-      { name: 'Technical SEO Audit', value: 'Monthly' },
-      { name: 'Backlink Building', value: '6 Links/mo' },
-      { name: 'Reporting', value: 'Bi-Weekly' },
-      { name: 'Support', value: 'Priority Slack' },
+      { name: 'Target Keywords Managed', value: '35 High-Intent Clusters' },
+      { name: 'On-Page Optimization', value: 'Full Domain Architecture' },
+      { name: 'Technical SEO Audit', value: 'Continuous Real-Time' },
+      { name: 'Editorial Backlinks', value: '6 Tier-1 Publications / mo' },
+      { name: 'AI Search Optimization', value: 'ChatGPT / Perplexity GEO' },
+      { name: 'Executive Reporting', value: 'Weekly Strategy Calls' },
+      { name: 'Dedicated Communication', value: 'Direct Private Slack Channel' },
     ],
     included: [
-      'Everything in Starter',
-      'Competitor Analysis',
-      'Conversion Rate Optimization',
-      'Schema Markup Implementation',
-      'PPC Campaign Management',
-      'Lead Tracking Dashboard',
+      'Everything in Starter Foundation',
+      'High-Impact Digital PR Link Acquisition',
+      'Generative Engine Optimization (GEO)',
+      'Conversion Rate Optimization (CRO)',
+      'Quarterly In-Depth Market Audits',
     ]
   },
   {
-    name: 'Domination',
+    name: 'Market Dominance',
     price: '$4,997',
     period: '/month',
-    description: 'Aggressive marketing for enterprises and high-growth brands.',
-    cta: 'Scale Now',
-    color: 'hsl(39, 100%, 58%)',
+    description: 'Bespoke enterprise marketing infrastructure for category leaders demanding total SERP authority.',
+    cta: 'Schedule Executive Brief',
+    popular: false,
     features: [
-      { name: 'Target Keywords', value: 'Unlimited' },
-      { name: 'On-Page Optimization', value: 'Unlimited' },
-      { name: 'Content Marketing', value: '8 Posts/mo' },
-      { name: 'Technical SEO Audit', value: 'Continuous' },
-      { name: 'Backlink Building', value: '15 Links/mo' },
-      { name: 'Reporting', value: 'Weekly Strategy' },
-      { name: 'Support', value: 'Dedicated Manager' },
+      { name: 'Target Keywords Managed', value: 'Unlimited Enterprise Scope' },
+      { name: 'On-Page Optimization', value: 'Multi-Region & Global i18n' },
+      { name: 'Technical SEO Audit', value: 'Real-Time Automated Monitor' },
+      { name: 'Editorial Backlinks', value: '14+ Premium Placements / mo' },
+      { name: 'AI Search Optimization', value: 'Full Entity Knowledge Graph' },
+      { name: 'Executive Reporting', value: 'Executive Boardroom Deliverables' },
+      { name: 'Dedicated Communication', value: '24/7 Priority Partner Desk' },
     ],
     included: [
-      'Everything in Growth',
-      'AI-Powered SEO Strategy',
-      'Custom Content Production',
-      'Digital PR & HARO Outreach',
-      'Quarterly Market Forecasting',
-      'White-Label Dashboard',
+      'Everything in Growth Engine',
+      'Guaranteed DA 60-90+ Placements',
+      'Dedicated Senior SEO Director',
+      'Custom React/Next.js Landing Pages',
+      'SLA Indexation & Revenue Commitments',
     ]
   }
 ];
 
 const faqs = [
   {
-    q: "Are there any long-term contracts?",
-    a: "No. All our plans are month-to-month. You can upgrade, downgrade, or cancel at any time with a 30-day notice."
+    q: "Are there long-term contractual lock-ins?",
+    a: "No. All agency retainers operate on a rolling month-to-month agreement. You may upgrade, pause, or terminate with a standard 30-day notice."
   },
   {
-    q: "Can I customize a package?",
-    a: "Absolutely. We work with many enterprise clients who require custom strategies. Contact us for a tailored quote."
+    q: "How soon do commercial ranking improvements register?",
+    a: "While organic search compounds over time, clients typically register initial momentum and keyword velocity within 45 to 60 days following technical remediation and initial Tier-1 links."
   },
   {
-    q: "How soon will I see results?",
-    a: "While SEO is a long-term game, most clients see measurable improvements in rankings and traffic within the first 60-90 days."
+    q: "What guarantee do you provide on editorial links?",
+    a: "Every link placement secured through MarketHom is guaranteed permanent DoFollow with 100% Google indexation SLA. If a publisher drops an article, we replace it free of charge."
   },
   {
-    q: "Do you offer a money-back guarantee?",
-    a: "We guarantee the quality of our work and the completion of all deliverables. If we don't hit our agreed KPIs, we work for free until we do."
+    q: "Can we build a custom hybrid tier?",
+    a: "Yes. Many enterprise teams require tailored mixes of publisher syndication, content engineering, and web development. Contact our strategy team for a customized blueprint."
   }
 ];
 
 export default function PricingPage() {
   return (
-    <>
-      <section className="pt-32 pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(217,91%,54%)]/5 via-transparent to-[hsl(270,80%,60%)]/5" />
-        <div className="container-custom relative z-10 text-center">
-          <span className="badge mb-4">Pricing Plans</span>
-          <h1 className="text-5xl md:text-7xl font-black mb-6">
-            Invest in Your <span className="gradient-text">Growth.</span>
+    <div className="bg-slate-950 min-h-screen text-slate-100 relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-10 left-1/4 w-[700px] h-[700px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/2 right-10 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+
+      {/* Hero Header */}
+      <section className="pt-36 pb-16 relative z-10 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 mb-6 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Transparent Investment Plans</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight text-white leading-tight">
+            Invest in Measurable{' '}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400">
+              Commercial Growth.
+            </span>
           </h1>
-          <p className="text-[hsl(215,20%,65%)] text-xl max-w-3xl mx-auto">
-            Transparent, results-driven pricing with no hidden fees or long-term contracts.
+
+          <p className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto font-light">
+            Fixed monthly pricing, no hidden retainers, and zero long-term commitments. Every dollar aligned directly with pipeline value.
           </p>
         </div>
       </section>
 
-      <section className="pb-20">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Tiers Grid */}
+      <section className="pb-28 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
             {tiers.map((tier) => (
               <div 
                 key={tier.name}
-                className={`glass-card p-8 flex flex-col relative ${tier.popular ? 'border-[hsl(270,80%,60%)]/50 scale-105 z-10 shadow-2xl' : ''}`}
+                className={`relative bg-slate-900/60 backdrop-blur-xl rounded-3xl p-8 sm:p-9 border flex flex-col justify-between transition-all duration-300 ${
+                  tier.popular 
+                    ? 'border-cyan-400/50 shadow-[0_0_40px_rgba(56,189,248,0.25)] lg:-translate-y-3 z-10' 
+                    : 'border-white/10 hover:border-white/20 shadow-2xl'
+                }`}
               >
                 {tier.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
-                      Most Popular
-                    </span>
-                  </div>
+                  <BorderBeam size={250} duration={10} delay={0} colorFrom="#38bdf8" colorTo="#6366f1" />
                 )}
-                
-                <div className="mb-8">
-                  <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                  <p className="text-sm text-[hsl(215,20%,55%)] mb-6">{tier.description}</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-white">{tier.price}</span>
-                    <span className="text-[hsl(215,20%,50%)]">{tier.period}</span>
-                  </div>
-                </div>
 
-                <div className="space-y-4 mb-8 flex-1">
-                  {tier.features.map((feat) => (
-                    <div key={feat.name} className="flex items-center justify-between py-2 border-b border-[hsl(215,25%,22%)]/40 text-sm">
-                      <span className="text-[hsl(215,20%,70%)]">{feat.name}</span>
-                      <span className="font-bold text-white">{feat.value}</span>
+                <div>
+                  {tier.popular && (
+                    <div className="mb-4">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg">
+                        <Sparkles className="w-3 h-3" />
+                        Most Selected Tier
+                      </span>
                     </div>
-                  ))}
-                </div>
+                  )}
 
-                <div className="mb-8">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-[hsl(215,20%,40%)] mb-4">What&apos;s Included</h4>
-                  <ul className="space-y-3">
-                    {tier.included.map((item) => (
-                      <li key={item} className="flex items-start gap-3 text-sm text-[hsl(215,20%,65%)]">
-                        <svg className="w-5 h-5 text-[hsl(152,69%,46%)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                        {item}
-                      </li>
+                  <div className="mb-8">
+                    <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
+                    <p className="text-sm text-slate-400 mb-6 font-light leading-relaxed">{tier.description}</p>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-5xl font-black text-white tracking-tight">{tier.price}</span>
+                      <span className="text-slate-400 font-medium text-sm">{tier.period}</span>
+                    </div>
+                  </div>
+
+                  {/* Core Features */}
+                  <div className="space-y-3 mb-8 pt-6 border-t border-white/10">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-2">Deliverables</span>
+                    {tier.features.map((feat) => (
+                      <div key={feat.name} className="flex items-center justify-between py-1.5 text-xs sm:text-sm">
+                        <span className="text-slate-300">{feat.name}</span>
+                        <span className="font-bold text-white">{feat.value}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
+
+                  {/* Included Items */}
+                  <div className="mb-8 pt-6 border-t border-white/10">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-3">Included Capabilities</span>
+                    <ul className="space-y-2.5">
+                      {tier.included.map((item) => (
+                        <li key={item} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-300">
+                          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 <Link 
                   href="/contact" 
-                  className={`w-full py-4 rounded-xl font-bold text-center transition-all ${
+                  className={`w-full py-4 rounded-2xl font-bold text-center text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                     tier.popular 
-                      ? 'bg-gradient-to-r from-[hsl(217,91%,54%)] to-[hsl(270,80%,60%)] text-white hover:opacity-90 shadow-lg' 
-                      : 'bg-white/5 border border-[hsl(215,25%,22%)] text-white hover:bg-white/10'
+                      ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-[0_0_25px_rgba(56,189,248,0.4)]' 
+                      : 'bg-white/5 hover:bg-white/10 border border-white/10 text-white'
                   }`}
                 >
-                  {tier.cta}
+                  <span>{tier.cta}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Comparison Table Section could be added here for extra detail */}
+          {/* Pricing FAQ Section */}
+          <div className="mt-24 max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Pricing FAQ</h2>
+              <p className="text-slate-400 text-sm">Frequently asked questions regarding onboarding, deliverables, and service scope.</p>
+            </div>
 
-      <section className="section-padding bg-[hsl(222,47%,5%)]">
-        <div className="container-custom">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4">Frequently Asked <span className="gradient-text">Questions</span></h2>
-            <p className="text-[hsl(215,20%,60%)]">Everything you need to know about our pricing and services.</p>
-          </div>
-          <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-            {faqs.map((faq, i) => (
-              <div key={i} className="glass-card p-6">
-                <h3 className="font-bold text-lg mb-3 text-white">{faq.q}</h3>
-                <p className="text-sm text-[hsl(215,20%,60%)] leading-relaxed">{faq.a}</p>
-              </div>
-            ))}
+            <div className="bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/10 divide-y divide-white/5 overflow-hidden shadow-2xl">
+              {faqs.map((faq, i) => (
+                <details key={i} className="group p-6 select-none cursor-pointer">
+                  <summary className="flex items-center justify-between text-base font-semibold text-white group-open:text-cyan-400 transition-colors">
+                    <span>{faq.q}</span>
+                    <ChevronDown className="w-4 h-4 text-slate-400 group-open:text-cyan-400 group-open:rotate-180 transition-transform duration-200" />
+                  </summary>
+                  <p className="mt-4 text-sm text-slate-300 font-light leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <CTASection />
-    </>
+    </div>
   );
 }

@@ -2,18 +2,20 @@ import React from 'react';
 import Link from 'next/link';
 import SearchFilter from '@/components/websites/SearchFilter';
 import Pagination from '@/components/websites/Pagination';
+import PublisherLogo from '@/components/websites/PublisherLogo';
 import { getServiceSupabase } from '@/lib/supabaseClient';
+import { queryCatalogPublishers } from '@/lib/publishers/catalogLookup';
 import { Metadata } from 'next';
-
 import { CANONICAL_SITE_URL } from '@/lib/constants';
+import { ArrowRight, Globe, ShieldCheck, Sparkles, TrendingUp, Layers } from 'lucide-react';
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }): Promise<Metadata> {
   const params = await searchParams;
   const hasQueryParams = Object.keys(params).length > 0;
 
   return {
-    title: 'SEO Marketplace | Premium Website Listings',
-    description: 'Browse our exclusive catalog of premium websites accepting guest posts and link placements. Boost your SEO with high DA/DR websites.',
+    title: 'Digital Publisher Marketplace | 29,000+ Verified Websites | MarketHom',
+    description: 'Browse our exclusive catalog of verified websites accepting guest posts and permanent DoFollow placements. Boost your organic rankings with elite DA/DR publications.',
     alternates: {
       canonical: `${CANONICAL_SITE_URL}/websites`,
     },
@@ -24,302 +26,260 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   };
 }
 
-export const revalidate = 60; // Revalidate every minute
+export const revalidate = 60;
 
 export default async function WebsitesIndexPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const supabase = getServiceSupabase();
   const params = await searchParams;
   const q = typeof params.q === 'string' ? params.q : '';
   const category = typeof params.category === 'string' ? params.category : '';
   const country = typeof params.country === 'string' ? params.country : '';
-
   const page = typeof params.page === 'string' ? parseInt(params.page, 10) : 1;
-  const limit = 10;
+  const limit = 12;
   const offset = (page - 1) * limit;
-  
-  // Fetch total sites for the search placeholder
-  const { count: totalSitesCount } = await supabase
-    .from('website_listings')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'published')
-    .eq('is_listed', true);
-  
-  let query = supabase
-    .from('website_listings')
-    .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price, website_metrics(metric_type, value, unit)', { count: 'exact' })
-    .eq('status', 'published')
-    .eq('is_listed', true);
 
-  if (q) query = query.or(`domain.ilike.%${q}%,name.ilike.%${q}%`);
-  if (category) query = query.eq('category_id', category);
-  if (country) query = query.eq('country', country);
+  let websites: any[] = [];
+  let totalCount = 0;
+  let totalPages = 1;
 
-  const { data: websitesRaw, error, count: filteredCount } = await query
-    .order('featured', { ascending: false })
-    .range(offset, offset + limit - 1);
+  const isSupabaseConfigured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://placeholder.supabase.co'
+  );
 
-  let websites = websitesRaw || [];
-  const totalPages = Math.ceil((filteredCount || 0) / limit);
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = getServiceSupabase();
+      let query = supabase
+        .from('website_listings')
+        .select('id, slug, name, domain, category_id, price, currency, logo_url, short_description, content_placement_price, content_placement_selling_price, location, website_metrics(metric_type, value, unit)', { count: 'exact' })
+        .eq('status', 'published')
+        .eq('is_listed', true);
 
-  // Fallback mock data for preview if DB connection fails or view missing
-  if (error || !websites) {
-    websites = [
-      {
-        id: 'mock-1',
-        slug: 'channillo.com',
-        name: 'Channillo',
-        domain: 'channillo.com',
-        category_id: 'General',
-        price: 23,
-        currency: 'USD',
-        logo_url: null,
-        short_description: 'Premium publishing opportunity on channillo.com.',
-        content_placement_price: null,
-        content_placement_selling_price: null,
-        website_metrics: []
+      if (q) query = query.or(`domain.ilike.%${q}%,name.ilike.%${q}%`);
+      if (category) query = query.eq('category_id', category);
+      if (country) query = query.eq('country', country);
+
+      const { data, count, error } = await query
+        .order('featured', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (!error && data && data.length > 0) {
+        websites = data;
+        totalCount = count || 0;
+        totalPages = Math.ceil(totalCount / limit);
       }
-    ];
+    } catch {
+      // Supabase failed, fall through to catalog lookup
+    }
   }
 
+  // Fallback to local 29,118 catalog dataset
+  if (websites.length === 0) {
+    const catalogData = await queryCatalogPublishers({
+      q,
+      category,
+      country,
+      page,
+      limit
+    });
+    websites = catalogData.websites;
+    totalCount = catalogData.total;
+    totalPages = catalogData.totalPages;
+  }
 
   const view = typeof params.view === 'string' && params.view === 'list' ? 'list' : 'grid';
-  
+
+  const categoryPills = [
+    'Technology', 'Business', 'Finance', 'Crypto', 
+    'Health', 'Travel', 'Real Estate', 'Marketing', 'Gaming'
+  ];
+
   return (
-    <div className="bg-slate-50 min-h-screen text-slate-900 pb-24">
-      {/* Hero Section */}
-      <div className="bg-[hsl(222,47%,7%)] text-white pt-36 pb-20 border-b border-slate-800 relative overflow-hidden">
-        {/* Abstract Background Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[hsl(217,91%,54%)]/20 blur-[120px] rounded-full pointer-events-none"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">SEO Placement <span className="text-[hsl(217,91%,54%)]">Marketplace</span></h1>
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed mb-8">
-            Discover premium, verified websites for guest posting, niche edits, and content syndication to supercharge your SEO.
-          </p>
+    <div className="bg-slate-950 min-h-screen text-slate-100 pb-28 pt-28 relative overflow-hidden">
+      {/* Background ambient radial glows */}
+      <div className="absolute top-10 left-1/3 w-[700px] h-[700px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/2 right-10 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+
+      {/* Hero Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 pt-8 pb-12">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 mb-6 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          <span>29,118+ Verified Digital Publishers</span>
         </div>
-      </div>
-      
-      {/* SEO Category Hubs - Static Internal Links for Crawlability */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {['Technology', 'Business', 'Finance', 'Crypto', 'Health', 'Travel', 'Real Estate', 'Gaming'].map(cat => {
-            const slug = cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-');
+
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight text-white leading-tight">
+          SEO Placement{' '}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400">
+            Marketplace
+          </span>
+        </h1>
+
+        <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-8 font-light">
+          Access high-authority publications for permanent DoFollow backlinks, verified indexing SLA, and direct editorial syndication.
+        </p>
+
+        {/* Category Filter Hubs */}
+        <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto">
+          {categoryPills.map(cat => {
+            const isSelected = category.toLowerCase() === cat.toLowerCase();
             return (
               <Link 
                 key={cat} 
-                href={`/websites/category/${slug}`}
-                className="px-4 py-2 bg-white text-sm font-medium text-slate-600 rounded-full border border-slate-200 shadow-sm hover:border-[hsl(217,91%,54%)] hover:text-[hsl(217,91%,54%)] transition-colors"
+                href={`/websites?category=${encodeURIComponent(cat)}`}
+                className={`px-4 py-2 text-xs font-semibold rounded-full border transition-all duration-200 ${
+                  isSelected 
+                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-[0_0_15px_rgba(56,189,248,0.25)]' 
+                    : 'bg-white/5 text-slate-300 border-white/10 hover:border-cyan-400/40 hover:text-white'
+                }`}
               >
                 {cat}
               </Link>
             );
           })}
           <Link 
-            href="/websites/category"
-            className="px-4 py-2 bg-slate-100 text-sm font-medium text-slate-700 rounded-full border border-slate-200 hover:bg-slate-200 transition-colors"
+            href="/websites"
+            className="px-4 py-2 text-xs font-semibold rounded-full border border-white/10 bg-slate-900/80 text-slate-400 hover:text-white transition-colors"
           >
-            View All Categories →
+            All Niches
           </Link>
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 lg:px-8 mt-6">
-        <SearchFilter totalSites={totalSitesCount || 0} />
+      {/* Search & Filter Bar */}
+      <div className="px-4 sm:px-6 lg:px-8 relative z-20">
+        <SearchFilter totalSites={totalCount} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" id="marketplace-results">
-        {!websites || websites.length === 0 ? (
-          <div className="text-center py-24 bg-white rounded-3xl border border-slate-200 shadow-sm">
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">No Listings Found</h2>
-            <p className="text-slate-500">Try adjusting your search or category filters.</p>
+      {/* Catalog Results Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-14 relative z-10" id="marketplace-results">
+        {websites.length === 0 ? (
+          <div className="text-center py-24 bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+            <h2 className="text-2xl font-bold text-white mb-2">No Matching Publishers Found</h2>
+            <p className="text-slate-400 text-sm font-light">Try adjusting your search terms, country filters, or niche categories.</p>
+            <Link href="/websites" className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-xs rounded-xl shadow-lg">
+              Reset Filters
+            </Link>
           </div>
         ) : (
           <>
-            <div className="mb-6 text-sm text-slate-500 font-medium">
-              Showing {offset + 1}–{Math.min(offset + limit, filteredCount || 0)} of {filteredCount || 0} {filteredCount === 1 ? 'website' : 'websites'}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 text-xs font-semibold text-slate-400">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>Showing {offset + 1}–{Math.min(offset + limit, totalCount)} of {totalCount.toLocaleString()} Verified Publishers</span>
+              </div>
+              <span className="text-slate-500">Page {page} of {totalPages}</span>
             </div>
-            <div className={view === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6" : "flex flex-col gap-4"}>
+
+            <div className={view === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6" : "flex flex-col gap-4"}>
               {websites.map(site => {
-                // Generate better description
-                let betterDesc = site.short_description || '';
-                
-                // Extract metrics
-                let da = null;
-                let dr = null;
-                let traffic = null;
+                let da = 0;
+                let dr = 0;
+                let traffic = 0;
+
                 if (site.website_metrics && Array.isArray(site.website_metrics)) {
                   for (const m of site.website_metrics) {
                     const t = m.metric_type?.toUpperCase();
-                    if (t === 'DA' || t === 'DOMAIN_AUTHORITY') da = m.value;
-                    if (t === 'DR' || t === 'DOMAIN_RATING') dr = m.value;
-                    if (t === 'SEMRUSH_TRAFFIC' || t === 'ORGANIC_TRAFFIC' || t === 'TRAFFIC') traffic = m.value;
+                    if (t === 'DA' || t === 'DOMAIN_AUTHORITY') da = Number(m.value) || 0;
+                    if (t === 'DR' || t === 'DOMAIN_RATING') dr = Number(m.value) || 0;
+                    if (t === 'SEMRUSH_TRAFFIC' || t === 'ORGANIC_TRAFFIC' || t === 'TRAFFIC') traffic = Number(m.value) || 0;
                   }
                 }
 
-                // Determine Quality Tier
-                let tier = 'Standard';
-                let tierColor = 'bg-slate-100 text-slate-700';
-                
-                const daVal = Number(da) || 0;
-                const drVal = Number(dr) || 0;
-                const trafficVal = Number(traffic) || 0;
+                let tier = 'Verified Partner';
+                let tierBadge = 'bg-blue-500/10 text-blue-300 border-blue-500/20';
 
-                if (daVal >= 60 || drVal >= 60 || trafficVal >= 50000) {
-                  tier = 'Elite';
-                  tierColor = 'bg-[hsl(39,100%,58%)] text-white';
-                } else if (daVal >= 40 || drVal >= 40 || trafficVal >= 10000) {
-                  tier = 'Premium';
-                  tierColor = 'bg-[hsl(217,91%,54%)] text-white';
+                if (da >= 50 || dr >= 50 || traffic >= 30000) {
+                  tier = 'Elite Authority';
+                  tierBadge = 'bg-amber-400/10 text-amber-300 border-amber-400/30';
+                } else if (da >= 30 || dr >= 30 || traffic >= 5000) {
+                  tier = 'Premium Publisher';
+                  tierBadge = 'bg-cyan-400/10 text-cyan-300 border-cyan-400/30';
                 }
 
-                if (!betterDesc || betterDesc.includes('Premium publishing opportunity on')) {
-                  const parts = [];
-                  if (da) parts.push(`DA ${da}`);
-                  if (dr) parts.push(`DR ${dr}`);
-                  if (traffic) parts.push(`traffic of ${traffic}`);
-                  
-                  if (parts.length > 0) {
-                    betterDesc = `Publish on ${site.domain} in the ${site.category_id || 'General'} category with ${parts.join(', ')}. Secure high-quality backlinks.`;
-                  } else {
-                    betterDesc = `Publishing opportunity on ${site.domain} (${site.category_id || 'General'}). Reach a targeted audience.`;
-                  }
-                }
-                
-                if (site.price && site.content_placement_selling_price) {
-                  betterDesc = betterDesc.split(`$${site.price}`).join(`$${site.content_placement_selling_price}`);
-                }
+                const price = site.content_placement_selling_price || site.price || 49;
+                const currency = site.currency === 'USD' || !site.currency ? '$' : site.currency;
 
                 return (
-              <Link key={site.id} href={`/website/${site.slug}`} className={`bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex overflow-hidden group hover:border-[hsl(217,91%,54%)]/50 cursor-pointer ${view === 'grid' ? 'rounded-3xl flex-col' : 'rounded-2xl flex-col sm:flex-row items-center p-4 gap-6'}`}>
-                {view === 'grid' ? (
-                  // GRID VIEW
-                  <div className="p-6 flex-1 flex flex-col relative w-full">
-                    <div className="flex items-start justify-between mb-5 w-full">
-                      <span className={`text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shrink-0 ${tierColor}`}>
-                        {tier}
-                      </span>
-                      <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full uppercase tracking-wider truncate max-w-[50%] inline-block text-right">
-                        {site.category_id}
-                      </span>
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:text-[hsl(217,91%,54%)] transition-colors line-clamp-1">{site.name}</h3>
-                    <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-5 w-full">
-                      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                      <span className="truncate">{site.domain}</span>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {da && (
-                        <span className="text-[10px] font-bold bg-[hsl(222,47%,7%)] text-white px-2 py-1 rounded">DA {da}</span>
-                      )}
-                      {dr && (
-                        <span className="text-[10px] font-bold bg-[hsl(217,91%,54%)] text-white px-2 py-1 rounded">DR {dr}</span>
-                      )}
-                      {traffic && (
-                        <span className="text-[10px] font-bold bg-[hsl(152,69%,46%)] text-white px-2 py-1 rounded flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                          {Number(traffic).toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <p className="text-sm text-slate-600 line-clamp-2 mb-6 flex-1 leading-relaxed">
-                      {betterDesc}
-                    </p>
-                    
-                    <div className="border-t border-slate-100 pt-5 flex items-center justify-between mt-auto">
-                      <div>
-                        {(site.content_placement_selling_price) ? (
-                          <>
-                            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
-                            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="text-xl font-bold text-[hsl(217,91%,54%)] mt-2">Buy Now</div>
-                        )}
-                      </div>
-                      <div className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md">
-                        View Details
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  // LIST VIEW
-                  <>
-                    
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 ${tierColor}`}>
+                  <Link 
+                    key={site.id || site.slug} 
+                    href={`/website/${site.slug}`}
+                    className={`bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden hover:border-cyan-400/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.2)] transition-all duration-300 flex flex-col justify-between group ${
+                      view === 'list' ? 'sm:flex-row sm:items-center p-5 gap-6' : 'p-6'
+                    }`}
+                  >
+                    <div>
+                      {/* Top Header Card */}
+                      <div className="flex items-center justify-between gap-3 mb-4">
+                        <div className="w-12 h-12 bg-slate-950/80 rounded-2xl border border-white/10 flex items-center justify-center p-2.5 overflow-hidden group-hover:border-cyan-400/30 transition-colors shrink-0">
+                          <PublisherLogo domain={site.domain} name={site.name} className="w-full h-full object-contain" />
+                        </div>
+                        <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${tierBadge}`}>
                           {tier}
                         </span>
-                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-[hsl(217,91%,54%)] transition-colors truncate">{site.name}</h3>
-                        <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded-full uppercase tracking-wider shrink-0 truncate max-w-[120px]">
-                          {site.category_id}
-                        </span>
                       </div>
-                      
-                      <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-2 w-full">
-                        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                        <span className="truncate">{site.domain}</span>
+
+                      {/* Domain and Category */}
+                      <div className="mb-4">
+                        <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors truncate" title={site.domain}>
+                          {site.domain}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                          <span>{site.category_id || 'General'}</span>
+                          {site.location && (
+                            <>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <Globe className="w-3 h-3 text-cyan-400" />
+                                {site.location}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
-                      
-                      <div className="flex flex-wrap gap-2 mb-2 w-full">
-                        {da && (
-                          <span className="text-[10px] font-bold bg-[hsl(222,47%,7%)] text-white px-2 py-1 rounded">DA {da}</span>
-                        )}
-                        {dr && (
-                          <span className="text-[10px] font-bold bg-[hsl(217,91%,54%)] text-white px-2 py-1 rounded">DR {dr}</span>
-                        )}
-                        {traffic && (
-                          <span className="text-[10px] font-bold bg-[hsl(152,69%,46%)] text-white px-2 py-1 rounded flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                            {Number(traffic).toLocaleString()}
+
+                      {/* 3 Metric Pills */}
+                      <div className="grid grid-cols-3 gap-2 mb-5">
+                        <div className="bg-slate-950/60 rounded-xl p-2.5 text-center border border-white/5">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Moz DA</span>
+                          <span className="text-sm font-black text-blue-400">{da || 'Verified'}</span>
+                        </div>
+                        <div className="bg-slate-950/60 rounded-xl p-2.5 text-center border border-white/5">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Ahrefs DR</span>
+                          <span className="text-sm font-black text-emerald-400">{dr || 'Verified'}</span>
+                        </div>
+                        <div className="bg-slate-950/60 rounded-xl p-2.5 text-center border border-white/5">
+                          <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Traffic</span>
+                          <span className="text-sm font-black text-cyan-400">
+                            {traffic > 1000 ? `${(traffic / 1000).toFixed(1)}k` : (traffic > 0 ? traffic : 'Active')}
                           </span>
-                        )}
-                      </div>
-                      
-                      <p className="text-sm text-slate-600 line-clamp-1 leading-relaxed hidden sm:block">
-                        {betterDesc}
-                      </p>
-                    </div>
-                    
-                    <div className="sm:border-l border-slate-100 sm:pl-6 flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0">
-                      <div className="text-left sm:text-right">
-                        {(site.content_placement_selling_price) ? (
-                          <>
-                            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-0.5">Starting At</span>
-                            <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                              {site.currency === 'USD' ? '$' : site.currency}{site.content_placement_selling_price}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="text-xl font-bold text-[hsl(217,91%,54%)] mt-1">Buy Now</div>
-                        )}
-                      </div>
-                      <div className="px-5 py-2.5 bg-white text-[hsl(217,91%,54%)] font-bold text-sm rounded-xl group-hover:bg-[hsl(217,91%,54%)] group-hover:text-white transition-colors border border-[hsl(217,91%,54%)]/20 group-hover:border-transparent shadow-sm hover:shadow-md mt-0 sm:mt-3">
-                        View Details
+                        </div>
                       </div>
                     </div>
-                  </>
-                )}
-              </Link>
-              )})}
+
+                    {/* Bottom Pricing & CTA */}
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] uppercase font-semibold text-slate-400 block">Placement Rate</span>
+                        <span className="text-lg font-black text-white">{currency}{price}</span>
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-cyan-500 text-xs font-bold text-slate-300 group-hover:text-white transition-all shadow-sm">
+                        <span>View</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
+
+            {/* Pagination Controls */}
+            <Pagination currentPage={page} totalPages={totalPages} />
           </>
-        )}
-        
-        {websites && websites.length > 0 && (
-          <Pagination 
-            currentPage={page} 
-            totalPages={totalPages}
-          />
         )}
       </div>
     </div>

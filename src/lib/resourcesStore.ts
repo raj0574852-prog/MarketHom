@@ -5,6 +5,7 @@ export interface SiteService {
   status: 'Active' | 'Draft';
   priceRange: string;
   description: string;
+  highlights?: string[];
 }
 
 export interface LeadInquiry {

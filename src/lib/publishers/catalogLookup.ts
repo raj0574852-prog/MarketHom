@@ -245,3 +245,55 @@ export async function getRelatedPublishersFromCatalog(
 
   return filtered.slice(0, limit);
 }
+
+export async function queryCatalogPublishers(options: {
+  q?: string;
+  category?: string;
+  country?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{
+  websites: WebsiteListing[];
+  total: number;
+  totalPages: number;
+}> {
+  await ensureCatalogIndexed();
+  if (!cachedCatalog) {
+    return { websites: [], total: 0, totalPages: 0 };
+  }
+
+  const q = (options.q || '').toLowerCase().trim();
+  const cat = (options.category || '').toLowerCase().trim();
+  const country = (options.country || '').toLowerCase().trim();
+  const page = Math.max(1, options.page || 1);
+  const limit = Math.max(1, Math.min(100, options.limit || 12));
+
+  let results = Array.from(cachedCatalog.values());
+
+  if (q) {
+    results = results.filter(site => 
+      site.domain.toLowerCase().includes(q) ||
+      (site.name && site.name.toLowerCase().includes(q))
+    );
+  }
+
+  if (cat && cat !== 'all') {
+    results = results.filter(site => 
+      site.category_id && site.category_id.toLowerCase().includes(cat)
+    );
+  }
+
+  if (country && country !== 'all' && country !== 'worldwide') {
+    results = results.filter(site => 
+      site.location && site.location.toLowerCase().includes(country)
+    );
+  }
+
+  const total = results.length;
+  const totalPages = Math.ceil(total / limit);
+  const offset = (page - 1) * limit;
+  const websites = results.slice(offset, offset + limit);
+
+  return { websites, total, totalPages };
+}
+
