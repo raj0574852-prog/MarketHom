@@ -97,8 +97,8 @@ export default function GuestPostingPage() {
                 <Link href="/contact" className="btn-primary py-4 px-8 text-base font-bold shadow-xl shadow-[hsl(217,91%,54%)]/25">
                   Get Free Client Strategy Audit â†’
                 </Link>
-                <Link href="/websites" className="btn-outline py-4 px-6 text-sm font-semibold border-[hsl(270,80%,60%)]/50 hover:bg-[hsl(270,80%,60%)]/10 text-[hsl(270,80%,75%)]">
-                  Browse Marketplace (32k+ Sites) â†’
+                <Link href="/case-studies" className="btn-outline py-4 px-6 text-sm font-semibold border-[hsl(270,80%,60%)]/50 hover:bg-[hsl(270,80%,60%)]/10 text-[hsl(270,80%,75%)]">
+                  Explore Case Studies &rarr;
                 </Link>
                 <Link href="#ranking-system" className="btn-outline py-4 px-6 text-sm font-semibold">
                   How Rankings Work â†“

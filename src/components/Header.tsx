@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   Search, Bot, Target, Share2, Link2, PenTool, Code, 
-  ChevronDown, Shield, FileText, ArrowRight, Menu, X, Globe, Sparkles 
+  ChevronDown, Shield, FileText, ArrowRight, Menu, X, Sparkles 
 } from 'lucide-react';
 import { BorderBeam } from '@/components/ui/BorderBeam';
 
@@ -128,17 +128,7 @@ export default function Header() {
               )}
             </li>
 
-            <li>
-              <Link
-                href="/websites"
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
-                  pathname.startsWith('/websites') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5 text-blue-400" />
-                <span>Marketplace</span>
-              </Link>
-            </li>
+
 
             <li>
               <Link
@@ -257,7 +247,7 @@ export default function Header() {
                   </Link>
                 ))}
               </div>
-              <Link href="/websites" className="px-3 py-2 text-sm font-semibold text-white">Marketplace</Link>
+
               <Link href="/pricing" className="px-3 py-2 text-sm font-semibold text-white">Pricing</Link>
               <Link href="/case-studies" className="px-3 py-2 text-sm font-semibold text-white">Case Studies</Link>
               <Link href="/about" className="px-3 py-2 text-sm font-semibold text-white">About</Link>

@@ -57,23 +57,7 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // 2. Intercept URLs targeting individual publishers under the old /websites/ prefix
-  if (pathname.startsWith('/websites/')) {
-    if (pathname.startsWith('/websites/category')) {
-      return supabaseResponse;
-    }
-    
-    let slugPart = pathname.substring('/websites/'.length);
-    if (slugPart.endsWith('/')) {
-      slugPart = slugPart.slice(0, -1);
-    }
-    
-    if (slugPart && !slugPart.includes('/')) {
-      const destinationUrl = request.nextUrl.clone();
-      destinationUrl.pathname = `/website/${slugPart}`;
-      return NextResponse.redirect(destinationUrl, 301);
-    }
-  }
+
 
   return supabaseResponse
 }

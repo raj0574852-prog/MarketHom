@@ -18,7 +18,6 @@ const SERVICES = [
 const COMPANY = [
   { label: 'About Agency', href: '/about' },
   { label: 'Verified Case Studies', href: '/case-studies' },
-  { label: 'Publisher Marketplace', href: '/websites' },
   { label: 'Transparent Pricing', href: '/pricing' },
   { label: 'Editorial Blog', href: '/blog' },
   { label: 'Contact Strategists', href: '/contact' },

@@ -27,8 +27,8 @@ export default function LinkBuildingPage() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact" className="btn-primary">Start Building Authority</Link>
-                <Link href="/websites" className="btn-outline border-[hsl(270,80%,60%)]/50 hover:bg-[hsl(270,80%,60%)]/10 text-[hsl(270,80%,75%)]">
-                  Browse Marketplace (32k+ Sites) â†’
+                <Link href="/case-studies" className="btn-outline border-[hsl(270,80%,60%)]/50 hover:bg-[hsl(270,80%,60%)]/10 text-[hsl(270,80%,75%)]">
+                  Explore Case Studies &rarr;
                 </Link>
               </div>
             </div>

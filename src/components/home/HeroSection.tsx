@@ -80,14 +80,14 @@ export default function HeroSection() {
             </Link>
 
             <Link
-              href="/websites"
-              title="Explore High-Authority Marketplace"
+              href="/case-studies"
+              title="Explore Client Case Studies"
               className="inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-full font-semibold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-md"
             >
-              <Globe className="w-4 h-4 text-blue-400" />
-              <span>Browse Marketplace</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold ml-1">
-                48K+ Sites
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <span>Explore Case Studies</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold ml-1">
+                +450% Avg ROI
               </span>
             </Link>
           </div>

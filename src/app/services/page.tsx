@@ -200,10 +200,10 @@ export default function ServicesPage() {
 
                     {(s.id === 'guest-posting' || s.id === 'link-building') && (
                       <Link 
-                        href="/websites" 
+                        href="/contact" 
                         className="px-3.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold transition-all"
                       >
-                        Marketplace →
+                        Order Outreach →
                       </Link>
                     )}
                   </div>
